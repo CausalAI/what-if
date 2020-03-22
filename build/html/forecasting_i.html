@@ -1,0 +1,1334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Forecasting I: univariate, heavy tailed &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Forecasting II: state space models" href="forecasting_ii.html" />
+    <link rel="prev" title="Writing guides using EasyGuide" href="easyguide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Forecasting I: univariate, heavy tailed</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Summary">Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Intro-to-Pyro’s-forecasting-framework">Intro to Pyro’s forecasting framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Time-local-random-variables:-self.time_plate">Time-local random variables: <code class="docutils literal notranslate"><span class="pre">self.time_plate</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Heavy-tailed-noise">Heavy-tailed noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Backtesting">Backtesting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Forecasting I: univariate, heavy tailed</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/forecasting_i.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Forecasting-I:-univariate,-heavy-tailed">
+<h1>Forecasting I: univariate, heavy tailed<a class="headerlink" href="#Forecasting-I:-univariate,-heavy-tailed" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial introduces the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html">pyro.contrib.forecast</a> module, a framework for forecasting with Pyro models. This tutorial covers only univariate models and simple likelihoods. This tutorial assumes the reader is already familiar with <a class="reference external" href="http://pyro.ai/examples/svi_part_ii.html">SVI</a> and <a class="reference external" href="http://pyro.ai/examples/tensor_shapes.html">tensor shapes</a>.</p>
+<p>See also:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://pyro.ai/examples/forecasting_ii.html">Forecasting II: state space models</a></p></li>
+<li><p><a class="reference external" href="http://pyro.ai/examples/forecasting_iii.html">Forecasting III: hierarchical models</a></p></li>
+</ul>
+<div class="section" id="Summary">
+<h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>To create a forecasting model:</p>
+<ol class="arabic simple">
+<li><p>Create a subclass of the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel">ForecastingModel</a> class.</p></li>
+<li><p>Implement the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel.model">.model(zero_data, covariates)</a> method using standard Pyro syntax.</p></li>
+<li><p>Sample all time-local variables inside the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel.time_plate">self.time_plate</a> context.</p></li>
+<li><p>Finally call the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel.predict">.predict(noise_dist, prediction)</a> method.</p></li>
+</ol>
+</li>
+<li><p>To train a forecasting model, create a <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.Forecaster">Forecaster</a> object.</p>
+<ul>
+<li><p>Training can be flaky, you’ll need to tune hyperparameters and randomly restart.</p></li>
+<li><p>Reparameterization can help learning, e.g. <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.loc_scale.LocScaleReparam">LocScaleReparam</a>.</p></li>
+</ul>
+</li>
+<li><p>To forecast the future, draw samples from a <code class="docutils literal notranslate"><span class="pre">Forecaster</span></code> object conditioned on data and covariates.</p></li>
+<li><p>To model seasonality, use helpers <a class="reference external" href="http://docs.pyro.ai/en/latest/ops.html#pyro.ops.tensor_utils.periodic_features">periodic_features()</a>, <a class="reference external" href="http://docs.pyro.ai/en/latest/ops.html#pyro.ops.tensor_utils.periodic_repeat">periodic_repeat()</a>, and <a class="reference external" href="http://docs.pyro.ai/en/latest/ops.html#pyro.ops.tensor_utils.periodic_cumsum">periodic_cumsum()</a>.</p></li>
+<li><p>To model heavy-tailed data, use <a class="reference external" href="http://docs.pyro.ai/en/latest/distributions.html#stable">Stable</a> distributions and <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.StableReparam">StableReparam</a>.</p></li>
+<li><p>To evaluate results, use the <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.eval_crps">backtest()</a> helper or low-level loss functions.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">pyro.poutine</span> <span class="k">as</span> <span class="nn">poutine</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.examples.bart</span> <span class="k">import</span> <span class="n">load_bart_od</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.forecast</span> <span class="k">import</span> <span class="n">ForecastingModel</span><span class="p">,</span> <span class="n">Forecaster</span><span class="p">,</span> <span class="n">backtest</span><span class="p">,</span> <span class="n">eval_crps</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.reparam</span> <span class="k">import</span> <span class="n">LocScaleReparam</span><span class="p">,</span> <span class="n">StableReparam</span>
+<span class="kn">from</span> <span class="nn">pyro.ops.tensor_utils</span> <span class="k">import</span> <span class="n">periodic_cumsum</span><span class="p">,</span> <span class="n">periodic_repeat</span><span class="p">,</span> <span class="n">periodic_features</span>
+<span class="kn">from</span> <span class="nn">pyro.ops.stats</span> <span class="k">import</span> <span class="n">quantile</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">20200221</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_bart_od</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;stations&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;stations&#39;, &#39;start_date&#39;, &#39;counts&#39;])
+torch.Size([78888, 50, 50])
+12TH 16TH 19TH 24TH ANTC ASHB BALB BAYF BERY CAST CIVC COLM COLS CONC DALY DBRK DELN DUBL EMBR FRMT FTVL GLEN HAYW LAFY LAKE MCAR MLBR MLPT MONT NBRK NCON OAKL ORIN PCTR PHIL PITT PLZA POWL RICH ROCK SANL SBRN SFIA SHAY SSAN UCTY WARM WCRK WDUB WOAK
+</pre></div></div>
+</div>
+<div class="section" id="Intro-to-Pyro’s-forecasting-framework">
+<h3>Intro to Pyro’s forecasting framework<a class="headerlink" href="#Intro-to-Pyro’s-forecasting-framework" title="Permalink to this headline">¶</a></h3>
+<p>Pyro’s forecasting framework consists of: - a <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel">ForecastingModel</a> base class, whose <code class="docutils literal notranslate"><span class="pre">.model()</span></code> method can be implemented for custom forecasting models, - a <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.Forecaster">Forecaster</a> class that trains and forecasts using <code class="docutils literal notranslate"><span class="pre">ForecastingModel</span></code>s, and - a
+<a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.backtest">backtest()</a> helper to evaluate models on a number of metrics.</p>
+<p>Consider a simple univariate dataset, say weekly <a class="reference external" href="https://www.bart.gov/about/reports/ridership">BART train</a> ridership aggregated over all stations in the network. This data roughly logarithmic, so we log-transform for modeling.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">T</span><span class="p">,</span> <span class="n">O</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">][:</span><span class="n">T</span> <span class="o">//</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">T</span> <span class="o">//</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_4_0.png" src="_images/forecasting_i_4_0.png" />
+</div>
+</div>
+<p>Let’s start with a simple log-linear regression model, with no trend or seasonality. Note that while this example is univariate, Pyro’s forecasting framework is multivariate, so we’ll often need to reshape using <code class="docutils literal notranslate"><span class="pre">.unsqueeze(-1)</span></code>, <code class="docutils literal notranslate"><span class="pre">.expand([1])</span></code>, and <code class="docutils literal notranslate"><span class="pre">.to_event(1)</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># First we need some boilerplate to create a class and define a .model() method.</span>
+<span class="k">class</span> <span class="nc">Model1</span><span class="p">(</span><span class="n">ForecastingModel</span><span class="p">):</span>
+    <span class="c1"># We then implement the .model() method. Since this is a generative model, it shouldn&#39;t</span>
+    <span class="c1"># look at data; however it is convenient to see the shape of data we&#39;re supposed to</span>
+    <span class="c1"># generate, so this inputs a zeros_like(data) tensor instead of the actual data.</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zero_data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">):</span>
+        <span class="n">data_dim</span> <span class="o">=</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Should be 1 in this univariate tutorial.</span>
+        <span class="n">feature_dim</span> <span class="o">=</span> <span class="n">covariates</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># The first part of the model is a probabilistic program to create a prediction.</span>
+        <span class="c1"># We use the zero_data as a template for the shape of the prediction.</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">data_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">feature_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">bias</span> <span class="o">+</span> <span class="p">(</span><span class="n">weight</span> <span class="o">*</span> <span class="n">covariates</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># The prediction should have the same shape as zero_data (duration, obs_dim),</span>
+        <span class="c1"># but may have additional sample dimensions on the left.</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># The next part of the model creates a likelihood or noise distribution.</span>
+        <span class="c1"># Again we&#39;ll be Bayesian and write this as a probabilistic program with</span>
+        <span class="c1"># priors over parameters.</span>
+        <span class="n">noise_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_scale&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">noise_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span>
+
+        <span class="c1"># The final step is to call the .predict() method.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">noise_dist</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can now train this model by creating a <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.Forecaster">Forecaster</a> object. We’ll split the data into <code class="docutils literal notranslate"><span class="pre">[T0,T1)</span></code> for training and <code class="docutils literal notranslate"><span class="pre">[T1,T2)</span></code> for testing.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">T0</span> <span class="o">=</span> <span class="mi">0</span>              <span class="c1"># begining</span>
+<span class="n">T2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># end</span>
+<span class="n">T1</span> <span class="o">=</span> <span class="n">T2</span> <span class="o">-</span> <span class="mi">52</span>        <span class="c1"># train/test split</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">T2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">365</span>
+<span class="n">covariates</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">time</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">forecaster</span> <span class="o">=</span> <span class="n">Forecaster</span><span class="p">(</span><span class="n">Model1</span><span class="p">(),</span> <span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     step    0 loss = 484401
+INFO     step  100 loss = 0.609042
+INFO     step  200 loss = -0.535144
+INFO     step  300 loss = -0.605789
+INFO     step  400 loss = -0.59744
+INFO     step  500 loss = -0.596203
+INFO     step  600 loss = -0.614217
+INFO     step  700 loss = -0.612415
+INFO     step  800 loss = -0.613236
+INFO     step  900 loss = -0.59879
+INFO     step 1000 loss = -0.601271
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 5.02 s, sys: 61.6 ms, total: 5.08 s
+Wall time: 5.12 s
+</pre></div></div>
+</div>
+<p>Next we can evaluate by drawing posterior samples from the forecaster, passing in full covariates but only partial data. We’ll use Pyro’s <a class="reference external" href="http://docs.pyro.ai/en/latest/ops.html#pyro.ops.stats.quantile">quantile()</a> function to plot median and an 80% confidence interval. To evaluate fit we’ll use <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.eval_crps">eval_crps()</a> to compute <a class="reference external" href="https://www.stat.washington.edu/raftery/Research/PDF/Gneiting2007jasa.pdf">Continuous Ranked Probability
+Score</a>; this is an good metric to assess distributional fit of a heavy-tailed distribution.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">forecaster</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">p10</span><span class="p">,</span> <span class="n">p50</span><span class="p">,</span> <span class="n">p90</span> <span class="o">=</span> <span class="n">quantile</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crps</span> <span class="o">=</span> <span class="n">eval_crps</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">p10</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+torch.Size([1000, 52, 1]) torch.Size([52])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_11_1.png" src="_images/forecasting_i_11_1.png" />
+</div>
+</div>
+<p>Zooming in to just the forecasted region, we see this model ignores seasonal behavior.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_13_0.png" src="_images/forecasting_i_13_0.png" />
+</div>
+</div>
+<p>We could add a yearly seasonal component simply by adding new covariates (note we’ve already taken care in the model to handle <code class="docutils literal notranslate"><span class="pre">feature_dim</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">T2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">365</span>
+<span class="n">covariates</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">time</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="n">periodic_features</span><span class="p">(</span><span class="n">T2</span><span class="p">,</span> <span class="mf">365.25</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">forecaster</span> <span class="o">=</span> <span class="n">Forecaster</span><span class="p">(</span><span class="n">Model1</span><span class="p">(),</span> <span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     step    0 loss = 53174.4
+INFO     step  100 loss = 0.519148
+INFO     step  200 loss = -0.0264822
+INFO     step  300 loss = -0.314983
+INFO     step  400 loss = -0.413243
+INFO     step  500 loss = -0.487756
+INFO     step  600 loss = -0.472516
+INFO     step  700 loss = -0.595866
+INFO     step  800 loss = -0.500985
+INFO     step  900 loss = -0.558623
+INFO     step 1000 loss = -0.589603
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 5.74 s, sys: 88.5 ms, total: 5.83 s
+Wall time: 5.89 s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">forecaster</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">p10</span><span class="p">,</span> <span class="n">p50</span><span class="p">,</span> <span class="n">p90</span> <span class="o">=</span> <span class="n">quantile</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crps</span> <span class="o">=</span> <span class="n">eval_crps</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_16_0.png" src="_images/forecasting_i_16_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_17_0.png" src="_images/forecasting_i_17_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Time-local-random-variables:-self.time_plate">
+<h3>Time-local random variables: <code class="docutils literal notranslate"><span class="pre">self.time_plate</span></code><a class="headerlink" href="#Time-local-random-variables:-self.time_plate" title="Permalink to this headline">¶</a></h3>
+<p>So far we’ve seen the <code class="docutils literal notranslate"><span class="pre">ForecastingModel.model()</span></code> method and <code class="docutils literal notranslate"><span class="pre">self.predict()</span></code>. The last piece of forecasting-specific syntax is the <code class="docutils literal notranslate"><span class="pre">self.time_plate</span></code> context for time-local variables. To see how this works, consider changing our global linear trend model above to a local level model. Note the <a class="reference external" href="http://docs.pyro.ai/en/latest/poutine.html#pyro.poutine.handlers.reparam">poutine.reparam()</a> handler is a general Pyro inference trick, not specific to forecasting.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">Model2</span><span class="p">(</span><span class="n">ForecastingModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zero_data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">):</span>
+        <span class="n">data_dim</span> <span class="o">=</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">feature_dim</span> <span class="o">=</span> <span class="n">covariates</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">data_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">feature_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># We&#39;ll sample a time-global scale parameter outside the time plate,</span>
+        <span class="c1"># then time-local iid noise inside the time plate.</span>
+        <span class="n">drift_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;drift_scale&quot;</span><span class="p">,</span>
+                                  <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_plate</span><span class="p">:</span>
+            <span class="c1"># We&#39;ll use a reparameterizer to improve variational fit. The model would still be</span>
+            <span class="c1"># correct if you removed this context manager, but the fit appears to be worse.</span>
+            <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">reparam</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;drift&quot;</span><span class="p">:</span> <span class="n">LocScaleReparam</span><span class="p">()}):</span>
+                <span class="n">drift</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;drift&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">zero_data</span><span class="p">,</span> <span class="n">drift_scale</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># After we sample the iid &quot;drift&quot; noise we can combine it in any time-dependent way.</span>
+        <span class="c1"># It is important to keep everything inside the plate independent and apply dependent</span>
+        <span class="c1"># transforms outside the plate.</span>
+        <span class="n">motion</span> <span class="o">=</span> <span class="n">drift</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># A Brownian motion.</span>
+
+        <span class="c1"># The prediction now includes three terms.</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">motion</span> <span class="o">+</span> <span class="n">bias</span> <span class="o">+</span> <span class="p">(</span><span class="n">weight</span> <span class="o">*</span> <span class="n">covariates</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># Construct the noise distribution and predict.</span>
+        <span class="n">noise_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_scale&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">noise_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">noise_dist</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">T2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">365</span>
+<span class="n">covariates</span> <span class="o">=</span> <span class="n">periodic_features</span><span class="p">(</span><span class="n">T2</span><span class="p">,</span> <span class="mf">365.25</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">forecaster</span> <span class="o">=</span> <span class="n">Forecaster</span><span class="p">(</span><span class="n">Model2</span><span class="p">(),</span> <span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     step    0 loss = 1.7326e+09
+INFO     step  100 loss = 0.902688
+INFO     step  200 loss = -0.0639999
+INFO     step  300 loss = -0.102488
+INFO     step  400 loss = -0.301241
+INFO     step  500 loss = -0.404315
+INFO     step  600 loss = -0.365754
+INFO     step  700 loss = -0.429714
+INFO     step  800 loss = -0.447207
+INFO     step  900 loss = -0.515883
+INFO     step 1000 loss = -0.519698
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 9.11 s, sys: 66.9 ms, total: 9.18 s
+Wall time: 9.21 s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">forecaster</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">p10</span><span class="p">,</span> <span class="n">p50</span><span class="p">,</span> <span class="n">p90</span> <span class="o">=</span> <span class="n">quantile</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crps</span> <span class="o">=</span> <span class="n">eval_crps</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_21_0.png" src="_images/forecasting_i_21_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_22_0.png" src="_images/forecasting_i_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Heavy-tailed-noise">
+<h3>Heavy-tailed noise<a class="headerlink" href="#Heavy-tailed-noise" title="Permalink to this headline">¶</a></h3>
+<p>Our final univariate model will generalize from Gaussian noise to heavy-tailed <a class="reference external" href="http://docs.pyro.ai/en/latest/distributions.html#stable">Stable</a> noise. The only difference is the <code class="docutils literal notranslate"><span class="pre">noise_dist</span></code> which now takes two new parameters: <code class="docutils literal notranslate"><span class="pre">stability</span></code> determines tail weight and <code class="docutils literal notranslate"><span class="pre">skew</span></code> determines the relative size of positive versus negative spikes.</p>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Stable_distribution">Stable distribution</a> is a natural heavy-tailed generalization of the Normal distribution, but it is difficult to work with due to its intractible density function. Pyro implements auxiliary variable methods for working with Stable distributions. To inform Pyro to use those auxiliary variable methods, we wrap the final line in <a class="reference external" href="http://docs.pyro.ai/en/latest/poutine.html#pyro.poutine.handlers.reparam">poutine.reparam()</a> effect handler
+that applies the <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.StableReparam">StableReparam</a> transform to the implicit observe site named “residual”. You can use Stable distributions for other sites by specifying <code class="docutils literal notranslate"><span class="pre">config={&quot;my_site_name&quot;:</span> <span class="pre">StableReparam()}</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">Model3</span><span class="p">(</span><span class="n">ForecastingModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zero_data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">):</span>
+        <span class="n">data_dim</span> <span class="o">=</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">feature_dim</span> <span class="o">=</span> <span class="n">covariates</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">data_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="n">feature_dim</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">drift_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;drift_scale&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_plate</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">reparam</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;drift&quot;</span><span class="p">:</span> <span class="n">LocScaleReparam</span><span class="p">()}):</span>
+                <span class="n">drift</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;drift&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">zero_data</span><span class="p">,</span> <span class="n">drift_scale</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">motion</span> <span class="o">=</span> <span class="n">drift</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># A Brownian motion.</span>
+
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">motion</span> <span class="o">+</span> <span class="n">bias</span> <span class="o">+</span> <span class="p">(</span><span class="n">weight</span> <span class="o">*</span> <span class="n">covariates</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># The next part of the model creates a likelihood or noise distribution.</span>
+        <span class="c1"># Again we&#39;ll be Bayesian and write this as a probabilistic program with</span>
+        <span class="c1"># priors over parameters.</span>
+        <span class="n">stability</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_stability&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">skew</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_skew&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_scale&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">noise_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Stable</span><span class="p">(</span><span class="n">stability</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+
+        <span class="c1"># We need to use a reparameterizer to handle the Stable distribution.</span>
+        <span class="c1"># Note &quot;residual&quot; is the name of Pyro&#39;s internal sample site in self.predict().</span>
+        <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">reparam</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;residual&quot;</span><span class="p">:</span> <span class="n">StableReparam</span><span class="p">()}):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">noise_dist</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">T2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">365</span>
+<span class="n">covariates</span> <span class="o">=</span> <span class="n">periodic_features</span><span class="p">(</span><span class="n">T2</span><span class="p">,</span> <span class="mf">365.25</span> <span class="o">/</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">forecaster</span> <span class="o">=</span> <span class="n">Forecaster</span><span class="p">(</span><span class="n">Model3</span><span class="p">(),</span> <span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">forecaster</span><span class="o">.</span><span class="n">guide</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{:0.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     step    0 loss = 5.92062e+07
+INFO     step  100 loss = 13.5949
+INFO     step  200 loss = 3.0411
+INFO     step  300 loss = 0.866627
+INFO     step  400 loss = 0.362264
+INFO     step  500 loss = 0.0508628
+INFO     step  600 loss = -0.236901
+INFO     step  700 loss = -0.290881
+INFO     step  800 loss = -0.242376
+INFO     step  900 loss = -0.339689
+INFO     step 1000 loss = -0.33147
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+bias = 14.64
+drift_scale = 2.173e-08
+noise_stability = 1.937
+noise_skew = 0.0007298
+noise_scale = 0.06047
+CPU times: user 19 s, sys: 97.5 ms, total: 19 s
+Wall time: 19.1 s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">forecaster</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="n">T1</span><span class="p">],</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">p10</span><span class="p">,</span> <span class="n">p50</span><span class="p">,</span> <span class="n">p90</span> <span class="o">=</span> <span class="n">quantile</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crps</span> <span class="o">=</span> <span class="n">eval_crps</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_26_0.png" src="_images/forecasting_i_26_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p10</span><span class="p">,</span> <span class="n">p90</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">p50</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;forecast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">T1</span><span class="p">:],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Total weekly ridership (CRPS = </span><span class="si">{:0.3g}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crps</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;log(# rides)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Week after 2011-01-01&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_27_0.png" src="_images/forecasting_i_27_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Backtesting">
+<h3>Backtesting<a class="headerlink" href="#Backtesting" title="Permalink to this headline">¶</a></h3>
+<p>To compare our Gaussian <code class="docutils literal notranslate"><span class="pre">Model2</span></code> and Stable <code class="docutils literal notranslate"><span class="pre">Model3</span></code> we’ll use a simple <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.backtest">backtesting()</a> helper. This helper by default evaluates three metrics: <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.eval_crps">CRPS</a> assesses distributional accuracy of heavy-tailed data,
+<a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.eval_mae">MAE</a> assesses point accuracy of heavy-tailed data, and <a class="reference external" href="http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.evaluate.eval_rmse">RMSE</a> assesses accuracy of Normal-tailed data. The one nuance here is to set <code class="docutils literal notranslate"><span class="pre">warm_start=True</span></code> to reduce the need for random restarts.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">windows2</span> <span class="o">=</span> <span class="n">backtest</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">Model2</span><span class="p">,</span>
+                    <span class="n">min_train_window</span><span class="o">=</span><span class="mi">104</span><span class="p">,</span> <span class="n">test_window</span><span class="o">=</span><span class="mi">52</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span>
+                    <span class="n">forecaster_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;log_every&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                                        <span class="s2">&quot;warm_start&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     Training on window [0:104], testing on window [104:156]
+INFO     step    0 loss = 3534.09
+INFO     step 1000 loss = 0.11251
+INFO     Training on window [0:130], testing on window [130:182]
+INFO     step    0 loss = 0.238584
+INFO     step 1000 loss = -0.184576
+INFO     Training on window [0:156], testing on window [156:208]
+INFO     step    0 loss = 0.62968
+INFO     step 1000 loss = -0.0259982
+INFO     Training on window [0:182], testing on window [182:234]
+INFO     step    0 loss = 0.195288
+INFO     step 1000 loss = -0.120416
+INFO     Training on window [0:208], testing on window [208:260]
+INFO     step    0 loss = 0.188322
+INFO     step 1000 loss = -0.18523
+INFO     Training on window [0:234], testing on window [234:286]
+INFO     step    0 loss = 0.0471417
+INFO     step 1000 loss = -0.185852
+INFO     Training on window [0:260], testing on window [260:312]
+INFO     step    0 loss = 0.00251847
+INFO     step 1000 loss = -0.246146
+INFO     Training on window [0:286], testing on window [286:338]
+INFO     step    0 loss = -0.0702055
+INFO     step 1000 loss = -0.25786
+INFO     Training on window [0:312], testing on window [312:364]
+INFO     step    0 loss = -0.133986
+INFO     step 1000 loss = -0.375242
+INFO     Training on window [0:338], testing on window [338:390]
+INFO     step    0 loss = -0.167895
+INFO     step 1000 loss = -0.331766
+INFO     Training on window [0:364], testing on window [364:416]
+INFO     step    0 loss = -0.270294
+INFO     step 1000 loss = -0.438097
+INFO     Training on window [0:390], testing on window [390:442]
+INFO     step    0 loss = -0.297009
+INFO     step 1000 loss = -0.473476
+INFO     Training on window [0:416], testing on window [416:468]
+INFO     step    0 loss = -0.398169
+INFO     step 1000 loss = -0.502486
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 1min 51s, sys: 724 ms, total: 1min 52s
+Wall time: 1min 52s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">windows3</span> <span class="o">=</span> <span class="n">backtest</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">Model3</span><span class="p">,</span>
+                    <span class="n">min_train_window</span><span class="o">=</span><span class="mi">104</span><span class="p">,</span> <span class="n">test_window</span><span class="o">=</span><span class="mi">52</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span>
+                    <span class="n">forecaster_options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;log_every&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                                        <span class="s2">&quot;warm_start&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO     Training on window [0:104], testing on window [104:156]
+INFO     step    0 loss = 1849.22
+INFO     step 1000 loss = 0.543365
+INFO     Training on window [0:130], testing on window [130:182]
+INFO     step    0 loss = 2.51271
+INFO     step 1000 loss = 0.0757928
+INFO     Training on window [0:156], testing on window [156:208]
+INFO     step    0 loss = 2.6663
+INFO     step 1000 loss = 0.0912818
+INFO     Training on window [0:182], testing on window [182:234]
+INFO     step    0 loss = 1.97279
+INFO     step 1000 loss = -0.00365819
+INFO     Training on window [0:208], testing on window [208:260]
+INFO     step    0 loss = 1.59146
+INFO     step 1000 loss = -0.0871935
+INFO     Training on window [0:234], testing on window [234:286]
+INFO     step    0 loss = 1.34227
+INFO     step 1000 loss = -0.103136
+INFO     Training on window [0:260], testing on window [260:312]
+INFO     step    0 loss = 1.21624
+INFO     step 1000 loss = -0.214513
+INFO     Training on window [0:286], testing on window [286:338]
+INFO     step    0 loss = 1.0086
+INFO     step 1000 loss = -0.272347
+INFO     Training on window [0:312], testing on window [312:364]
+INFO     step    0 loss = 0.962262
+INFO     step 1000 loss = -0.293812
+INFO     Training on window [0:338], testing on window [338:390]
+INFO     step    0 loss = 0.598708
+INFO     step 1000 loss = -0.190582
+INFO     Training on window [0:364], testing on window [364:416]
+INFO     step    0 loss = 0.719034
+INFO     step 1000 loss = -0.362534
+INFO     Training on window [0:390], testing on window [390:442]
+INFO     step    0 loss = 0.353514
+INFO     step 1000 loss = -0.431448
+INFO     Training on window [0:416], testing on window [416:468]
+INFO     step    0 loss = 0.402931
+INFO     step 1000 loss = -0.48814
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+CPU times: user 4min, sys: 1.07 s, total: 4min 1s
+Wall time: 4min 3s
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Gaussian versus Stable accuracy over </span><span class="si">{}</span><span class="s2"> windows&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">windows2</span><span class="p">)))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;crps&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows2</span><span class="p">],</span> <span class="s2">&quot;b&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gaussian&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;crps&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows3</span><span class="p">],</span> <span class="s2">&quot;r&gt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stable&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;CRPS&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows2</span><span class="p">],</span> <span class="s2">&quot;b&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gaussian&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows3</span><span class="p">],</span> <span class="s2">&quot;r&gt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stable&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;MAE&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows2</span><span class="p">],</span> <span class="s2">&quot;b&lt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Gaussian&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">w</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows3</span><span class="p">],</span> <span class="s2">&quot;r&gt;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stable&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;RMSE&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/forecasting_i_31_0.png" src="_images/forecasting_i_31_0.png" />
+</div>
+</div>
+<p>Note that RMSE is a poor metric for evaluating heavy-tailed data. Our stable model has such heavy tails that its variance is infinite, so we cannot expect RMSE to converge, hence occasional outlying points.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="forecasting_ii.html" class="btn btn-neutral float-right" title="Forecasting II: state space models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="easyguide.html" class="btn btn-neutral float-left" title="Writing guides using EasyGuide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

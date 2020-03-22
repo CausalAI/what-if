@@ -1,0 +1,479 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>自定义 SVI 目标函数 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pyro 模型中使用 PyTorch JIT Compiler" href="jit.html" />
+    <link rel="prev" title="Inference with Discrete Latent Variables" href="enumeration.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">自定义 SVI 目标函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Basic-SVI-Usage">Basic SVI Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#A-Lower-Level-Pattern">A Lower-Level Pattern</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Custom-Regularizer">Example: Custom Regularizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Clipping-Gradients">Example: Clipping Gradients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Scaling-the-Loss">Example: Scaling the Loss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Mixing-Optimizers">Example: Mixing Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-Custom-ELBO">Example: Custom ELBO</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Example:-KL-Annealing">Example: KL Annealing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>自定义 SVI 目标函数</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/custom_objectives.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="自定义-SVI-目标函数">
+<h1>自定义 SVI 目标函数<a class="headerlink" href="#自定义-SVI-目标函数" title="Permalink to this headline">¶</a></h1>
+<p>Pyro provides support for various optimization-based approaches to Bayesian inference,with <code class="docutils literal notranslate"><span class="pre">Trace_ELBO</span></code> serving as the basic implementation of SVI (stochastic variational inference). See the <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#module-pyro.infer.svi">docs</a> for more information on the various SVI implementations and SVI tutorials <a class="reference external" href="http://pyro.ai/examples/svi_part_i.html">I</a>, <a class="reference external" href="http://pyro.ai/examples/svi_part_ii.html">II</a>, and
+<a class="reference external" href="http://pyro.ai/examples/svi_part_iii.html">III</a> for background on SVI.</p>
+<p>In this tutorial we show how advanced users can modify and/or augment the variational objectives (alternatively: loss functions) provided by Pyro to support special use cases.</p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="#Basic-SVI-Usage">Basic SVI Usage</a></p>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="#A-Lower-Level-Pattern">A Lower Level Pattern</a></p></li>
+</ol>
+</li>
+<li><p><a class="reference external" href="#Example:-Custom-Regularizer">Example: Custom Regularizer</a></p></li>
+<li><p><a class="reference external" href="#Example:-Scaling-the-Loss">Example: Scaling the Loss</a></p></li>
+<li><p><a class="reference external" href="#Example:-Mixing-Optimizers">Example: Mixing Optimizers</a></p></li>
+<li><p><a class="reference external" href="#Example:-Custom-ELBO">Example: Custom ELBO</a></p></li>
+<li><p><a class="reference external" href="#Example:-KL-Annealing">Example: KL Annealing</a></p></li>
+</ol>
+<div class="section" id="Basic-SVI-Usage">
+<h2>Basic SVI Usage<a class="headerlink" href="#Basic-SVI-Usage" title="Permalink to this headline">¶</a></h2>
+<p>We first review the basic usage pattern of <code class="docutils literal notranslate"><span class="pre">SVI</span></code> objects in Pyro. We assume that the user has defined a <code class="docutils literal notranslate"><span class="pre">model</span></code> and a <code class="docutils literal notranslate"><span class="pre">guide</span></code>. The user then creates an optimizer and an <code class="docutils literal notranslate"><span class="pre">SVI</span></code> object:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)})</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Gradient steps can then be taken with a call to <code class="docutils literal notranslate"><span class="pre">svi.step(...)</span></code>. The arguments to <code class="docutils literal notranslate"><span class="pre">step()</span></code> are then passed to <code class="docutils literal notranslate"><span class="pre">model</span></code> and <code class="docutils literal notranslate"><span class="pre">guide</span></code>.</p>
+<div class="section" id="A-Lower-Level-Pattern">
+<h3>A Lower-Level Pattern<a class="headerlink" href="#A-Lower-Level-Pattern" title="Permalink to this headline">¶</a></h3>
+<p>The nice thing about the above pattern is that it allows Pyro to take care of various details for us, for example:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pyro.optim.Adam</span></code> dynamically creates a new <code class="docutils literal notranslate"><span class="pre">torch.optim.Adam</span></code> optimizer whenever a new parameter is encountered</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SVI.step()</span></code> zeros gradients between gradient steps</p></li>
+</ul>
+<p>If we want more control, we can directly manipulate the differentiable loss method of the various <code class="docutils literal notranslate"><span class="pre">ELBO</span></code> classes. For example, (assuming we know all the parameters in advance) this is equivalent to the previous code snippet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define optimizer and loss function</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)})</span>
+<span class="n">loss_fn</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">()</span><span class="o">.</span><span class="n">differentiable_loss</span>
+<span class="c1"># compute loss</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">model_and_guide_args</span><span class="p">)</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="c1"># take a step and zero the parameter gradients</span>
+<span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Example:-Custom-Regularizer">
+<h2>Example: Custom Regularizer<a class="headerlink" href="#Example:-Custom-Regularizer" title="Permalink to this headline">¶</a></h2>
+<p>Suppose we want to add a custom regularization term to the SVI loss. Using the above usage pattern, this is easy to do. First we define our regularizer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_custom_L2_regularizer</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">):</span>
+    <span class="n">reg_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">my_parameters</span><span class="p">:</span>
+        <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">reg_loss</span> <span class="o">+</span> <span class="n">param</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">reg_loss</span>
+</pre></div>
+</div>
+<p>Then the only change we need to make is:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">- loss = loss_fn(model, guide)</span>
+<span class="gi">+ loss = loss_fn(model, guide) + my_custom_L2_regularizer(my_parameters)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example:-Clipping-Gradients">
+<h2>Example: Clipping Gradients<a class="headerlink" href="#Example:-Clipping-Gradients" title="Permalink to this headline">¶</a></h2>
+<p>For some models the loss gradient can explode during training, leading to overflow and <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values. One way to protect against this is with gradient clipping. The optimizers in <code class="docutils literal notranslate"><span class="pre">pyro.optim</span></code> take an optional dictionary of <code class="docutils literal notranslate"><span class="pre">clip_args</span></code> which allows clipping either the gradient norm or the gradient value to fall within the given limit.</p>
+<p>To change the basic example above:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">- optimizer = pyro.optim.Adam({&quot;lr&quot;: 0.001, &quot;betas&quot;: (0.90, 0.999)})</span>
+<span class="gi">+ optimizer = pyro.optim.Adam({&quot;lr&quot;: 0.001, &quot;betas&quot;: (0.90, 0.999)}, {&quot;clip_norm&quot;: 10.0})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example:-Scaling-the-Loss">
+<h2>Example: Scaling the Loss<a class="headerlink" href="#Example:-Scaling-the-Loss" title="Permalink to this headline">¶</a></h2>
+<p>Depending on the optimization algorithm, the scale of the loss may or not matter. Suppose we want to scale our loss function by the number of datapoints before we differentiate it. This is easily done:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">- loss = loss_fn(model, guide)</span>
+<span class="gi">+ loss = loss_fn(model, guide) / N_data</span>
+</pre></div>
+</div>
+<p>Note that in the case of SVI, where each term in the loss function is a log probability from the model or guide, this same effect can be achieved using <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.poutine.scale">poutine.scale</a>. For example we can use the <code class="docutils literal notranslate"><span class="pre">poutine.scale</span></code> decorator to scale both the model and guide:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@poutine.scale</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="n">N_data</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@poutine.scale</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="n">N_data</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example:-Mixing-Optimizers">
+<h2>Example: Mixing Optimizers<a class="headerlink" href="#Example:-Mixing-Optimizers" title="Permalink to this headline">¶</a></h2>
+<p>The various optimizers in <code class="docutils literal notranslate"><span class="pre">pyro.optim</span></code> allow the user to specify optimization settings (e.g. learning rates) on a per-parameter basis. But what if we want to use different optimization algorithms for different parameters? We can do this using Pyro’s <code class="docutils literal notranslate"><span class="pre">MultiOptimizer</span></code> (see below), but we can also achieve the same thing if we directly manipulate <code class="docutils literal notranslate"><span class="pre">differentiable_loss</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adam</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">adam_parameters</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)})</span>
+<span class="n">sgd</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">sgd_parameters</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">})</span>
+<span class="n">loss_fn</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">()</span><span class="o">.</span><span class="n">differentiable_loss</span>
+<span class="c1"># compute loss</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">)</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="c1"># take a step and zero the parameter gradients</span>
+<span class="n">adam</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="n">sgd</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="n">adam</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">sgd</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For completeness, we also show how we can do the same thing using <a class="reference external" href="http://docs.pyro.ai/en/dev/optimization.html?highlight=multi%20optimizer#module-pyro.optim.multi">MultiOptimizer</a>, which allows us to combine multiple Pyro optimizers. Note that since <code class="docutils literal notranslate"><span class="pre">MultiOptimizer</span></code> uses <code class="docutils literal notranslate"><span class="pre">torch.autograd.grad</span></code> under the hood (instead of <code class="docutils literal notranslate"><span class="pre">torch.Tensor.backward()</span></code>), it has a slightly different interface; in particular the <code class="docutils literal notranslate"><span class="pre">step()</span></code> method also takes parameters as inputs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model</span><span class="p">():</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="o">...</span>
+
+<span class="n">adam</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">})</span>
+<span class="n">sgd</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">})</span>
+<span class="n">optim</span> <span class="o">=</span> <span class="n">MixedMultiOptimizer</span><span class="p">([([</span><span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="n">adam</span><span class="p">),</span> <span class="p">([</span><span class="s1">&#39;b&#39;</span><span class="p">],</span> <span class="n">sgd</span><span class="p">)])</span>
+<span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">param_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">param_capture</span><span class="p">:</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">elbo</span><span class="o">.</span><span class="n">differentiable_loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)}</span>
+<span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Example:-Custom-ELBO">
+<h2>Example: Custom ELBO<a class="headerlink" href="#Example:-Custom-ELBO" title="Permalink to this headline">¶</a></h2>
+<p>In the previous three examples we bypassed creating a <code class="docutils literal notranslate"><span class="pre">SVI</span></code> object and directly manipulated the differentiable loss function provided by an <code class="docutils literal notranslate"><span class="pre">ELBO</span></code> implementation. Another thing we can do is create custom <code class="docutils literal notranslate"><span class="pre">ELBO</span></code> implementations and pass those into the <code class="docutils literal notranslate"><span class="pre">SVI</span></code> machinery. For example, a simplified version of a <code class="docutils literal notranslate"><span class="pre">Trace_ELBO</span></code> loss function might look as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># note that simple_elbo takes a model, a guide, and their respective arguments as inputs</span>
+<span class="k">def</span> <span class="nf">simple_elbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># run the guide and trace its execution</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># run the model and replay it against the samples from the guide</span>
+    <span class="n">model_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
+        <span class="n">poutine</span><span class="o">.</span><span class="n">replay</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">guide_trace</span><span class="p">))</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># construct the elbo loss function</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">model_trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">guide_trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">())</span>
+
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">simple_elbo</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that this is basically what the <code class="docutils literal notranslate"><span class="pre">elbo</span></code> implementation in <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">“mini-pyro”</a> looks like.</p>
+<div class="section" id="Example:-KL-Annealing">
+<h3>Example: KL Annealing<a class="headerlink" href="#Example:-KL-Annealing" title="Permalink to this headline">¶</a></h3>
+<p>In the <a class="reference external" href="http://pyro.ai/examples/dmm.html">Deep Markov Model Tutorial</a> the ELBO variational objective is modified during training. In particular the various KL-divergence terms between latent random variables are scaled downward (i.e. annealed) relative to the log probabilities of the observed data. In the tutorial this is accomplished using <code class="docutils literal notranslate"><span class="pre">poutine.scale</span></code>. We can accomplish the same thing by defining a custom loss function. This latter option is not a very elegant pattern but we include it
+anyway to show the flexibility we have at our disposal.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">simple_elbo_kl_annealing</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># get the annealing factor and latents to anneal from the keyword</span>
+    <span class="c1"># arguments passed to the model and guide</span>
+    <span class="n">annealing_factor</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;annealing_factor&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">latents_to_anneal</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;latents_to_anneal&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="c1"># run the guide and replay the model against the guide</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">model_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
+        <span class="n">poutine</span><span class="o">.</span><span class="n">replay</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">guide_trace</span><span class="p">))</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">elbo</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="c1"># loop through all the sample sites in the model and guide trace and</span>
+    <span class="c1"># construct the loss; note that we scale all the log probabilities of</span>
+    <span class="c1"># samples sites in `latents_to_anneal` by the factor `annealing_factor`</span>
+    <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">model_trace</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="n">annealing_factor</span> <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">latents_to_anneal</span> <span class="k">else</span> <span class="mf">1.0</span>
+            <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">+</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">guide_trace</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="n">annealing_factor</span> <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">latents_to_anneal</span> <span class="k">else</span> <span class="mf">1.0</span>
+            <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">-</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">elbo</span>
+
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">simple_elbo_kl_annealing</span><span class="p">)</span>
+<span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">other_args</span><span class="p">,</span> <span class="n">annealing_factor</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">latents_to_anneal</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;my_latent&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="jit.html" class="btn btn-neutral float-right" title="Pyro 模型中使用 PyTorch JIT Compiler" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="enumeration.html" class="btn btn-neutral float-left" title="Inference with Discrete Latent Variables" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

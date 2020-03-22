@@ -1,0 +1,600 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to Pyro Examples and Tutorials! &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pyro 模型简介" href="intro_part_i.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Welcome to Pyro Examples and Tutorials!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="welcome-to-pyro-examples-and-tutorials">
+<h1>Welcome to Pyro Examples and Tutorials!<a class="headerlink" href="#welcome-to-pyro-examples-and-tutorials" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#原始随机函数">原始随机函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#一个简单模型">一个简单模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#The-pyro.sample-Primitive">The <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> Primitive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#通用概率编程">通用概率编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#下一步？">下一步？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#一个简单例子">一个简单例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#Conditioning">Conditioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#近似推断">近似推断</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#变分推断">变分推断</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#下一步？">下一步？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#SVI数学基础">SVI数学基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#Guide">Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#ELBO">ELBO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#SVI-Class"><code class="docutils literal notranslate"><span class="pre">SVI</span></code> Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#optimizers">optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#一个简单例子">一个简单例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#在Pyro中标记条件独立">在Pyro中标记条件独立</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#子采样">子采样</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#Amortization">Amortization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#More-about-plate">More about <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#ELBO-优化问题">ELBO 优化问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#两种优化策略">两种优化策略</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Distributions-shapes:-batch_shape-and-event_shape">Distributions shapes: <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> and <code class="docutils literal notranslate"><span class="pre">event_shape</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Declaring-independent-dims-with-plate">Declaring independent dims with <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Subsampling-tensors-inside-a-plate">Subsampling tensors inside a <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Broadcasting-to-allow-parallel-enumeration">Broadcasting to allow parallel enumeration</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Restriction-1:-conditional-independence">Restriction 1: conditional independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Restriction-2:-no-downstream-coupling">Restriction 2: no downstream coupling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Restriction-3:-single-path-leaving-each-plate">Restriction 3: single path leaving each plate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Basic-SVI-Usage">Basic SVI Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Custom-Regularizer">Example: Custom Regularizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Clipping-Gradients">Example: Clipping Gradients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Scaling-the-Loss">Example: Scaling the Loss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Mixing-Optimizers">Example: Mixing Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Custom-ELBO">Example: Custom ELBO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jit.html#Summary:">Summary:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jit.html#Table-of-contents">Table of contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="minipyro.html#example-use-of-mini-pyro">Example use of mini-Pyro</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Poutine:-Pyro-算法库的基石">Poutine: Pyro 算法库的基石</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Implementing-new-effect-handlers-with-the-Messenger-API">Implementing new effect handlers with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#The-Messenger-API-in-more-detail">The <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API in more detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Inside-the-messages-sent-by-Messengers">Inside the messages sent by <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Implementing-inference-algorithms-with-existing-effect-handlers:-examples">Implementing inference algorithms with existing effect handlers: examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Example:-implementing-lazy-evaluation-with-the-Messenger-API">Example: implementing lazy evaluation with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#References:-algebraic-effects-and-handlers-in-programming-language-research">References: algebraic effects and handlers in programming language research</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vae.html#VAE-数学简介">VAE 数学简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vae.html#VAE-in-Pyro">VAE in Pyro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vae.html#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vae.html#Code-and-Sample-results">Code and Sample results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vae.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Tutorial-Outline">Tutorial Outline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Linear-Regression">Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Bayesian-Regression-with-Pyro’s-Stochastic-Variational-Inference-(SVI)">Bayesian Regression with Pyro’s Stochastic Variational Inference (SVI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Model-Evaluation">Model Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Model-Serving-via-TorchScript">Model Serving via TorchScript</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Bayesian-Linear-Regression">Bayesian Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Model-+-Guide">Model + Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#SVI">SVI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#HMC">HMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Comparing-Posterior-Distributions">Comparing Posterior Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#MultivariateNormal-Guide">MultivariateNormal Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#The-Model">The Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Packaging-the-Model-and-Guide-as-a-PyTorch-Module">Packaging the Model and Guide as a PyTorch Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Stochastic-Variational-Inference">Stochastic Variational Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#The-Black-Magic-of-Optimization">The Black Magic of Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Data-Loading,-Training,-and-Evaluation">Data Loading, Training, and Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Evaluation">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Bells,-whistles,-and-other-improvements">Bells, whistles, and other improvements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#Some-final-comments">Some final comments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dmm.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="air.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#Model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#Guide">Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#Results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#In-practice">In practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="air.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#The-Challenges-of-Inference">The Challenges of Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#First-Variant:-Standard-objective-function,-naive-estimator">First Variant: Standard objective function, naive estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Interlude:-Summing-Out-Discrete-Latents">Interlude: Summing Out Discrete Latents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Second-Variant:-Standard-Objective-Function,-Better-Estimator">Second Variant: Standard Objective Function, Better Estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Third-Variant:-Adding-a-Term-to-the-Objective">Third Variant: Adding a Term to the Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Final-thoughts">Final thoughts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#Summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stable.html#Table-of-contents">Table of contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html#Table-of-contents">Table of contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Imports">Imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Define-model">Define model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Sparse-GPs">Sparse GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#More-Sparse-GPs">More Sparse GPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gp.html#Reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Modelling">Modelling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Visualizing-the-result">Visualizing the result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Remarks">Remarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gplvm.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#Problem-Setup">Problem Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#Define-an-objective-function">Define an objective function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#Setting-a-Gaussian-Process-prior">Setting a Gaussian Process prior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#Define-an-acquisition-function">Define an acquisition function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#The-inner-loop-of-Bayesian-Optimization">The inner loop of Bayesian Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#Running-the-algorithm">Running the algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bo.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Table-of-contents">Table of contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forecasting_i.html#Summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forecasting_ii.html#Summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forecasting_iii.html#Summary">Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tracking_1d.html#Generate-data">Generate data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracking_1d.html#Train">Train</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#Specify-the-model:">Specify the model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#And-the-guide:">And the guide:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#Now-create-a-CSIS-instance:">Now create a <code class="docutils literal notranslate"><span class="pre">CSIS</span></code> instance:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#Now-we-‘compile’-the-instance-to-perform-inference-on-this-model:">Now we ‘compile’ the instance to perform inference on this model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#And-now-perform-inference-by-importance-sampling:">And now perform inference by importance sampling:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="csis.html#We-now-plot-the-results-and-compare-with-importance-sampling:">We now plot the results and compare with importance sampling:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="RSA-hyperbole.html#Pragmatic-Halo">Pragmatic Halo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RSA-hyperbole.html#Irony-and-More-Complex-Affect">Irony and More Complex Affect</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ekf.html#Dynamic-process">Dynamic process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ekf.html#Kalman-Update">Kalman Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ekf.html#Nonlinear-Estimation:-Extended-Kalman-Filter">Nonlinear Estimation: Extended Kalman Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ekf.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="working_memory.html#The-experiment-set-up">The experiment set-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_memory.html#Optimal-experimental-design-in-Pyro">Optimal experimental design in Pyro</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#Choosing-a-prior">Choosing a prior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#Setting-up-the-model">Setting up the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#Measuring-the-expected-information-gain-of-a-polling-strategy">Measuring the expected information gain of a polling strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#Running-the-experiment">Running the experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#Conclusions">Conclusions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elections.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#What-are-Bayesian-nonparametric-models?">What are Bayesian nonparametric models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#The-Dirichlet-Process-(Ferguson,-1973)">The Dirichlet Process (Ferguson, 1973)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#The-Chinese-Restaurant-Process-(Aldous,-1985)">The Chinese Restaurant Process (Aldous, 1985)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#The-Stick-Breaking-Method-(Sethuraman,-1994)">The Stick-Breaking Method (Sethuraman, 1994)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#Inference"><strong>Inference</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#Criticism"><strong>Criticism</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#Contents">Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#Theoretical-Background">Theoretical Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#BBBVI-in-Pyro">BBBVI in Pyro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#The-Complete-Implementation">The Complete Implementation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="intro_part_i.html" class="btn btn-neutral float-right" title="Pyro 模型简介" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

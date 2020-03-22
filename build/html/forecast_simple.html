@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Multivariate Forecasting &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gaussian Process Time Series Models" href="timeseries.html" />
+    <link rel="prev" title="Plated Einsum" href="einsum.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Multivariate Forecasting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/forecast_simple.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="multivariate-forecasting">
+<h1>Multivariate Forecasting<a class="headerlink" href="#multivariate-forecasting" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/contrib/forecast/bart.py">View bart.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright Contributors to the Pyro project.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="kn">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.examples.bart</span> <span class="kn">import</span> <span class="n">load_bart_od</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.forecast</span> <span class="kn">import</span> <span class="n">ForecastingModel</span><span class="p">,</span> <span class="n">backtest</span>
+<span class="kn">from</span> <span class="nn">pyro.ops.tensor_utils</span> <span class="kn">import</span> <span class="n">periodic_cumsum</span><span class="p">,</span> <span class="n">periodic_repeat</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyro&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyro&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a tensor of (arrivals,departures) to Embarcadero station.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Loading data&quot;</span><span class="p">)</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_bart_od</span><span class="p">()</span>
+
+    <span class="c1"># The full dataset has all station-&gt;station ridership counts for all of 50</span>
+    <span class="c1"># train stations. In this simple example we will model only the aggretate</span>
+    <span class="c1"># counts to and from a single station, Embarcadero.</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;stations&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;EMBR&quot;</span><span class="p">)</span>
+    <span class="n">arrivals</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">departures</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">][:,</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">arrivals</span><span class="p">,</span> <span class="n">departures</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># This simple example uses no covariates, so we will construct a</span>
+    <span class="c1"># zero-element tensor of the correct length as empty covariates.</span>
+    <span class="n">covariates</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">covariates</span>
+
+
+<span class="c1"># We define a model by subclassing the ForecastingModel class and implementing</span>
+<span class="c1"># a single .model() method.</span>
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">ForecastingModel</span><span class="p">):</span>
+    <span class="c1"># The .model() method inputs two tensors: a fake tensor zero_data that is</span>
+    <span class="c1"># the same size and dtype as the real data (but of course the generative</span>
+    <span class="c1"># model shouldn&#39;t depend on the value of the data it generates!), and a</span>
+    <span class="c1"># tensor of covariates. Our simple model depends on no covariates, so we</span>
+    <span class="c1"># simply pass in an empty tensor (see  the preprocess() function above).</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zero_data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">):</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span>
+        <span class="n">duration</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">zero_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="k">assert</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># Data is bivariate: (arrivals, departures).</span>
+
+        <span class="c1"># Sample global parameters.</span>
+        <span class="n">noise_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;noise_scale&quot;</span><span class="p">,</span>
+                                  <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">dim</span><span class="p">,),</span> <span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">noise_scale</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim</span><span class="p">,)</span>
+        <span class="n">trans_timescale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;trans_timescale&quot;</span><span class="p">,</span>
+                                      <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">trans_timescale</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim</span><span class="p">,)</span>
+
+        <span class="n">trans_loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;trans_loc&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Cauchy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">period</span><span class="p">))</span>
+        <span class="n">trans_loc</span> <span class="o">=</span> <span class="n">trans_loc</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">trans_loc</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="n">dim</span><span class="p">,))</span>
+        <span class="k">assert</span> <span class="n">trans_loc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim</span><span class="p">,)</span>
+        <span class="n">trans_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;trans_scale&quot;</span><span class="p">,</span>
+                                  <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">trans_corr</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;trans_corr&quot;</span><span class="p">,</span>
+                                 <span class="n">dist</span><span class="o">.</span><span class="n">LKJCorrCholesky</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(())))</span>
+        <span class="n">trans_scale_tril</span> <span class="o">=</span> <span class="n">trans_scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">trans_corr</span>
+        <span class="k">assert</span> <span class="n">trans_scale_tril</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="n">obs_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;obs_scale&quot;</span><span class="p">,</span>
+                                <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">obs_corr</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;obs_corr&quot;</span><span class="p">,</span>
+                               <span class="n">dist</span><span class="o">.</span><span class="n">LKJCorrCholesky</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(())))</span>
+        <span class="n">obs_scale_tril</span> <span class="o">=</span> <span class="n">obs_scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">obs_corr</span>
+        <span class="k">assert</span> <span class="n">obs_scale_tril</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Note the initial seasonality should be sampled in a plate with the</span>
+        <span class="c1"># same dim as the time_plate, dim=-1. That way we can repeat the dim</span>
+        <span class="c1"># below using periodic_repeat().</span>
+        <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;season_plate&quot;</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span>  <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">season_init</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;season_init&quot;</span><span class="p">,</span>
+                                      <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">season_init</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Sample independent noise at each time step.</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_plate</span><span class="p">:</span>
+            <span class="n">season_noise</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;season_noise&quot;</span><span class="p">,</span>
+                                       <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="n">season_noise</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Construct a prediction. This prediction has an exactly repeated</span>
+        <span class="c1"># seasonal part plus slow seasonal drift. We use two deterministic,</span>
+        <span class="c1"># linear functions to transform our diagonal Normal noise to nontrivial</span>
+        <span class="c1"># samples from a Gaussian process.</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="p">(</span><span class="n">periodic_repeat</span><span class="p">(</span><span class="n">season_init</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                      <span class="n">periodic_cumsum</span><span class="p">(</span><span class="n">season_noise</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Construct a joint noise model. This model is a GaussianHMM, whose</span>
+        <span class="c1"># .rsample() and .log_prob() methods are parallelized over time; this</span>
+        <span class="c1"># this entire model is parallelized over time.</span>
+        <span class="n">init_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">trans_mat</span> <span class="o">=</span> <span class="n">trans_timescale</span><span class="o">.</span><span class="n">neg</span><span class="p">()</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">()</span>
+        <span class="n">trans_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">trans_loc</span><span class="p">,</span> <span class="n">scale_tril</span><span class="o">=</span><span class="n">trans_scale_tril</span><span class="p">)</span>
+        <span class="n">obs_mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+        <span class="n">obs_dist</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="n">scale_tril</span><span class="o">=</span><span class="n">obs_scale_tril</span><span class="p">)</span>
+        <span class="n">noise_model</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">GaussianHMM</span><span class="p">(</span><span class="n">init_dist</span><span class="p">,</span> <span class="n">trans_mat</span><span class="p">,</span> <span class="n">trans_dist</span><span class="p">,</span> <span class="n">obs_mat</span><span class="p">,</span> <span class="n">obs_dist</span><span class="p">,</span>
+                                       <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">noise_model</span><span class="o">.</span><span class="n">event_shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># The final statement registers our noise model and prediction.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">noise_model</span><span class="p">,</span> <span class="n">prediction</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="n">__debug__</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">covariates</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># We will model positive count data by log1p-transforming it into real</span>
+    <span class="c1"># valued data.  But since we want to evaluate back in the count domain, we</span>
+    <span class="c1"># will also define a transform to apply during evaluation, transforming</span>
+    <span class="c1"># from real back to count-valued data. Truth is mapped by the log1p()</span>
+    <span class="c1"># inverse expm1(), but the prediction will be sampled from a Poisson</span>
+    <span class="c1"># distribution.</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">log1p</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">truth</span><span class="p">):</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span><span class="o">.</span><span class="n">expm1</span><span class="p">())</span>
+        <span class="n">truth</span> <span class="o">=</span> <span class="n">truth</span><span class="o">.</span><span class="n">expm1</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pred</span><span class="p">,</span> <span class="n">truth</span>
+
+    <span class="c1"># The backtest() function automatically trains and evaluates our model on</span>
+    <span class="c1"># different windows of data.</span>
+    <span class="n">forecaster_options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;num_steps&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">num_steps</span><span class="p">,</span>
+        <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+        <span class="s2">&quot;log_every&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">log_every</span><span class="p">,</span>
+        <span class="s2">&quot;dct_gradients&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">dct</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">backtest</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">covariates</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span>
+                       <span class="n">train_window</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">train_window</span><span class="p">,</span>
+                       <span class="n">test_window</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">test_window</span><span class="p">,</span>
+                       <span class="n">stride</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span>
+                       <span class="n">num_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span>
+                       <span class="n">forecaster_options</span><span class="o">=</span><span class="n">forecaster_options</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">,</span> <span class="s2">&quot;rmse&quot;</span><span class="p">,</span> <span class="s2">&quot;crps&quot;</span><span class="p">]:</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">]</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{} = {:0.3g} +- {:0.3g}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">metrics</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Bart Ridership Forecasting Example&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--train-window&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">2160</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--test-window&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">336</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--stride&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">168</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-steps&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">501</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-lr&quot;</span><span class="p">,</span> <span class="s2">&quot;--learning-rate&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--dct&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--num-samples&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--log-every&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--seed&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1234567890</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="timeseries.html" class="btn btn-neutral float-right" title="Gaussian Process Time Series Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="einsum.html" class="btn btn-neutral float-left" title="Plated Einsum" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

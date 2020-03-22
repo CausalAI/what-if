@@ -1,0 +1,797 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pyro 推断简介 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SVI Part I: Pyro 随机变分推断基础" href="svi_part_i.html" />
+    <link rel="prev" title="Pyro 模型简介" href="intro_part_i.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pyro 推断简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#一个简单例子">一个简单例子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Conditioning">Conditioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#近似推断">近似推断</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#变分推断">变分推断</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#下一步？">下一步？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Pyro 推断简介</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/intro_part_ii.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<p><em>为了从数据中学习模型并对其进行推理，我们需要 be able to do inference.</em></p>
+<p>Tips:</p>
+<ul class="simple">
+<li><p>Pyro 包含 <code class="docutils literal notranslate"><span class="pre">pyro.do</span></code>，这是 Pearl 的 <code class="docutils literal notranslate"><span class="pre">do</span></code>-operator 的实现，用于因果推断。</p></li>
+</ul>
+<div class="section" id="Pyro-推断简介">
+<h1>Pyro 推断简介<a class="headerlink" href="#Pyro-推断简介" title="Permalink to this headline">¶</a></h1>
+<p>现代机器学习的许多内容 can be cast as approximate inference and expressed succinctly in a language like Pyro. To motivate the rest of this tutorial, 让我们为一个简单的物理问题建立一个生成模型，以便我们可以使用Pyro的推理机来解决它。但是，我们将首先导入本教程所需的模块：</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.infer</span>
+<span class="kn">import</span> <span class="nn">pyro.optim</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="一个简单例子">
+<h2>一个简单例子<a class="headerlink" href="#一个简单例子" title="Permalink to this headline">¶</a></h2>
+<p>假设我们试图得到某物的重量，但是我们使用的秤是不可靠的，并且每当我们称量同一物体时会给出稍微变动的读数。我们可以尝试 compensate for this variability by integrating the noisy measurement information with <strong>a guess based on some prior knowledge about the object</strong>, like its density or material properties. The following model encodes this process:</p>
+<div class="math notranslate nohighlight">
+\[{\sf weight} \,  \sim \cal {\sf Normal}({\mu}, 1)\]</div>
+<p>这是一个 guess based on some prior knowledge about the weight of the object.</p>
+<div class="math notranslate nohighlight">
+\[{\sf measurement} \, |  {\sf weight} \sim {\sf Normal}({\sf weight}, 0.75)\]</div>
+<p>Note that this is a model not only for our belief over weight, but also for the result of taking a measurement of it. 该模型对应于以下随机函数：</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Conditioning">
+<h2>Conditioning<a class="headerlink" href="#Conditioning" title="Permalink to this headline">¶</a></h2>
+<p>概率编程的真正威力是 in the ability to condition generative models on observed data and infer the latent factors that might have produced that data. 在Pyro中，we separate the expression of conditioning from its evaluation via inference, 使得我们能够 write a model once and condition it on many different observations. Pyro支持 constraining a model’s internal <code class="docutils literal notranslate"><span class="pre">sample</span></code> statements to be equal to a given set of observations.</p>
+<p>再次考虑称重的例子，也就是 <code class="docutils literal notranslate"><span class="pre">scale</span></code>. Suppose we want to sample from the distribution of <code class="docutils literal notranslate"><span class="pre">weight</span></code> given input <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">8.5</span></code>, but now we have observed that <code class="docutils literal notranslate"><span class="pre">measurement</span> <span class="pre">=</span> <span class="pre">9.5</span></code>. That is, we wish to <em>infer</em> the distribution:</p>
+<div class="math notranslate nohighlight">
+\[({\sf weight} \, | \, {\mu = 8.5}, {\sf measurement} = 9.5) \sim \, ?\]</div>
+<p>Pyro provides the function <code class="docutils literal notranslate"><span class="pre">pyro.condition</span></code> to allow us to constrain the values of sample statements. <code class="docutils literal notranslate"><span class="pre">pyro.condition</span></code> is a higher-order function that takes a model and a dictionary of observations and returns a new model that has the same input and output signatures but always uses the given values at observed <code class="docutils literal notranslate"><span class="pre">sample</span></code> statements:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">conditioned_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<p>Because it behaves just like an ordinary Python function, conditioning can be deferred or parametrized with Python’s <code class="docutils literal notranslate"><span class="pre">lambda</span></code> or <code class="docutils literal notranslate"><span class="pre">def</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">deferred_conditioned_scale</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="n">measurement</span><span class="p">})(</span><span class="n">mu</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>在某些情况下可能更方便 to pass observations directly to individual <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> statements instead of using <code class="docutils literal notranslate"><span class="pre">pyro.condition</span></code>. The optional <code class="docutils literal notranslate"><span class="pre">obs</span></code> keyword argument is reserved by <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> for that purpose:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">scale_obs</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>  <span class="c1"># equivalent to conditioned_scale above</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+     <span class="c1"># here we condition on measurement == 9.5</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="mf">9.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>最后，除了用于合并观察数据的 <code class="docutils literal notranslate"><span class="pre">pyro.condition</span></code> 之外，Pyro还包含 <code class="docutils literal notranslate"><span class="pre">pyro.do</span></code>，这是 Pearl 的 <code class="docutils literal notranslate"><span class="pre">do</span></code>-operator 的实现，用于因果推断，其接口与 <code class="docutils literal notranslate"><span class="pre">pyro.condition</span></code> 相同。<code class="docutils literal notranslate"><span class="pre">condition</span></code> and <code class="docutils literal notranslate"><span class="pre">do</span></code> 可以自由混合和组合，使Pyro成为基于模型的因果推断的强大工具。</p>
+</div>
+<div class="section" id="近似推断">
+<h2>近似推断<a class="headerlink" href="#近似推断" title="Permalink to this headline">¶</a></h2>
+<p>我们可以进行 Flexible Approximate Inference With Guide Functions.</p>
+<p>Let’s return to <code class="docutils literal notranslate"><span class="pre">conditioned_scale</span></code>. Now that we have conditioned on an observation of <code class="docutils literal notranslate"><span class="pre">measurement</span></code>, we can use Pyro’s approximate inference algorithms to estimate the distribution over <code class="docutils literal notranslate"><span class="pre">weight</span></code> given <code class="docutils literal notranslate"><span class="pre">guess</span></code> and <code class="docutils literal notranslate"><span class="pre">measurement</span> <span class="pre">==</span> <span class="pre">data</span></code>.</p>
+<p>让我们回到 <code class="docutils literal notranslate"><span class="pre">conditioned_scale</span></code>。现在我们 have conditioned on an observation of <code class="docutils literal notranslate"><span class="pre">measurement</span></code>，于是我们可以使用 Pyro 的近似推理算法来 estimate the distribution over <code class="docutils literal notranslate"><span class="pre">weight</span></code> given <code class="docutils literal notranslate"><span class="pre">mu</span></code> and <code class="docutils literal notranslate"><span class="pre">measurement</span> <span class="pre">=</span> <span class="pre">data</span></code>.</p>
+<p>Pyro中的推理算法，例如 <code class="docutils literal notranslate"><span class="pre">pyro.infer.SVI</span></code>，允许我们使用任意随机函数，我们将其称为 <em>guide functions</em> or <em>guides</em>，作为近似后验分布. Guide functions 必须满足以下两个条件才能成为特定模型的有效近似后验分布：</p>
+<ol class="arabic simple">
+<li><p>all unobserved (i.e., not conditioned) sample statements 需要在 model 和 guide 中同时出现。</p></li>
+<li><p>model 和 guide 具有相同的 input signature (i.e., takes the same arguments)</p></li>
+</ol>
+<p>Guide functions 的作用(或者角色)是：</p>
+<ul class="simple">
+<li><p>as programmable, data-dependent proposal distributions 用于 importance sampling, rejection sampling, sequential Monte Carlo, MCMC, and independent Metropolis-Hastings, and</p></li>
+<li><p>as variational distributions or inference networks 用于随机变分推理。</p></li>
+</ul>
+<p>目前，重要性抽样，MCMC和随机变分推断已在Pyro中实现，我们计划在将来添加其他算法。</p>
+<p>尽管 guide 的精确含义在不同的推断算法中有所不同，但通常应选择 guide function，使其 principlely 具有足够的灵活性 to closely approximate the distribution over all unobserved <code class="docutils literal notranslate"><span class="pre">sample</span></code>(也就是 not conditioned) statements in the model.</p>
+<p>In the case of <code class="docutils literal notranslate"><span class="pre">scale</span></code>, <code class="docutils literal notranslate"><span class="pre">weight</span></code> 给定 <code class="docutils literal notranslate"><span class="pre">mu</span></code> 和 <code class="docutils literal notranslate"><span class="pre">measurement</span></code> 的真实后验分布是 <span class="math notranslate nohighlight">\(N(9.14, 0.6)\)</span>。 (模型非常简单，因此我们可以解析的得到后验分布, for derivation, see for example Section 3.4 of <a class="reference external" href="http://www.stat.cmu.edu/~brian/463-663/week09/Chapter%2003.pdf">http://www.stat.cmu.edu/~brian/463-663/week09/Chapter%2003.pdf</a> .)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">perfect_guide</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">loc</span> <span class="o">=</span><span class="p">(</span><span class="mf">0.75</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">+</span> <span class="mf">9.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.75</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># 9.14</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.75</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.75</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># 0.6</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="变分推断">
+<h2>变分推断<a class="headerlink" href="#变分推断" title="Permalink to this headline">¶</a></h2>
+<p>Parametrized Stochastic Functions and Variational Inference</p>
+<p>尽管我们可以写出 <code class="docutils literal notranslate"><span class="pre">scale</span></code> 的精确后验分布，但是总的来说，指定一个近似于任意条件随机函数的后验分布的 guide 是很困难的。实际上，可以准确确定真实后验的随机函数是例外而不是一般规则。例如，even a version of our <code class="docutils literal notranslate"><span class="pre">scale</span></code> example with a nonlinear function in the middle may be intractable:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">intractable_scale</span><span class="p">(</span><span class="n">guess</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">some_nonlinear_function</span><span class="p">(</span><span class="n">weight</span><span class="p">),</span> <span class="mf">0.75</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>因此我们的做法是 is use the top-level function <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code> to specify a <em>family</em> of guides indexed by named parameters, and search for the member of that family that is the best approximation according to some loss function. 这种近似后验推断的方法称为“变分推断”。</p>
+<p><code class="docutils literal notranslate"><span class="pre">pyro.param</span></code> 是 a frontend for Pyro’s 键值 <em>参数存储</em>(key-value <em>parameter store</em>)，, which is described in more detail in the documentation. 像 <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> 一样，<code class="docutils literal notranslate"><span class="pre">pyro.param</span></code> 总是以名称作为第一个参数来调用。The first time <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code> is called with a particular name, it stores its argument in the parameter store, 然后返回该值。之后，when it is called with that name, it returns the value from the parameter store regardless of any other arguments. 这里类似于此处的
+<code class="docutils literal notranslate"><span class="pre">simple_param_store.setdefault</span></code> , but with some additional tracking and management functionality.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">simple_param_store</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">simple_param_store</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>For example, we can parametrize <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> in <code class="docutils literal notranslate"><span class="pre">scale_posterior_guide</span></code> instead of specifying them by hand:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">scale_parametrized_guide</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<p>As an aside, note that in <code class="docutils literal notranslate"><span class="pre">scale_parametrized_guide</span></code>, we had to apply <code class="docutils literal notranslate"><span class="pre">torch.abs</span></code> to parameter <code class="docutils literal notranslate"><span class="pre">b</span></code> because the standard deviation of a normal distribution has to be positive; similar restrictions also apply to parameters of many other distributions. The PyTorch distributions library, which Pyro is built on, 提供了 <a class="reference external" href="https://pytorch.org/docs/master/distributions.html#module-torch.distributions.constraints">constraints module</a> 用于实现此类限制, and applying constraints to Pyro parameters
+is as easy as passing the relevant <code class="docutils literal notranslate"><span class="pre">constraint</span></code> object to <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="k">import</span> <span class="n">constraints</span>
+
+<span class="k">def</span> <span class="nf">scale_parametrized_guide_constrained</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">),</span> <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">positive</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>  <span class="c1"># no more torch.abs</span>
+</pre></div>
+</div>
+</div>
+<p>Pyro is built to enable <em>stochastic variational inference</em>, a powerful and widely applicable class of variational inference algorithms with 三个关键特征:</p>
+<ol class="arabic simple">
+<li><p>参数始终是实数值张量</p></li>
+<li><p>We compute Monte Carlo estimates of 损失函数 from samples of execution histories of the model and guide</p></li>
+<li><p>我们使用随机梯度下降法搜索最佳参数。</p></li>
+</ol>
+<p>将随机梯度下降与PyTorch的GPU加速张量数学和自动微分相结合 allows us to scale variational inference to very high-dimensional parameter spaces and massive datasets.</p>
+<p>Pyro’s SVI functionality is described in detail in the <a class="reference internal" href="svi_part_i.html"><span class="doc">SVI tutorial</span></a>. Here is a very simple example applying it to <code class="docutils literal notranslate"><span class="pre">scale</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.infer</span>
+<span class="kn">import</span> <span class="nn">pyro.optim</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+
+<span class="n">mu</span> <span class="o">=</span> <span class="mf">8.5</span>
+
+<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+
+<span class="n">conditioned_scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">})</span>
+
+<span class="k">def</span> <span class="nf">scale_parametrized_guide</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">conditioned_scale</span><span class="p">,</span>
+                     <span class="n">guide</span><span class="o">=</span><span class="n">scale_parametrized_guide</span><span class="p">,</span>
+                     <span class="n">optim</span><span class="o">=</span><span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.001</span><span class="p">,</span> <span class="s2">&quot;momentum&quot;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">}),</span>
+                     <span class="n">loss</span><span class="o">=</span><span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">())</span>
+
+
+<span class="n">losses</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span>  <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">2500</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">mu</span><span class="p">))</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;ELBO&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;step&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">);</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;a = &#39;</span><span class="p">,</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;b = &#39;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+a =  9.107474327087402
+b =  0.6285384893417358
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/intro_part_ii_24_1.png" src="_images/intro_part_ii_24_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">num_steps</span><span class="p">],[</span><span class="mf">9.14</span><span class="p">,</span><span class="mf">9.14</span><span class="p">],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">num_steps</span><span class="p">],[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.6</span><span class="p">],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/intro_part_ii_25_0.png" src="_images/intro_part_ii_25_0.png" />
+</div>
+</div>
+<p><strong>注意，SVI获得的参数非常接近 true parameters of the desired conditional distribution. This is to be expected as our guide is from the same family.</strong></p>
+<p>Note that optimization will update the values of the guide parameters in the parameter store, so that once we find good parameter values, 我们可以将 guide 的样本作为后验样本用于后续任务.</p>
+</div>
+<div class="section" id="下一步？">
+<h2>下一步？<a class="headerlink" href="#下一步？" title="Permalink to this headline">¶</a></h2>
+<p>在 <a class="reference internal" href="vae.html"><span class="doc">Variational Autoencoder tutorial</span></a> 中，我们将会看到 how models like <code class="docutils literal notranslate"><span class="pre">scale</span></code> can be augmented with deep neural networks and use stochastic variational inference to 建立图像生成模型.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="svi_part_i.html" class="btn btn-neutral float-right" title="SVI Part I: Pyro 随机变分推断基础" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="intro_part_i.html" class="btn btn-neutral float-left" title="Pyro 模型简介" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

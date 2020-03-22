@@ -1,0 +1,787 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pyro 模型简介 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pyro 推断简介" href="intro_part_ii.html" />
+    <link rel="prev" title="Welcome to Pyro Examples and Tutorials!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pyro 模型简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#原始随机函数">原始随机函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#一个简单模型">一个简单模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-pyro.sample-Primitive">The <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> Primitive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#通用概率编程">通用概率编程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#下一步？">下一步？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Pyro 模型简介</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/intro_part_i.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<p>Tips：</p>
+<ul class="simple">
+<li><p>stochastic function 从数学上来说是随机泛函。</p></li>
+<li><p>Pyro 样本相对于 Pytorch 样本最大的不同之处是它们有 names, Pyro 的 backend 使用这些 names to uniquely identify sample statements and change their behavior at runtime depending on how the enclosing stochastic function is being used.</p></li>
+</ul>
+<div class="section" id="Pyro-模型简介">
+<h1>Pyro 模型简介<a class="headerlink" href="#Pyro-模型简介" title="Permalink to this headline">¶</a></h1>
+<p>概率编程的基本单元是 stochastic function, This is an arbitrary Python callable that combines two ingredients:</p>
+<ul class="simple">
+<li><p>deterministic Python code; and</p></li>
+<li><p>primitive stochastic functions that call a random number generator</p></li>
+</ul>
+<p>具体来说，随机函数可以是 any Python object with a <code class="docutils literal notranslate"><span class="pre">__call__()</span></code> method, like a function, a method, or a PyTorch <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>.</p>
+<p>在整个教程和文档中，由于随机函数可用于表示 simplified or abstract descriptions of 数据生成过程，因此我们通常将其称为 stochastic functions <em>models</em>。将 models 表示为 stochastic functions 意味着像常规的 Python 可调用对象一样, models can be composed, reused, imported, and serialized.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="原始随机函数">
+<h2>原始随机函数<a class="headerlink" href="#原始随机函数" title="Permalink to this headline">¶</a></h2>
+<p>原始随机函数(Primitive stochastic functions, or distributions) 是一类重要的随机函数，我们可以为其显式计算概率 of the outputs given the inputs. As of PyTorch 0.4 and Pyro 0.2, Pyro uses PyTorch’s <a class="reference external" href="http://pytorch.org/docs/master/distributions.html">distribution library</a>. You can also create custom distributions using <a class="reference external" href="http://pytorch.org/docs/master/distributions.html#module-torch.distributions.transforms">transforms</a>.</p>
+<p>使用 primitive stochastic functions 很简单. 例如, to draw a sample <code class="docutils literal notranslate"><span class="pre">x</span></code> from 标准正态分布 <span class="math notranslate nohighlight">\(\mathcal{N}(0,1)\)</span> we do the following:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">loc</span> <span class="o">=</span> <span class="mf">0.</span>   <span class="c1"># mean zero</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># unit variance</span>
+<span class="n">normal</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="c1"># create a normal distribution object</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">normal</span><span class="o">.</span><span class="n">rsample</span><span class="p">()</span> <span class="c1"># draw a sample from N(0,1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sample&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;log prob&quot;</span><span class="p">,</span> <span class="n">normal</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="c1"># score the sample from N(0,1)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+sample tensor(-1.3905)
+log prob tensor(-1.8857)
+</pre></div></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">torch.distributions.Normal</span></code> is an instance of the <code class="docutils literal notranslate"><span class="pre">Distribution</span></code> class that takes parameters and provides <strong>sample and score methods</strong>. Pyro’s distribution library <code class="docutils literal notranslate"><span class="pre">pyro.distributions</span></code> is a thin wrapper around <code class="docutils literal notranslate"><span class="pre">torch.distributions</span></code> 因为我们想利用 PyTorch’s fast tensor math and autograd capabilities during inference.</p>
+</div>
+<div class="section" id="一个简单模型">
+<h2>一个简单模型<a class="headerlink" href="#一个简单模型" title="Permalink to this headline">¶</a></h2>
+<p>所有的 probalistic programs 是通过 primitive functions and deterministic computation 组合得到的。我们最终的目的是要是用 probablistic programming 来模拟真实世界，我们现在从一个具体的例子出发。</p>
+<p>现在我们有一堆关于每天平均气温和 cloud cover 的数据。我们想 reason about how temperature interacts with whether it was sunny or cloudy. 如下的简单随机函数描述了数据的生成过程：</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="k">import</span> <span class="n">Source</span>
+<span class="n">Source</span><span class="p">(</span><span class="s1">&#39;digraph{rankdir=LR; cloudy -&gt; temperature}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/intro_part_i_8_0.svg" src="_images/intro_part_i_8_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">weather</span><span class="p">():</span>
+    <span class="n">cloudy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="n">cloudy</span> <span class="o">=</span> <span class="s1">&#39;cloudy&#39;</span> <span class="k">if</span> <span class="n">cloudy</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="s1">&#39;sunny&#39;</span>
+    <span class="n">mean_temp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cloudy&#39;</span><span class="p">:</span> <span class="mf">55.0</span><span class="p">,</span> <span class="s1">&#39;sunny&#39;</span><span class="p">:</span> <span class="mf">75.0</span><span class="p">}[</span><span class="n">cloudy</span><span class="p">]</span>
+    <span class="n">scale_temp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cloudy&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s1">&#39;sunny&#39;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">}[</span><span class="n">cloudy</span><span class="p">]</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean_temp</span><span class="p">,</span> <span class="n">scale_temp</span><span class="p">)</span><span class="o">.</span><span class="n">rsample</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cloudy</span><span class="p">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">weather</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;cloudy&#39;, 46.847618103027344)
+</pre></div></div>
+</div>
+<p>Let’s go through this line-by-line. First, in lines 2 we define a binary random variable ‘cloudy’, which is given by a draw from the Bernoulli distribution with a parameter of <code class="docutils literal notranslate"><span class="pre">0.3</span></code>. Since the Bernoulli distributions return <code class="docutils literal notranslate"><span class="pre">0</span></code>s or <code class="docutils literal notranslate"><span class="pre">1</span></code>s, in line 3 we convert the value <code class="docutils literal notranslate"><span class="pre">cloudy</span></code> to a string so that return values of <code class="docutils literal notranslate"><span class="pre">weather</span></code> are easier to parse. So according to this model 30% of the time it’s cloudy and 70% of the time it’s sunny.</p>
+<p>In lines 4-5 we define the parameters we’re going to use to sample the temperature in lines 6. These parameters depend on the particular value of <code class="docutils literal notranslate"><span class="pre">cloudy</span></code> we sampled in line 2. For example, the mean temperature is 55 degrees (Fahrenheit) on cloudy days and 75 degrees on sunny days. Finally we return the two values <code class="docutils literal notranslate"><span class="pre">cloudy</span></code> and <code class="docutils literal notranslate"><span class="pre">temp</span></code> in line 7.</p>
+<p>但是，<code class="docutils literal notranslate"><span class="pre">weather</span></code> 完全独立于 Pyro - it only calls PyTorch. 我们需要将其转换为 Pyro 程序 if we want to use this model for anything other than sampling fake data. 那么，这个模型除生成假数据还应该能干嘛呢？我们希望 can be composed, reused, imported, and serialized.</p>
+</div>
+<div class="section" id="The-pyro.sample-Primitive">
+<h2>The <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> Primitive<a class="headerlink" href="#The-pyro.sample-Primitive" title="Permalink to this headline">¶</a></h2>
+<p>为了将 <code class="docutils literal notranslate"><span class="pre">weather</span></code> 转换为 Pyro 程序, 我们将会 replace the <code class="docutils literal notranslate"><span class="pre">torch.distribution</span></code>s with <code class="docutils literal notranslate"><span class="pre">pyro.distribution</span></code>s and the <code class="docutils literal notranslate"><span class="pre">.sample()</span></code> and <code class="docutils literal notranslate"><span class="pre">.rsample()</span></code> calls with calls to <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code>(Pyro的核心语言原语 language primitive 之一). Using <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> is as simple as calling a primitive stochastic function with 一个重要的区别:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;my_sample&quot;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(0.9544)
+</pre></div></div>
+</div>
+<p>Just like a direct call to <code class="docutils literal notranslate"><span class="pre">torch.distributions.Normal().rsample()</span></code>, this returns a sample from the unit normal distribution. 最关键的区别是该样本是有 <strong>names</strong> 的. Pyro的后端使用这些 <strong>names</strong></p>
+<ul class="simple">
+<li><p>to uniquely identify sample statements and</p></li>
+<li><p><em>change their behavior at runtime</em> depending on how the enclosing stochastic function is being used.</p></li>
+</ul>
+<p>正如我们将看到的，这就是 Pyro 如何实现 various manipulations that underlie inference algorithms.</p>
+<p>我们已经介绍了 <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> 和 <code class="docutils literal notranslate"><span class="pre">pyro.distributions</span></code>，现在我们可以将我们的简单模型重写为Pyro程序：</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">weather</span><span class="p">():</span>
+    <span class="n">cloudy</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;cloudy&#39;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="mf">0.3</span><span class="p">))</span>
+    <span class="n">cloudy</span> <span class="o">=</span> <span class="s1">&#39;cloudy&#39;</span> <span class="k">if</span> <span class="n">cloudy</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="s1">&#39;sunny&#39;</span>
+    <span class="n">mean_temp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cloudy&#39;</span><span class="p">:</span> <span class="mf">55.0</span><span class="p">,</span> <span class="s1">&#39;sunny&#39;</span><span class="p">:</span> <span class="mf">75.0</span><span class="p">}[</span><span class="n">cloudy</span><span class="p">]</span>
+    <span class="n">scale_temp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cloudy&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s1">&#39;sunny&#39;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">}[</span><span class="n">cloudy</span><span class="p">]</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean_temp</span><span class="p">,</span> <span class="n">scale_temp</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cloudy</span><span class="p">,</span> <span class="n">temp</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">weather</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;sunny&#39;, 94.37557983398438)
+(&#39;sunny&#39;, 72.5186767578125)
+(&#39;cloudy&#39;, 54.18292999267578)
+</pre></div></div>
+</div>
+<p>Procedurally，<code class="docutils literal notranslate"><span class="pre">weather()</span></code> 仍然是一个non-deterministic Python callable that returns two random samples. Because the randomness is now invoked with <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code>, however, 它远不止于此。具体来说，<code class="docutils literal notranslate"><span class="pre">weather()</span></code> specifies a joint probability distribution over two named random variables: <code class="docutils literal notranslate"><span class="pre">cloudy</span></code> and <code class="docutils literal notranslate"><span class="pre">temp</span></code>. As such, it defines a probabilistic model that we can reason about using the techniques of probability
+theory.例如，我们可能会问：如果我观察到70度的温度，多云的可能性有多大？下一个教程将讨论如何提出和回答这类问题。</p>
+</div>
+<div class="section" id="通用概率编程">
+<h2>通用概率编程<a class="headerlink" href="#通用概率编程" title="Permalink to this headline">¶</a></h2>
+<p>Universality: Stochastic Recursion, Higher-order Stochastic Functions, and Random Control Flow</p>
+<p>现在我们已经看到了如何定义一个简单的模型。Building off of it is easy. For example:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># 建立在 weather 基础上的一个概率程序</span>
+<span class="c1"># weather{cloudy --&gt; temp} --&gt; ice_cream</span>
+<span class="k">def</span> <span class="nf">ice_cream_sales</span><span class="p">():</span>
+    <span class="n">cloudy</span><span class="p">,</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">weather</span><span class="p">()</span>
+    <span class="n">expected_sales</span> <span class="o">=</span> <span class="mf">200.</span> <span class="k">if</span> <span class="n">cloudy</span> <span class="o">==</span> <span class="s1">&#39;sunny&#39;</span> <span class="ow">and</span> <span class="n">temp</span> <span class="o">&gt;</span> <span class="mf">80.0</span> <span class="k">else</span> <span class="mf">50.</span>
+    <span class="n">ice_cream</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;ice_cream&#39;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">expected_sales</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ice_cream</span>
+</pre></div>
+</div>
+</div>
+<p>(这种模块化是非常强大的) This kind of modularity, familiar to any programmer, is obviously very powerful. 但是它强大到足以包含我们想要表达的所有不同类型的模型吗？</p>
+<p>It turns out that because Pyro is embedded in Python, stochastic functions can contain arbitrarily complex deterministic Python and randomness can freely affect control flow. 例如，我们可以构造递归函数 that terminate their recursion nondeterministically, provided we take care to pass <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> unique sample names whenever it’s called. 例如我们可以定义一个几何分布，来计算直到第一次成功之前的失败次数，如下所示：</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">geometric</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># 该函数表示第 t 次失败之后, 继续尝试直到成功，返回总共失败次数。</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;x_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">t</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">t_update</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">geometric</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t_update</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">geometric</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2
+</pre></div></div>
+</div>
+<p>Note that the names <code class="docutils literal notranslate"><span class="pre">x_0</span></code>, <code class="docutils literal notranslate"><span class="pre">x_1</span></code>, etc., in <code class="docutils literal notranslate"><span class="pre">geometric()</span></code> are generated dynamically and that different executions can have different numbers of named random variables.</p>
+<p>我们也可以定义把其他随机函数当成输入或者输出的随机函数：</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="k">import</span> <span class="n">Source</span>
+<span class="n">Source</span><span class="p">(</span><span class="s1">&#39;digraph{rankdir=LR; loc, scale -&gt; z1, z2 -&gt; y; mu_latent -&gt; loc}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/intro_part_i_22_0.svg" src="_images/intro_part_i_22_0.svg" /></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">normal_product</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="n">z1</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+    <span class="n">z2</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">z1</span> <span class="o">*</span> <span class="n">z2</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="c1"># 可以把 loc 看成某个固定的输入随机函数 mu_latent</span>
+<span class="c1"># 从而得到一个输出是正态随机函数，而不是数值的随机函数。</span>
+<span class="k">def</span> <span class="nf">make_normal_normal</span><span class="p">():</span>
+    <span class="n">mu_latent</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;mu_latent&quot;</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">scale</span><span class="p">:</span> <span class="n">normal_product</span><span class="p">(</span><span class="n">mu_latent</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fn</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">make_normal_normal</span><span class="p">()(</span><span class="mf">1.</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-0.0618)
+</pre></div></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">make_normal_normal()</span></code> is a stochastic function that takes one argument and which, upon execution, generates three named random variables.</p>
+<p>The fact that Pyro supports arbitrary Python code like this—iteration, recursion, higher-order functions, etc.—in conjuction with random control flow means that Pyro 随机函数是 <em>universal</em> ，即它们可用于表示任何可计算的概率分布。 正如我们将在后续教程中看到的那样，它难以置信的强大。</p>
+<p>值得强调的是 that this is one reason why Pyro is built on top of PyTorch: 动态计算图 are an important ingredient in allowing for universal models that can benefit from GPU-accelerated tensor math.</p>
+</div>
+<div class="section" id="下一步？">
+<h2>下一步？<a class="headerlink" href="#下一步？" title="Permalink to this headline">¶</a></h2>
+<p>我们已经展示了如何使用 stochastic functions 和 primitive distributions 来表示 Pyro中的模型。为了从数据中学习模型并对其进行推理，我们需要 be able to do inference. This is the subject of the <a class="reference internal" href="intro_part_ii.html"><span class="doc">next tutorial</span></a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="intro_part_ii.html" class="btn btn-neutral float-right" title="Pyro 推断简介" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Pyro Examples and Tutorials!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

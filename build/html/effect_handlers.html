@@ -1,0 +1,1100 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Poutine: Pyro 中使用 Effect Handlers 编程手册 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="变分自编码器" href="vae.html" />
+    <link rel="prev" title="Mini-Pyro" href="minipyro.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Poutine: Pyro 中使用 Effect Handlers 编程手册</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Poutine:-Pyro-算法库的基石">Poutine: Pyro 算法库的基石</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Implementing-new-effect-handlers-with-the-Messenger-API">Implementing new effect handlers with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-Messenger-API-in-more-detail">The <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API in more detail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Interlude:-the-global-Messenger-stack">Interlude: the global <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Returning-to-the-LogJointMessenger-example">Returning to the <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code> example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Inside-the-messages-sent-by-Messengers">Inside the messages sent by <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Implementing-inference-algorithms-with-existing-effect-handlers:-examples">Implementing inference algorithms with existing effect handlers: examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Example:-Variational-inference-with-a-Monte-Carlo-ELBO">Example: Variational inference with a Monte Carlo ELBO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Example:-exact-inference-via-sequential-enumeration">Example: exact inference via sequential enumeration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Example:-implementing-lazy-evaluation-with-the-Messenger-API">Example: implementing lazy evaluation with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#References:-algebraic-effects-and-handlers-in-programming-language-research">References: algebraic effects and handlers in programming language research</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Poutine: Pyro 中使用 Effect Handlers 编程手册</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/effect_handlers.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Poutine:-Pyro-中使用-Effect-Handlers-编程手册">
+<h1>Poutine: Pyro 中使用 Effect Handlers 编程手册<a class="headerlink" href="#Poutine:-Pyro-中使用-Effect-Handlers-编程手册" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Poutine: A Guide to Programming with Effect Handlers in Pyro</p>
+</div></blockquote>
+<p><strong>Note to readers</strong>: This tutorial is a guide to the API details of Pyro’s effect handling library, <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html">Poutine</a>. We recommend readers first orient themselves with the simplified <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">minipyro.py</a> which contains a minimal, readable implementation of Pyro’s runtime and the effect handler abstraction described here. Pyro’s effect handler library is more general than minipyro’s but also
+contains more layers of indirection; it helps to read them side-by-side.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">pyro.poutine</span> <span class="k">as</span> <span class="nn">poutine</span>
+
+<span class="kn">from</span> <span class="nn">pyro.poutine.runtime</span> <span class="k">import</span> <span class="n">effectful</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Introduction">
+<h2>Introduction<a class="headerlink" href="#Introduction" title="Permalink to this headline">¶</a></h2>
+<p>概率编程中的推断会涉及到 manipulating or transforming probabilistic programs written as generative models. 例如，几乎所有近似推断算法都需要在某个生成模型下，计算非标准化的联合概率分布 of values of latent and observed variables.</p>
+<p>考虑以下示例模型 from the <a class="reference external" href="http://pyro.ai/examples/intro_part_ii.html">introductory inference tutorial</a>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">mu</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>This model defines a joint probability distribution over <code class="docutils literal notranslate"><span class="pre">&quot;weight&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;measurement&quot;</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[{\sf weight} \,  \sim \cal {\sf Normal}({\mu}, 1)\]</div>
+<div class="math notranslate nohighlight">
+\[{\sf measurement} \, |  {\sf weight} \sim {\sf Normal}({\sf weight}, 0.75)\]</div>
+<p>If we had access to the inputs and outputs of each <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> site, we could compute their log-joint:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logp</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">measurement</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>但是，the way we wrote <code class="docutils literal notranslate"><span class="pre">scale</span></code> above 并未展示这些 intermediate distribution objects, and rewriting it to return them would be intrusive and would violate the separation of concerns between models and inference algorithms that a probabilistic programming language like Pyro is designed to enforce.</p>
+<p>为了解决此冲突和方便推断算法的开发， Pyro 推出了 <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html">Poutine</a>, a library of <em>effect handlers</em> , or 用于检查和修改Pyro程序行为的可组合 building blocks. Pyro的大多数内部组件都是在Poutine之上实现的。</p>
+</div>
+<div class="section" id="Poutine:-Pyro-算法库的基石">
+<h2>Poutine: Pyro 算法库的基石<a class="headerlink" href="#Poutine:-Pyro-算法库的基石" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A first look at Poutine: Pyro’s library of algorithmic building blocks</p>
+</div></blockquote>
+<p>Effect handlers, 它是编程语言社区中的常见抽象，give <em>nonstandard interpretations</em> or <em>side effects</em> to the behavior of particular statements in a programming language, like <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> or <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code>. 有关编程语言研究中的 effect handlers 的背景知识，请参阅the optional “References” section at the end of this tutorial.</p>
+<p>相对于查看更多定义，让我们看第一个例子 that addresses the problem above: we can compose two existing effect handlers, <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code> (which sets output values of <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> statements) and <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> (which records the inputs, distributions, and outputs of <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> statements), to concisely define a new effect handler that computes the log-joint。</p>
+<p>也就是说，我们可以把两个的 effect handlers 组合定义成一个新的 effect handler that computes the log-joint:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">make_log_joint</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_log_joint</span><span class="p">(</span><span class="n">cond_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">cond_data</span><span class="p">)</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">_log_joint</span>
+
+<span class="n">scale_log_joint</span> <span class="o">=</span> <span class="n">make_log_joint</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_log_joint</span><span class="p">({</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">},</span> <span class="mf">8.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-3.0203)
+</pre></div></div>
+</div>
+<p>That snippet is short, but still somewhat opaque - <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code>, <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code>, and <code class="docutils literal notranslate"><span class="pre">trace.log_prob_sum</span></code> are all black boxes. Let’s remove a layer of boilerplate from <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code> and <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> and explicitly implement what <code class="docutils literal notranslate"><span class="pre">trace.log_prob_sum</span></code> is doing:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyro.poutine.trace_messenger</span> <span class="k">import</span> <span class="n">TraceMessenger</span>
+<span class="kn">from</span> <span class="nn">pyro.poutine.condition_messenger</span> <span class="k">import</span> <span class="n">ConditionMessenger</span>
+
+<span class="k">def</span> <span class="nf">make_log_joint_2</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_log_joint</span><span class="p">(</span><span class="n">cond_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">TraceMessenger</span><span class="p">()</span> <span class="k">as</span> <span class="n">tracer</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">ConditionMessenger</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cond_data</span><span class="p">):</span>
+                <span class="n">model</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace</span>
+        <span class="n">logp</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;is_observed&quot;</span><span class="p">]:</span>
+                    <span class="k">assert</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">cond_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">logp</span> <span class="o">=</span> <span class="n">logp</span> <span class="o">+</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">logp</span>
+    <span class="k">return</span> <span class="n">_log_joint</span>
+
+<span class="n">scale_log_joint</span> <span class="o">=</span> <span class="n">make_log_joint_2</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_log_joint</span><span class="p">({</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">},</span> <span class="mf">8.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-3.0203)
+</pre></div></div>
+</div>
+<p>This makes things a little more clear: we can now see that <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> and <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code> are wrappers for context managers that presumably communicate with the model through something inside <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code>. We can also see that <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> produces a data structure (a <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#trace">Trace</a>) containing a dictionary whose keys are <code class="docutils literal notranslate"><span class="pre">sample</span></code> site names and values are dictionaries containing the distribution (<code class="docutils literal notranslate"><span class="pre">&quot;fn&quot;</span></code>) and output
+(<code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code>) at each site, and that the output values at each site are exactly the values specified in <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">TraceMessenger</span></code> and <code class="docutils literal notranslate"><span class="pre">ConditionMessenger</span></code> are Pyro effect handlers, or <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s: stateful context manager objects that are placed on a global stack and send messages (hence the name) up and down the stack at each effectful operation, like a <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> call. A <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> is placed at the bottom of the stack when its <code class="docutils literal notranslate"><span class="pre">__enter__</span></code> method is called, i.e. when it is used in a “with” statement.</p>
+<p>We’ll look at this process in more detail later in this tutorial. For a simplified implementation in only a few lines of code, see <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">pyro.contrib.minipyro</a>.</p>
+</div>
+<div class="section" id="Implementing-new-effect-handlers-with-the-Messenger-API">
+<h2>Implementing new effect handlers with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API<a class="headerlink" href="#Implementing-new-effect-handlers-with-the-Messenger-API" title="Permalink to this headline">¶</a></h2>
+<p>Although it’s easiest to build new effect handlers by composing the existing ones in <code class="docutils literal notranslate"><span class="pre">pyro.poutine</span></code>, implementing a new effect as a <code class="docutils literal notranslate"><span class="pre">pyro.poutine.messenger.Messenger</span></code> subclass is actually fairly straightforward. Before diving into the API, let’s look at another example: a version of our log-joint computation that performs the sum while the model is executing. We’ll then review what each part of the example is actually doing.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">LogJointMessenger</span><span class="p">(</span><span class="n">poutine</span><span class="o">.</span><span class="n">messenger</span><span class="o">.</span><span class="n">Messenger</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cond_data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cond_data</span>
+
+    <span class="c1"># __call__ is syntactic sugar for using Messengers as higher-order functions.</span>
+    <span class="c1"># Messenger already defines __call__, but we re-define it here</span>
+    <span class="c1"># for exposition and to change the return value:</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">_fn</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="c1"># All Messenger subclasses must call the base Messenger.__enter__()</span>
+        <span class="c1"># in their __enter__ methods</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+    <span class="c1"># __exit__ takes the same arguments in all Python context managers</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="c1"># All Messenger subclasses must call the base Messenger.__exit__ method</span>
+        <span class="c1"># in their __exit__ methods.</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+
+    <span class="c1"># _pyro_sample will be called once per pyro.sample site.</span>
+    <span class="c1"># It takes a dictionary msg containing the name, distribution,</span>
+    <span class="c1"># observation or sample value, and other metadata from the sample site.</span>
+    <span class="k">def</span> <span class="nf">_pyro_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="c1"># Any unobserved random variables will trigger this assertion.</span>
+        <span class="c1"># In the next section, we&#39;ll learn how to also handle sampled values.</span>
+        <span class="k">assert</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+        <span class="c1"># Since we&#39;ve observed a value for this site, we set the &quot;is_observed&quot; flag to True</span>
+        <span class="c1"># This tells any other Messengers not to overwrite msg[&quot;value&quot;] with a sample.</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;is_observed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">+</span> <span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">with</span> <span class="n">LogJointMessenger</span><span class="p">(</span><span class="n">cond_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">})</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
+    <span class="n">scale</span><span class="p">(</span><span class="mf">8.5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">logp</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+
+<span class="n">scale_log_joint</span> <span class="o">=</span> <span class="n">LogJointMessenger</span><span class="p">(</span><span class="n">cond_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">})(</span><span class="n">scale</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_log_joint</span><span class="p">(</span><span class="mf">8.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-3.0203)
+tensor(-3.0203)
+</pre></div></div>
+</div>
+<p>A convenient bit of boilerplate that allows the use of <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code> as a context manager, decorator, or higher-order function is the following. Most of the existing effect handlers in <code class="docutils literal notranslate"><span class="pre">pyro.poutine</span></code>, including <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> and <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code> which we used earlier, are <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s wrapped this way in <code class="docutils literal notranslate"><span class="pre">pyro.poutine.handlers</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">log_joint</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cond_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">msngr</span> <span class="o">=</span> <span class="n">LogJointMessenger</span><span class="p">(</span><span class="n">cond_data</span><span class="o">=</span><span class="n">cond_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msngr</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">msngr</span>
+
+<span class="n">scale_log_joint</span> <span class="o">=</span> <span class="n">log_joint</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">cond_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scale_log_joint</span><span class="p">(</span><span class="mf">8.5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-3.0203)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="The-Messenger-API-in-more-detail">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API in more detail<a class="headerlink" href="#The-Messenger-API-in-more-detail" title="Permalink to this headline">¶</a></h2>
+<p>Our <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code> implementation has three important methods: <code class="docutils literal notranslate"><span class="pre">__enter__</span></code>, <code class="docutils literal notranslate"><span class="pre">__exit__</span></code>, and <code class="docutils literal notranslate"><span class="pre">_pyro_sample</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__enter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__exit__</span></code> are special methods needed by any Python context manager. When implementing new <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> classes, if we override <code class="docutils literal notranslate"><span class="pre">__enter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__exit__</span></code>, we always need to call the base <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>’s <code class="docutils literal notranslate"><span class="pre">__enter__</span></code> and <code class="docutils literal notranslate"><span class="pre">__exit__</span></code> methods for the new <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> to be applied correctly.</p>
+<p>The last method <code class="docutils literal notranslate"><span class="pre">LogJointMessenger._pyro_sample</span></code>, is called once at each sample site. It reads and modifies a <em>message</em>, which is a dictionary containing the sample site’s name, distribution, sampled or observed value, and other metadata. We’ll examine the contents of a message in more detail in the next section.</p>
+<p>Instead of <code class="docutils literal notranslate"><span class="pre">_pyro_sample</span></code>, a generic <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> actually contains two methods that are called once per operation where side effects are performed: 1. <code class="docutils literal notranslate"><span class="pre">_process_message</span></code> modifies a message and sends the result to the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> just above on the stack 2. <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code> modifies a message and sends the result to the next <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> down on the stack. It is always called after all active <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s have had their <code class="docutils literal notranslate"><span class="pre">_process_message</span></code> method applied to the message.</p>
+<p>Although custom <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s can override <code class="docutils literal notranslate"><span class="pre">_process_message</span></code> and <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code>, it’s convenient to avoid requiring all effect handlers to be aware of all possible effectful operation types. For this reason, by default <code class="docutils literal notranslate"><span class="pre">Messenger._process_message</span></code> will use <code class="docutils literal notranslate"><span class="pre">msg[&quot;type&quot;]</span></code> to dispatch to a corresponding method <code class="docutils literal notranslate"><span class="pre">Messenger._pyro_&lt;type&gt;</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">Messenger._pyro_sample</span></code> as in <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code>. Just as exception handling code ignores unhandled exception types, this allows
+<code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s to simply forward operations they don’t know how to handle up to the next <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> in the stack:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Messenger</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">_process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="s2">&quot;_pyro_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">])</span>  <span class="c1"># e.g. _pyro_sample when msg[&quot;type&quot;] == &quot;sample&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<div class="section" id="Interlude:-the-global-Messenger-stack">
+<h3>Interlude: the global <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> stack<a class="headerlink" href="#Interlude:-the-global-Messenger-stack" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">pyro.contrib.minipyro</a> for an end-to-end implementation of the mechanism in this section.</p>
+<p>The order in which <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s are applied to an operation like a <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> statement is determined by the order in which their <code class="docutils literal notranslate"><span class="pre">__enter__</span></code> methods are called. <code class="docutils literal notranslate"><span class="pre">Messenger.__enter__</span></code> appends a <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> to the end (the bottom) of the global handler stack:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Messenger</span><span class="p">:</span>
+    <span class="o">...</span>
+    <span class="c1"># __enter__ pushes a Messenger onto the stack</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="n">_PYRO_STACK</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="o">...</span>
+
+    <span class="c1"># __exit__ removes a Messenger from the stack</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">assert</span> <span class="n">_PYRO_STACK</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">self</span>
+        <span class="n">_PYRO_STACK</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pyro.poutine.runtime.apply_stack</span></code> then traverses the stack twice at each operation, first from bottom to top to apply each <code class="docutils literal notranslate"><span class="pre">_process_message</span></code> and then from top to bottom to apply each <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">apply_stack</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>  <span class="c1"># simplified</span>
+    <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">_PYRO_STACK</span><span class="p">):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">_process_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="n">default_process_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">_PYRO_STACK</span><span class="p">:</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">_postprocess_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">msg</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Returning-to-the-LogJointMessenger-example">
+<h3>Returning to the <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code> example<a class="headerlink" href="#Returning-to-the-LogJointMessenger-example" title="Permalink to this headline">¶</a></h3>
+<p>The second method <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code> is necessary because some effects can only be applied after all other effect handlers have had a chance to update the message once. In the case of <code class="docutils literal notranslate"><span class="pre">LogJointMessenger</span></code>, other effects, like enumeration, may modify a sample site’s value or distribution (<code class="docutils literal notranslate"><span class="pre">msg[&quot;value&quot;]</span></code> or <code class="docutils literal notranslate"><span class="pre">msg[&quot;fn&quot;]</span></code>), so we move the log-probability computation to a new method, <code class="docutils literal notranslate"><span class="pre">_pyro_post_sample</span></code>, which is called by <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code> (via a dispatch mechanism like the one
+used by <code class="docutils literal notranslate"><span class="pre">_process_message</span></code>) at each <code class="docutils literal notranslate"><span class="pre">sample</span></code> site after all active handlers’ <code class="docutils literal notranslate"><span class="pre">_pyro_sample</span></code> methods have been applied:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">LogJointMessenger2</span><span class="p">(</span><span class="n">poutine</span><span class="o">.</span><span class="n">messenger</span><span class="o">.</span><span class="n">Messenger</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cond_data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cond_data</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logp</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">_fn</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pyro_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_pyro_post_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]</span>  <span class="c1"># the &quot;done&quot; flag asserts that no more modifications to value and fn will be performed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">+</span> <span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;scale&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+
+<span class="k">with</span> <span class="n">LogJointMessenger2</span><span class="p">(</span><span class="n">cond_data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;measurement&quot;</span><span class="p">:</span> <span class="mf">9.5</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">8.23</span><span class="p">})</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
+    <span class="n">scale</span><span class="p">(</span><span class="mf">8.5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">logp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor(-3.0203)
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Inside-the-messages-sent-by-Messengers">
+<h2>Inside the messages sent by <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s<a class="headerlink" href="#Inside-the-messages-sent-by-Messengers" title="Permalink to this headline">¶</a></h2>
+<p>As the previous two examples mentioned, the actual messages sent up and down the stack are dictionaries with a particular set of keys. Consider the following sample statement:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">},</span> <span class="n">obs</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This sample statement is converted into an initial message before any effects are applied, and each effect handler’s <code class="docutils literal notranslate"><span class="pre">_process_message</span></code> and <code class="docutils literal notranslate"><span class="pre">_postprocess_message</span></code> may update fields in place or add new fields. We write out the full initial message here for completeness:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">msg</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># The following fields contain the name, inputs, function, and output of a site.</span>
+    <span class="c1"># These are generally the only fields you&#39;ll need to think about.</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span>
+    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>  <span class="c1"># msg[&quot;value&quot;] will eventually contain the value returned by pyro.sample</span>
+    <span class="s2">&quot;is_observed&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>  <span class="c1"># because obs=None by default; only used by sample sites</span>
+    <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(),</span>  <span class="c1"># positional arguments passed to &quot;fn&quot; when it is called; usually empty for sample sites</span>
+    <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># keyword arguments passed to &quot;fn&quot; when it is called; usually empty for sample sites</span>
+    <span class="c1"># This field typically contains metadata needed or stored by a particular inference algorithm</span>
+    <span class="s2">&quot;infer&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">},</span>
+    <span class="c1"># The remaining fields are generally only used by Pyro&#39;s internals,</span>
+    <span class="c1"># or for implementing more advanced effects beyond the scope of this tutorial</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span>  <span class="c1"># label used by Messenger._process_message to dispatch, in this case to _pyro_sample</span>
+    <span class="s2">&quot;done&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s2">&quot;stop&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.</span><span class="p">),</span>  <span class="c1"># Multiplicative scale factor that can be applied to each site&#39;s log_prob</span>
+    <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="s2">&quot;continuation&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="s2">&quot;cond_indep_stack&quot;</span><span class="p">:</span> <span class="p">(),</span>  <span class="c1"># Will contain metadata from each pyro.plate enclosing this sample site.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that when we use <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> or <code class="docutils literal notranslate"><span class="pre">TraceMessenger</span></code> as in our first two versions of <code class="docutils literal notranslate"><span class="pre">make_log_joint</span></code>, the contents of <code class="docutils literal notranslate"><span class="pre">msg</span></code> are exactly the information stored in the trace for each sample and param site.</p>
+</div>
+<div class="section" id="Implementing-inference-algorithms-with-existing-effect-handlers:-examples">
+<h2>Implementing inference algorithms with existing effect handlers: examples<a class="headerlink" href="#Implementing-inference-algorithms-with-existing-effect-handlers:-examples" title="Permalink to this headline">¶</a></h2>
+<p>It turns out that many inference operations, like our first version of <code class="docutils literal notranslate"><span class="pre">make_log_joint</span></code> above, have strikingly short implementations in terms of existing effect handlers in <code class="docutils literal notranslate"><span class="pre">pyro.poutine</span></code>.</p>
+<div class="section" id="Example:-Variational-inference-with-a-Monte-Carlo-ELBO">
+<h3>Example: Variational inference with a Monte Carlo ELBO<a class="headerlink" href="#Example:-Variational-inference-with-a-Monte-Carlo-ELBO" title="Permalink to this headline">¶</a></h3>
+<p>For example, here is an implementation of variational inference with a Monte Carlo ELBO that uses <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code>, <code class="docutils literal notranslate"><span class="pre">poutine.condition</span></code>, and <code class="docutils literal notranslate"><span class="pre">poutine.replay</span></code>. This is very similar to the simple ELBO in <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">pyro.contrib.minipyro</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">monte_carlo_elbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># assuming batch is a dictionary, we use poutine.condition to fix values of observed variables</span>
+    <span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+
+    <span class="c1"># we&#39;ll approximate the expectation in the ELBO with a single sample:</span>
+    <span class="c1"># first, we run the guide forward unmodified and record values and distributions</span>
+    <span class="c1"># at each sample site using poutine.trace</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># we use poutine.replay to set the values of latent variables in the model</span>
+    <span class="c1"># to the values sampled above by our guide, and use poutine.trace</span>
+    <span class="c1"># to record the distributions that appear at each sample site in in the model</span>
+    <span class="n">model_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
+        <span class="n">poutine</span><span class="o">.</span><span class="n">replay</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">guide_trace</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">elbo</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">model_trace</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">+</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;is_observed&quot;</span><span class="p">]:</span>
+                <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">-</span> <span class="n">guide_trace</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">elbo</span>
+</pre></div>
+</div>
+</div>
+<p>We use <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code> and <code class="docutils literal notranslate"><span class="pre">poutine.block</span></code> to record <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code> calls for optimization:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({})</span>
+    <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="c1"># this poutine.trace will record all of the parameters that appear in the model and guide</span>
+        <span class="c1"># during the execution of monte_carlo_elbo</span>
+        <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">()</span> <span class="k">as</span> <span class="n">param_capture</span><span class="p">:</span>
+            <span class="c1"># we use poutine.block here so that only parameters appear in the trace above</span>
+            <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">hide_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;param&quot;</span><span class="p">):</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="n">monte_carlo_elbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">node</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">()</span>
+                     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">param_capture</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">zero_grads</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Example:-exact-inference-via-sequential-enumeration">
+<h3>Example: exact inference via sequential enumeration<a class="headerlink" href="#Example:-exact-inference-via-sequential-enumeration" title="Permalink to this headline">¶</a></h3>
+<p>Here is an example of a very different inference algorithm–exact inference via enumeration–implemented with <code class="docutils literal notranslate"><span class="pre">pyro.poutine</span></code>. A complete explanation of this algorithm is beyond the scope of this tutorial and may be found in Chapter 3 of the short online book <a class="reference external" href="http://dippl.org/chapters/03-enumeration.html">Design and Implementation of Probabilistic Programming Languages</a>. This example uses <code class="docutils literal notranslate"><span class="pre">poutine.queue</span></code>, itself implemented using <code class="docutils literal notranslate"><span class="pre">poutine.trace</span></code>, <code class="docutils literal notranslate"><span class="pre">poutine.replay</span></code>, and <code class="docutils literal notranslate"><span class="pre">poutine.block</span></code>,
+to enumerate over possible values of all discrete variables in a model and compute a marginal distribution over all possible return values or the possible values at a particular sample site:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">sequential_discrete_marginal</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">site_name</span><span class="o">=</span><span class="s2">&quot;_RETURN&quot;</span><span class="p">):</span>
+
+    <span class="kn">from</span> <span class="nn">six.moves</span> <span class="k">import</span> <span class="n">queue</span>  <span class="c1"># queue data structures</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>  <span class="c1"># Instantiate a first-in first-out queue</span>
+    <span class="n">q</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">poutine</span><span class="o">.</span><span class="n">Trace</span><span class="p">())</span>  <span class="c1"># seed the queue with an empty trace</span>
+
+    <span class="c1"># as before, we fix the values of observed random variables with poutine.condition</span>
+    <span class="c1"># assuming data is a dictionary whose keys are names of sample sites in model</span>
+    <span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># we wrap the conditioned model in a poutine.queue,</span>
+    <span class="c1"># which repeatedly pushes and pops partially completed executions from a Queue()</span>
+    <span class="c1"># to perform breadth-first enumeration over the set of values of all discrete sample sites in model</span>
+    <span class="n">enum_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">queue</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+
+    <span class="c1"># actually perform the enumeration by repeatedly tracing enum_model</span>
+    <span class="c1"># and accumulate samples and trace log-probabilities for postprocessing</span>
+    <span class="n">samples</span><span class="p">,</span> <span class="n">log_weights</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">q</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">enum_model</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()</span>
+        <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">site_name</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+        <span class="n">log_weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">())</span>
+
+    <span class="c1"># we take the samples and log-joints and turn them into a histogram:</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">log_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">log_weights</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">log_weights</span> <span class="o">=</span> <span class="n">log_weights</span> <span class="o">-</span> <span class="n">dist</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">log_weights</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">Empirical</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">log_weights</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>(Note that <code class="docutils literal notranslate"><span class="pre">sequential_discrete_marginal</span></code> is very general, but is also quite slow. For high-performance parallel enumeration that applies to a less general class of models, see the enumeration tutorial.)</p>
+</div>
+</div>
+<div class="section" id="Example:-implementing-lazy-evaluation-with-the-Messenger-API">
+<h2>Example: implementing lazy evaluation with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API<a class="headerlink" href="#Example:-implementing-lazy-evaluation-with-the-Messenger-API" title="Permalink to this headline">¶</a></h2>
+<p>Now that we’ve learned more about the internals of <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>, let’s use it to implement a slightly more complicated effect: lazy evaluation. We first define a <code class="docutils literal notranslate"><span class="pre">LazyValue</span></code> class that we will use to build up a computation graph:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">LazyValue</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span> <span class="o">=</span> <span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expr</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expr</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">LazyValue</span><span class="p">)</span> <span class="k">else</span> <span class="n">fn</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">LazyValue</span><span class="p">)</span> <span class="k">else</span> <span class="n">arg</span>
+                         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">LazyValue</span><span class="p">)</span> <span class="k">else</span> <span class="n">v</span>
+                      <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+</pre></div>
+</div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">LazyValue</span></code>, implementing lazy evaluation as a <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> compatible with other effect handlers is suprisingly easy. We just make each <code class="docutils literal notranslate"><span class="pre">msg[&quot;value&quot;]</span></code> a <code class="docutils literal notranslate"><span class="pre">LazyValue</span></code> and introduce a new operation type <code class="docutils literal notranslate"><span class="pre">&quot;apply&quot;</span></code> for deterministic operations:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">LazyMessenger</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">poutine</span><span class="o">.</span><span class="n">messenger</span><span class="o">.</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;apply&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]:</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;done&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LazyValue</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">],</span> <span class="o">*</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Finally, just like <code class="docutils literal notranslate"><span class="pre">torch.autograd</span></code> overloads <code class="docutils literal notranslate"><span class="pre">torch</span></code> tensor operations to record an autograd graph, we need to wrap any operations we’d like to be lazy. We’ll use <code class="docutils literal notranslate"><span class="pre">pyro.poutine.runtime.effectful</span></code> as a decorator to expose these operations to <code class="docutils literal notranslate"><span class="pre">LazyMessenger</span></code>. <code class="docutils literal notranslate"><span class="pre">effectful</span></code> constructs a message much like the one above and sends it up and down the effect handler stack, but allows us to set the type (in this case, to <code class="docutils literal notranslate"><span class="pre">&quot;apply&quot;</span></code> instead of <code class="docutils literal notranslate"><span class="pre">&quot;sample&quot;</span></code>) so that these operations aren’t
+mistaken for <code class="docutils literal notranslate"><span class="pre">sample</span></code> statements by other effect handlers like <code class="docutils literal notranslate"><span class="pre">TraceMessenger</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nd">@effectful</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;apply&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="nd">@effectful</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;apply&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+<span class="nd">@effectful</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;apply&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="nd">@effectful</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;apply&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Applied to another model:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">biased_scale</span><span class="p">(</span><span class="n">guess</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">normal</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+    <span class="n">tolerance</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;tolerance&quot;</span><span class="p">,</span> <span class="n">normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;measurement&quot;</span><span class="p">,</span> <span class="n">normal</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">mul</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="mf">1.</span><span class="p">),</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)))</span>
+
+<span class="k">with</span> <span class="n">LazyMessenger</span><span class="p">():</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">biased_scale</span><span class="p">(</span><span class="mf">8.5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">evaluate</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+((&lt;function normal at 0x7fc41cbfdc80&gt; (&lt;function add at 0x7fc41cbf91e0&gt; (&lt;function mul at 0x7fc41cbfda60&gt; ((&lt;function normal at 0x7fc41cbfdc80&gt; 8.5 1.0) ) 0.8) 1.0) (&lt;function sigmoid at 0x7fc41cbfdb70&gt; ((&lt;function normal at 0x7fc41cbfdc80&gt; 0.0 0.25) ))) )
+tensor(6.5436)
+</pre></div></div>
+</div>
+<p>Together with other effect handlers like <code class="docutils literal notranslate"><span class="pre">TraceMessenger</span></code> and <code class="docutils literal notranslate"><span class="pre">ConditionMessenger</span></code>, with which it freely composes, <code class="docutils literal notranslate"><span class="pre">LazyMessenger</span></code> demonstrates how to use Poutine to quickly and concisely implement state-of-the-art PPL techniques like <a class="reference external" href="https://arxiv.org/abs/1708.07787">delayed sampling with Rao-Blackwellization</a>.</p>
+</div>
+<div class="section" id="References:-algebraic-effects-and-handlers-in-programming-language-research">
+<h2>References: algebraic effects and handlers in programming language research<a class="headerlink" href="#References:-algebraic-effects-and-handlers-in-programming-language-research" title="Permalink to this headline">¶</a></h2>
+<p>This section contains some references to PL papers for readers interested in this direction.</p>
+<p>Algebraic effects and handlers, which were developed starting in the early 2000s and are a subject of active research in the programming languages community, are a versatile abstraction for building modular implementations of nonstandard interpreters of particular statements in a programming language, like <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> or <code class="docutils literal notranslate"><span class="pre">pyro.param</span></code>. They were originally introduced to address the difficulty of composing nonstandard interpreters implemented with monads and monad transformers.</p>
+<ul class="simple">
+<li><p>For an accessible introduction to the effect handlers literature, see the excellent review/tutorial paper <a class="reference external" href="http://homepages.inf.ed.ac.uk/slindley/papers/handlers.pdf">“Handlers in Action”</a> by Ohad Kammar, Sam Lindley, and Nicolas Oury, and the references therein.</p></li>
+<li><p>Algebraic effect handlers were originally introduced by Gordon Plotkin and Matija Pretnar in the paper <a class="reference external" href="https://link.springer.com/chapter/10.1007/978-3-642-00590-9_7">“Handlers of Algebraic Effects”</a>.</p></li>
+<li><p>A useful mental model of effect handlers is as exception handlers that are capable of resuming computation in the <code class="docutils literal notranslate"><span class="pre">try</span></code> block after raising an exception and performing some processing in the <code class="docutils literal notranslate"><span class="pre">except</span></code> block. This metaphor is explored further in the experimental programming language <a class="reference external" href="http://math.andrej.com/eff/">Eff</a> and its companion paper <a class="reference external" href="https://arxiv.org/abs/1203.1539">“Programming with Algebraic Effects and Handlers”</a> by Andrej Bauer and Matija Pretnar.</p></li>
+<li><p>Most effect handlers in Pyro are “linear,” meaning that they only resume once per effectful operation and do not alter the order of execution of the original program. One exception is <code class="docutils literal notranslate"><span class="pre">poutine.queue</span></code>, which uses an inefficient implementation strategy for multiple resumptions like the one described for delimited continuations in the paper <a class="reference external" href="http://delivery.acm.org/10.1145/3240000/3236771/icfp18main-p36-p.pdf">“Capturing the Future by Replaying the Past”</a> by James Koppel, Gabriel Scherer,
+and Armando Solar-Lezama.</p></li>
+<li><p>More efficient implementation strategies for effect handlers in mainstream programming languages like Python or JavaScript is an area of active research. One promising line of work involves selective continuation-passing style transforms as in the paper <a class="reference external" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/algeff.pdf">“Type-Directed Compilation of Row-Typed Algebraic Effects”</a> by Daan Leijen.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="vae.html" class="btn btn-neutral float-right" title="变分自编码器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="minipyro.html" class="btn btn-neutral float-left" title="Mini-Pyro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Capture-Recapture Models (CJS Models) &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Causal Effect VAE" href="cevae.html" />
+    <link rel="prev" title="Boosting Black Box Variational Inference" href="boosting_bbvi.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Capture-Recapture Models (CJS Models)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/capture_recapture.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="capture-recapture-models-cjs-models">
+<h1>Capture-Recapture Models (CJS Models)<a class="headerlink" href="#capture-recapture-models-cjs-models" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/capture_recapture/cjs.py">View cjs.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">We show how to implement several variants of the Cormack-Jolly-Seber (CJS)</span>
+<span class="sd">[4, 5, 6] model used in ecology to analyze animal capture-recapture data.</span>
+<span class="sd">For a discussion of these models see reference [1].</span>
+
+<span class="sd">We make use of two datasets:</span>
+<span class="sd">-- the European Dipper (Cinclus cinclus) data from reference [2]</span>
+<span class="sd">   (this is Norway&#39;s national bird).</span>
+<span class="sd">-- the meadow voles data from reference [3].</span>
+
+<span class="sd">Compare to the Stan implementations in [7].</span>
+
+<span class="sd">References</span>
+<span class="sd">[1] Kery, M., &amp; Schaub, M. (2011). Bayesian population analysis using</span>
+<span class="sd">    WinBUGS: a hierarchical perspective. Academic Press.</span>
+<span class="sd">[2] Lebreton, J.D., Burnham, K.P., Clobert, J., &amp; Anderson, D.R. (1992).</span>
+<span class="sd">    Modeling survival and testing biological hypotheses using marked animals:</span>
+<span class="sd">    a unified approach with case studies. Ecological monographs, 62(1), 67-118.</span>
+<span class="sd">[3] Nichols, Pollock, Hines (1984) The use of a robust capture-recapture design</span>
+<span class="sd">    in small mammal population studies: A field example with Microtus pennsylvanicus.</span>
+<span class="sd">    Acta Theriologica 29:357-365.</span>
+<span class="sd">[4] Cormack, R.M., 1964. Estimates of survival from the sighting of marked animals.</span>
+<span class="sd">    Biometrika 51, 429-438.</span>
+<span class="sd">[5] Jolly, G.M., 1965. Explicit estimates from capture-recapture data with both death</span>
+<span class="sd">    and immigration-stochastic model. Biometrika 52, 225-247.</span>
+<span class="sd">[6] Seber, G.A.F., 1965. A note on the multiple recapture census. Biometrika 52, 249-259.</span>
+<span class="sd">[7] https://github.com/stan-dev/example-models/tree/master/BPA/Ch.07</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="kn">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">pyro.poutine</span> <span class="kn">as</span> <span class="nn">poutine</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.autoguide</span> <span class="kn">import</span> <span class="n">AutoDiagonalNormal</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="kn">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">TraceEnum_ELBO</span><span class="p">,</span> <span class="n">TraceTMC_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Our first and simplest CJS model variant only has two continuous</span>
+<span class="sd">(scalar) latent random variables: i) the survival probability phi;</span>
+<span class="sd">and ii) the recapture probability rho. These are treated as fixed</span>
+<span class="sd">effects with no temporal or individual/group variation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">model_1</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># survival probability</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># recapture probability</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;animals&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="c1"># we use this mask to eliminate extraneous log probabilities</span>
+        <span class="c1"># that arise for a given individual before its first capture.</span>
+        <span class="n">first_capture_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">markov</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+            <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">first_capture_mask</span><span class="p">):</span>
+                <span class="n">mu_z_t</span> <span class="o">=</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+                <span class="c1"># we use parallel enumeration to exactly sum out</span>
+                <span class="c1"># the discrete states z_t.</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_z_t</span><span class="p">),</span>
+                                <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+                <span class="n">mu_y_t</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">z</span>
+                <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_y_t</span><span class="p">),</span>
+                            <span class="n">obs</span><span class="o">=</span><span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">])</span>
+            <span class="n">first_capture_mask</span> <span class="o">|=</span> <span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In our second model variant there is a time-varying survival probability phi_t for</span>
+<span class="sd">T-1 of the T time periods of the capture data; each phi_t is treated as a fixed effect.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">model_2</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># recapture probability</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">first_capture_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+    <span class="c1"># we create the plate once, outside of the loop over t</span>
+    <span class="n">animals_plate</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;animals&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">markov</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+        <span class="c1"># note that phi_t needs to be outside the plate, since</span>
+        <span class="c1"># phi_t is shared across all N individuals</span>
+        <span class="n">phi_t</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span> \
+                <span class="k">else</span> <span class="mf">1.0</span>
+        <span class="k">with</span> <span class="n">animals_plate</span><span class="p">,</span> <span class="n">poutine</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">first_capture_mask</span><span class="p">):</span>
+            <span class="n">mu_z_t</span> <span class="o">=</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="n">phi_t</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+            <span class="c1"># we use parallel enumeration to exactly sum out</span>
+            <span class="c1"># the discrete states z_t.</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_z_t</span><span class="p">),</span>
+                            <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+            <span class="n">mu_y_t</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">z</span>
+            <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_y_t</span><span class="p">),</span>
+                        <span class="n">obs</span><span class="o">=</span><span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">])</span>
+        <span class="n">first_capture_mask</span> <span class="o">|=</span> <span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In our third model variant there is a survival probability phi_t for T-1</span>
+<span class="sd">of the T time periods of the capture data (just like in model_2), but here</span>
+<span class="sd">each phi_t is treated as a random effect.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">model_3</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">logit</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">phi_mean</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_mean&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># mean survival probability</span>
+    <span class="n">phi_logit_mean</span> <span class="o">=</span> <span class="n">logit</span><span class="p">(</span><span class="n">phi_mean</span><span class="p">)</span>
+    <span class="c1"># controls temporal variability of survival probability</span>
+    <span class="n">phi_sigma</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_sigma&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># recapture probability</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">first_capture_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+    <span class="c1"># we create the plate once, outside of the loop over t</span>
+    <span class="n">animals_plate</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;animals&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">markov</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+        <span class="n">phi_logit_t</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_logit_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                                  <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">phi_logit_mean</span><span class="p">,</span> <span class="n">phi_sigma</span><span class="p">))</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span> \
+                      <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">phi_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">phi_logit_t</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">animals_plate</span><span class="p">,</span> <span class="n">poutine</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">first_capture_mask</span><span class="p">):</span>
+            <span class="n">mu_z_t</span> <span class="o">=</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="n">phi_t</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+            <span class="c1"># we use parallel enumeration to exactly sum out</span>
+            <span class="c1"># the discrete states z_t.</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_z_t</span><span class="p">),</span>
+                            <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+            <span class="n">mu_y_t</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">z</span>
+            <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_y_t</span><span class="p">),</span>
+                        <span class="n">obs</span><span class="o">=</span><span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">])</span>
+        <span class="n">first_capture_mask</span> <span class="o">|=</span> <span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In our fourth model variant we include group-level fixed effects</span>
+<span class="sd">for sex (male, female).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">model_4</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># survival probabilities for males/females</span>
+    <span class="n">phi_male</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_male&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="n">phi_female</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_female&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="c1"># we construct a N-dimensional vector that contains the appropriate</span>
+    <span class="c1"># phi for each individual given its sex (female = 0, male = 1)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">sex</span> <span class="o">*</span> <span class="n">phi_male</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">sex</span><span class="p">)</span> <span class="o">*</span> <span class="n">phi_female</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># recapture probability</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;animals&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        <span class="c1"># we use this mask to eliminate extraneous log probabilities</span>
+        <span class="c1"># that arise for a given individual before its first capture.</span>
+        <span class="n">first_capture_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">markov</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+            <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">first_capture_mask</span><span class="p">):</span>
+                <span class="n">mu_z_t</span> <span class="o">=</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="n">phi</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+                <span class="c1"># we use parallel enumeration to exactly sum out</span>
+                <span class="c1"># the discrete states z_t.</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_z_t</span><span class="p">),</span>
+                                <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+                <span class="n">mu_y_t</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">z</span>
+                <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_y_t</span><span class="p">),</span>
+                            <span class="n">obs</span><span class="o">=</span><span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">])</span>
+            <span class="n">first_capture_mask</span> <span class="o">|=</span> <span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In our final model variant we include both fixed group effects and fixed</span>
+<span class="sd">time effects for the survival probability phi:</span>
+
+<span class="sd">logit(phi_t) = beta_group + gamma_t</span>
+
+<span class="sd">We need to take care that the model is not overparameterized; to do this</span>
+<span class="sd">we effectively let a single scalar beta encode the difference in male</span>
+<span class="sd">and female survival probabilities.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">model_5</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">):</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># phi_beta controls the survival probability differential</span>
+    <span class="c1"># for males versus females (in logit space)</span>
+    <span class="n">phi_beta</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_beta&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+    <span class="n">phi_beta</span> <span class="o">=</span> <span class="n">sex</span> <span class="o">*</span> <span class="n">phi_beta</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>  <span class="c1"># recapture probability</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="n">first_capture_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+    <span class="c1"># we create the plate once, outside of the loop over t</span>
+    <span class="n">animals_plate</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;animals&quot;</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">markov</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+        <span class="n">phi_gamma_t</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;phi_gamma_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span> <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span> \
+                      <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">phi_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">phi_beta</span> <span class="o">+</span> <span class="n">phi_gamma_t</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">animals_plate</span><span class="p">,</span> <span class="n">poutine</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">first_capture_mask</span><span class="p">):</span>
+            <span class="n">mu_z_t</span> <span class="o">=</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span> <span class="n">phi_t</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">first_capture_mask</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+            <span class="c1"># we use parallel enumeration to exactly sum out</span>
+            <span class="c1"># the discrete states z_t.</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_z_t</span><span class="p">),</span>
+                            <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+            <span class="n">mu_y_t</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">z</span>
+            <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">mu_y_t</span><span class="p">),</span>
+                        <span class="n">obs</span><span class="o">=</span><span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">])</span>
+        <span class="n">first_capture_mask</span> <span class="o">|=</span> <span class="n">capture_history</span><span class="p">[:,</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+
+<span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;model_&#39;</span><span class="p">):]:</span> <span class="n">model</span>
+          <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+          <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;model_&#39;</span><span class="p">)}</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="n">__debug__</span><span class="p">)</span>
+
+    <span class="c1"># load data</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;dipper&quot;</span><span class="p">:</span>
+        <span class="n">capture_history_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/dipper_capture_history.csv&#39;</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;vole&quot;</span><span class="p">:</span>
+        <span class="n">capture_history_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/meadow_voles_capture_history.csv&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Available datasets are </span><span class="se">\&#39;</span><span class="s2">dipper</span><span class="se">\&#39;</span><span class="s2"> and </span><span class="se">\&#39;</span><span class="s2">vole</span><span class="se">\&#39;</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">capture_history</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">capture_history_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">float</span><span class="p">()[:,</span> <span class="mi">1</span><span class="p">:]</span>
+    <span class="n">N</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">capture_history</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Loaded {} capture history for {} individuals collected over {} time periods.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+          <span class="n">args</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;dipper&quot;</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">]:</span>
+        <span class="n">sex_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/dipper_sex.csv&#39;</span>
+        <span class="n">sex</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">sex_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">float</span><span class="p">()[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Loaded dipper sex data.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;vole&quot;</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot run model_{} on meadow voles data, since we lack sex &quot;</span> <span class="o">+</span>
+                         <span class="s2">&quot;information for these animals.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sex</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">]</span>
+
+    <span class="c1"># we use poutine.block to only expose the continuous latent variables</span>
+    <span class="c1"># in the models to AutoDiagonalNormal (all of which begin with &#39;phi&#39;</span>
+    <span class="c1"># or &#39;rho&#39;)</span>
+    <span class="k">def</span> <span class="nf">expose_fn</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;phi&#39;</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">]</span>
+
+    <span class="c1"># we use a mean field diagonal normal variational distributions (i.e. guide)</span>
+    <span class="c1"># for the continuous latent variables.</span>
+    <span class="n">guide</span> <span class="o">=</span> <span class="n">AutoDiagonalNormal</span><span class="p">(</span><span class="n">poutine</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">expose_fn</span><span class="o">=</span><span class="n">expose_fn</span><span class="p">))</span>
+
+    <span class="c1"># since we enumerate the discrete random variables,</span>
+    <span class="c1"># we need to use TraceEnum_ELBO or TraceTMC_ELBO.</span>
+    <span class="n">optim</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">})</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">tmc</span><span class="p">:</span>
+        <span class="n">elbo</span> <span class="o">=</span> <span class="n">TraceTMC_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tmc_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">infer_config</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_samples&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">tmc_num_samples</span><span class="p">,</span> <span class="s2">&quot;expand&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span> <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;infer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;enumerate&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;parallel&quot;</span> <span class="k">else</span> <span class="p">{})</span>  <span class="c1"># noqa: E501</span>
+        <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">tmc_model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">elbo</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">elbo</span> <span class="o">=</span> <span class="n">TraceEnum_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_particles</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">vectorize_particles</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">elbo</span><span class="p">)</span>
+
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Beginning training of model_{} with Stochastic Variational Inference.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_steps</span><span class="p">):</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">)</span>
+        <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">step</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[iteration </span><span class="si">%03d</span><span class="s2">] loss: </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">losses</span><span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">:])))</span>
+
+    <span class="c1"># evaluate final trained model</span>
+    <span class="n">elbo_eval</span> <span class="o">=</span> <span class="n">TraceEnum_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_particles</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">vectorize_particles</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">svi_eval</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">elbo_eval</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Final loss: </span><span class="si">%.4f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">svi_eval</span><span class="o">.</span><span class="n">evaluate_loss</span><span class="p">(</span><span class="n">capture_history</span><span class="p">,</span> <span class="n">sex</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;CJS capture-recapture model for ecological data&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;--model&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;one of: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">()))))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--dataset&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;dipper&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-steps&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-lr&quot;</span><span class="p">,</span> <span class="s2">&quot;--learning-rate&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tmc&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use Tensor Monte Carlo instead of exact enumeration &quot;</span>
+                             <span class="s2">&quot;to estimate the marginal likelihood. You probably don&#39;t want to do this, &quot;</span>
+                             <span class="s2">&quot;except to see that TMC makes Monte Carlo gradient estimation feasible &quot;</span>
+                             <span class="s2">&quot;even with very large numbers of non-reparametrized variables.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tmc-num-samples&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cevae.html" class="btn btn-neutral float-right" title="Causal Effect VAE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="boosting_bbvi.html" class="btn btn-neutral float-left" title="Boosting Black Box Variational Inference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

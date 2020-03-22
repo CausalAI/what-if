@@ -1,0 +1,770 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Mini-Pyro &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Poutine: Pyro 中使用 Effect Handlers 编程手册" href="effect_handlers.html" />
+    <link rel="prev" title="Pyro 模型中使用 PyTorch JIT Compiler" href="jit.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mini-Pyro</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-use-of-mini-pyro">Example use of mini-Pyro</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Mini-Pyro</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/minipyro.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="mini-pyro">
+<h1>Mini-Pyro<a class="headerlink" href="#mini-pyro" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/pyro/contrib/minipyro.py">View pyro/contrib/minipyro.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mini Pyro</span>
+<span class="sd">---------</span>
+
+<span class="sd">This file contains a minimal implementation of the Pyro Probabilistic</span>
+<span class="sd">Programming Language. The API (method signatures, etc.) match that of</span>
+<span class="sd">the full implementation as closely as possible. This file is independent</span>
+<span class="sd">of the rest of Pyro, with the exception of the :mod:`pyro.distributions`</span>
+<span class="sd">module.</span>
+
+<span class="sd">An accompanying example that makes use of this implementation can be</span>
+<span class="sd">found at examples/minipyro.py.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">pyro.distributions</span> <span class="kn">import</span> <span class="n">validation_enabled</span>
+
+<span class="c1"># Pyro keeps track of two kinds of global state:</span>
+<span class="c1"># i)  The effect handler stack, which enables non-standard interpretations of</span>
+<span class="c1">#     Pyro primitives like sample();</span>
+<span class="c1">#     See http://docs.pyro.ai/en/0.3.1/poutine.html</span>
+<span class="c1"># ii) Trainable parameters in the Pyro ParamStore;</span>
+<span class="c1">#     See http://docs.pyro.ai/en/0.3.1/parameters.html</span>
+
+<span class="n">PYRO_STACK</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">PARAM_STORE</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># maps name -&gt; (unconstrained_value, constraint)</span>
+
+
+<span class="k">def</span> <span class="nf">get_param_store</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">PARAM_STORE</span>
+
+
+<span class="c1"># The base effect handler class (called Messenger here for consistency with Pyro).</span>
+<span class="k">class</span> <span class="nc">Messenger</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span>
+
+    <span class="c1"># Effect handlers push themselves onto the PYRO_STACK.</span>
+    <span class="c1"># Handlers earlier in the PYRO_STACK are applied first.</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">PYRO_STACK</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">PYRO_STACK</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">self</span>
+        <span class="n">PYRO_STACK</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">postprocess_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># A first useful example of an effect handler.</span>
+<span class="c1"># trace records the inputs and outputs of any primitive site it encloses,</span>
+<span class="c1"># and returns a dictionary containing that data to the user.</span>
+<span class="k">class</span> <span class="nc">trace</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span>
+
+    <span class="c1"># trace illustrates why we need postprocess_message in addition to process_message:</span>
+    <span class="c1"># We only want to record a value after all other effects have been applied</span>
+    <span class="k">def</span> <span class="nf">postprocess_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;sample&quot;</span> <span class="ow">or</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">,</span> \
+            <span class="s2">&quot;sample sites must have unique names&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span>
+
+
+<span class="c1"># A second example of an effect handler for setting the value at a sample site.</span>
+<span class="c1"># This illustrates why effect handlers are a useful PPL implementation technique:</span>
+<span class="c1"># We can compose trace and replay to replace values but preserve distributions,</span>
+<span class="c1"># allowing us to compute the joint probability density of samples under a model.</span>
+<span class="c1"># See the definition of elbo(...) below for an example of this pattern.</span>
+<span class="k">class</span> <span class="nc">replay</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">guide_trace</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guide_trace</span> <span class="o">=</span> <span class="n">guide_trace</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">guide_trace</span><span class="p">:</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guide_trace</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># block allows the selective application of effect handlers to different parts of a model.</span>
+<span class="c1"># Sites hidden by block will only have the handlers below block on the PYRO_STACK applied,</span>
+<span class="c1"># allowing inference or other effectful computations to be nested inside models.</span>
+<span class="k">class</span> <span class="nc">block</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hide_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="bp">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hide_fn</span> <span class="o">=</span> <span class="n">hide_fn</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hide_fn</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+            <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;stop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+
+<span class="c1"># seed is used to fix the RNG state when calling a model.</span>
+<span class="k">class</span> <span class="nc">seed</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rng_seed</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span> <span class="o">=</span> <span class="n">rng_seed</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">old_state</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;torch&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">get_rng_state</span><span class="p">(),</span> <span class="s1">&#39;random&#39;</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">getstate</span><span class="p">()}</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_state</span><span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_rng_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_state</span><span class="p">[</span><span class="s1">&#39;torch&#39;</span><span class="p">])</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">setstate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_state</span><span class="p">[</span><span class="s1">&#39;random&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;numpy&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_state</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_state</span><span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">])</span>
+
+
+<span class="c1"># This limited implementation of PlateMessenger only implements broadcasting.</span>
+<span class="k">class</span> <span class="nc">PlateMessenger</span><span class="p">(</span><span class="n">Messenger</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">dim</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">batch_shape</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="ow">or</span> <span class="n">batch_shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+                <span class="n">batch_shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span>
+                <span class="n">batch_shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+                <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+
+<span class="c1"># apply_stack is called by pyro.sample and pyro.param.</span>
+<span class="c1"># It is responsible for applying each Messenger to each effectful operation.</span>
+<span class="k">def</span> <span class="nf">apply_stack</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">pointer</span><span class="p">,</span> <span class="n">handler</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">PYRO_STACK</span><span class="p">)):</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">process_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c1"># When a Messenger sets the &quot;stop&quot; field of a message,</span>
+        <span class="c1"># it prevents any Messengers above it on the stack from being applied.</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stop&quot;</span><span class="p">):</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">](</span><span class="o">*</span><span class="n">msg</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
+
+    <span class="c1"># A Messenger that sets msg[&quot;stop&quot;] == True also prevents application</span>
+    <span class="c1"># of postprocess_message by Messengers above it on the stack</span>
+    <span class="c1"># via the pointer variable from the process_message loop</span>
+    <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">PYRO_STACK</span><span class="p">[</span><span class="o">-</span><span class="n">pointer</span><span class="o">-</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">postprocess_message</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span>
+
+
+<span class="c1"># sample is an effectful version of Distribution.sample(...)</span>
+<span class="c1"># When any effect handlers are active, it constructs an initial message and calls apply_stack.</span>
+<span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="c1"># if there are no active Messengers, we just draw a sample and return it as expected:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PYRO_STACK</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Otherwise, we initialize a message...</span>
+    <span class="n">initial_msg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;sample&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="n">args</span><span class="p">,</span>
+        <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">obs</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># ...and use apply_stack to send it to the Messengers</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">apply_stack</span><span class="p">(</span><span class="n">initial_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># param is an effectful version of PARAM_STORE.setdefault that also handles constraints.</span>
+<span class="c1"># When any effect handlers are active, it constructs an initial message and calls apply_stack.</span>
+<span class="k">def</span> <span class="nf">param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">init_value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">constraint</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">event_dim</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">event_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;minipyro.plate does not support the event_dim arg&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fn</span><span class="p">(</span><span class="n">init_value</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">PARAM_STORE</span><span class="p">:</span>
+            <span class="n">unconstrained_value</span><span class="p">,</span> <span class="n">constraint</span> <span class="o">=</span> <span class="n">PARAM_STORE</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Initialize with a constrained value.</span>
+            <span class="k">assert</span> <span class="n">init_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">constrained_value</span> <span class="o">=</span> <span class="n">init_value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                <span class="n">unconstrained_value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">constrained_value</span><span class="p">)</span>
+            <span class="n">unconstrained_value</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">()</span>
+            <span class="n">PARAM_STORE</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">unconstrained_value</span><span class="p">,</span> <span class="n">constraint</span>
+
+        <span class="c1"># Transform from unconstrained space to constrained space.</span>
+        <span class="n">constrained_value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">constraint</span><span class="p">)(</span><span class="n">unconstrained_value</span><span class="p">)</span>
+        <span class="n">constrained_value</span><span class="o">.</span><span class="n">unconstrained</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">unconstrained_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">constrained_value</span>
+
+    <span class="c1"># if there are no active Messengers, we just draw a sample and return it as expected:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PYRO_STACK</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">init_value</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)</span>
+
+    <span class="c1"># Otherwise, we initialize a message...</span>
+    <span class="n">initial_msg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;param&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;fn&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">init_value</span><span class="p">,</span> <span class="n">constraint</span><span class="p">),</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># ...and use apply_stack to send it to the Messengers</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">apply_stack</span><span class="p">(</span><span class="n">initial_msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># boilerplate to match the syntax of actual pyro.plate:</span>
+<span class="k">def</span> <span class="nf">plate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;minipyro.plate requires a dim arg&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">PlateMessenger</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+
+
+<span class="c1"># This is a thin wrapper around the `torch.optim.Adam` class that</span>
+<span class="c1"># dynamically generates optimizers for dynamically generated parameters.</span>
+<span class="c1"># See http://docs.pyro.ai/en/0.3.1/optimization.html</span>
+<span class="k">class</span> <span class="nc">Adam</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optim_args</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim_args</span> <span class="o">=</span> <span class="n">optim_args</span>
+        <span class="c1"># Each parameter will get its own optimizer, which we keep track</span>
+        <span class="c1"># of using this dictionary keyed on parameters.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim_objs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="c1"># If we&#39;ve seen this parameter before, use the previously</span>
+            <span class="c1"># constructed optimizer.</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optim_objs</span><span class="p">:</span>
+                <span class="n">optim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optim_objs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+            <span class="c1"># If we&#39;ve never seen this parameter before, construct</span>
+            <span class="c1"># an Adam optimizer and keep track of it.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">optim</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">param</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">optim_args</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optim_objs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">optim</span>
+            <span class="c1"># Take a gradient step for the parameter param.</span>
+            <span class="n">optim</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+
+<span class="c1"># This is a unified interface for stochastic variational inference in Pyro.</span>
+<span class="c1"># The actual construction of the loss is taken care of by `loss`.</span>
+<span class="c1"># See http://docs.pyro.ai/en/0.3.1/inference_algos.html</span>
+<span class="k">class</span> <span class="nc">SVI</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">guide</span> <span class="o">=</span> <span class="n">guide</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span> <span class="o">=</span> <span class="n">optim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span>
+
+    <span class="c1"># This method handles running the model and guide, constructing the loss</span>
+    <span class="c1"># function, and taking a gradient step.</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># This wraps both the call to `model` and `guide` in a `trace` so that</span>
+        <span class="c1"># we can record all the parameters that are encountered. Note that</span>
+        <span class="c1"># further tracing occurs inside of `loss`.</span>
+        <span class="k">with</span> <span class="n">trace</span><span class="p">()</span> <span class="k">as</span> <span class="n">param_capture</span><span class="p">:</span>
+            <span class="c1"># We use block here to allow tracing to record parameters only.</span>
+            <span class="k">with</span> <span class="n">block</span><span class="p">(</span><span class="n">hide_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">):</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Differentiate the loss.</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Grab all the parameters from the trace.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">()</span>
+                  <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">param_capture</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="c1"># Take a step w.r.t. each parameter in params.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="c1"># Zero out the gradients so that they don&#39;t accumulate.</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+
+<span class="c1"># This is a basic implementation of the Evidence Lower Bound, which is the</span>
+<span class="c1"># fundamental objective in Variational Inference.</span>
+<span class="c1"># See http://pyro.ai/examples/svi_part_i.html for details.</span>
+<span class="c1"># This implementation has various limitations (for example it only supports</span>
+<span class="c1"># random variables with reparameterized samplers), but all the ELBO</span>
+<span class="c1"># implementations in Pyro share the same basic logic.</span>
+<span class="k">def</span> <span class="nf">elbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># Run the guide with the arguments passed to SVI.step() and trace the execution,</span>
+    <span class="c1"># i.e. record all the calls to Pyro primitives like sample() and param().</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># Now run the model with the same arguments and trace the execution. Because</span>
+    <span class="c1"># model is being run with replay, whenever we encounter a sample site in the</span>
+    <span class="c1"># model, instead of sampling from the corresponding distribution in the model,</span>
+    <span class="c1"># we instead reuse the corresponding sample from the guide. In probabilistic</span>
+    <span class="c1"># terms, this means our loss is constructed as an expectation w.r.t. the joint</span>
+    <span class="c1"># distribution defined by the guide.</span>
+    <span class="n">model_trace</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">replay</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide_trace</span><span class="p">))</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="c1"># We will accumulate the various terms of the ELBO in `elbo`.</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="c1"># Loop over all the sample sites in the model and add the corresponding</span>
+    <span class="c1"># log p(z) term to the ELBO. Note that this will also include any observed</span>
+    <span class="c1"># data, i.e. sample sites with the keyword `obs=...`.</span>
+    <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">model_trace</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">+</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># Loop over all the sample sites in the guide and add the corresponding</span>
+    <span class="c1"># -log q(z) term to the ELBO.</span>
+    <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">guide_trace</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">elbo</span> <span class="o">=</span> <span class="n">elbo</span> <span class="o">-</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># Return (-elbo) since by convention we do gradient descent on a loss and</span>
+    <span class="c1"># the ELBO is a lower bound that needs to be maximized.</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">elbo</span>
+
+
+<span class="c1"># This is a wrapper for compatibility with full Pyro.</span>
+<span class="k">def</span> <span class="nf">Trace_ELBO</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">elbo</span>
+
+
+<span class="c1"># This is a Jit wrapper around elbo() that (1) delays tracing until the first</span>
+<span class="c1"># invocation, and (2) registers pyro.param() statements with torch.jit.trace.</span>
+<span class="c1"># This version does not support variable number of args or non-tensor kwargs.</span>
+<span class="k">class</span> <span class="nc">JitTrace_ELBO</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_jit_warnings</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ignore_jit_warnings&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compiled</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c1"># On first call, initialize params and save their names.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">block</span><span class="p">(),</span> <span class="n">trace</span><span class="p">()</span> <span class="k">as</span> <span class="n">tr</span><span class="p">,</span> <span class="n">block</span><span class="p">(</span><span class="n">hide_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;param&quot;</span><span class="p">):</span>
+                <span class="n">elbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span> <span class="o">=</span> <span class="n">tr</span>
+
+        <span class="c1"># Augment args with reads from the global param store.</span>
+        <span class="n">unconstrained_params</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">param</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">()</span>
+                                     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">)</span>
+        <span class="n">params_and_args</span> <span class="o">=</span> <span class="n">unconstrained_params</span> <span class="o">+</span> <span class="n">args</span>
+
+        <span class="c1"># On first call, create a compiled elbo.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compiled</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">compiled</span><span class="p">(</span><span class="o">*</span><span class="n">params_and_args</span><span class="p">):</span>
+                <span class="n">unconstrained_params</span> <span class="o">=</span> <span class="n">params_and_args</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">)]</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">params_and_args</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">):]</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unconstrained_param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">,</span> <span class="n">unconstrained_params</span><span class="p">):</span>
+                    <span class="n">constrained_param</span> <span class="o">=</span> <span class="n">param</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># assume param has been initialized</span>
+                    <span class="k">assert</span> <span class="n">constrained_param</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">()</span> <span class="ow">is</span> <span class="n">unconstrained_param</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">constrained_param</span>
+                <span class="k">return</span> <span class="n">replay</span><span class="p">(</span><span class="n">elbo</span><span class="p">,</span> <span class="n">guide_trace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_param_trace</span><span class="p">)(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">validation_enabled</span><span class="p">(</span><span class="bp">False</span><span class="p">),</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_jit_warnings</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">TracerWarning</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_compiled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="n">params_and_args</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compiled</span><span class="p">(</span><span class="o">*</span><span class="n">params_and_args</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="example-use-of-mini-pyro">
+<h2>Example use of mini-Pyro<a class="headerlink" href="#example-use-of-mini-pyro" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/minipyro.py">View examples/minipyro.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This example demonstrates the functionality of `pyro.contrib.minipyro`,</span>
+<span class="sd">which is a minimal implementation of the Pyro Probabilistic Programming</span>
+<span class="sd">Language that was created for didactic purposes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">pyro.generic</span> <span class="kn">import</span> <span class="n">distributions</span> <span class="k">as</span> <span class="n">dist</span>
+<span class="c1"># We use the pyro.generic interface to support dynamic choice of backend.</span>
+<span class="kn">from</span> <span class="nn">pyro.generic</span> <span class="kn">import</span> <span class="n">infer</span><span class="p">,</span> <span class="n">ops</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">pyro</span><span class="p">,</span> <span class="n">pyro_backend</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># Define a basic model with a single Normal latent random variable `loc`</span>
+    <span class="c1"># and a batch of Normally distributed observations.</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+        <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;obs&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Define a guide (i.e. variational distribution) with a Normal</span>
+    <span class="c1"># distribution over the latent random variable `loc`.</span>
+    <span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">guide_loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;guide_loc&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">))</span>
+        <span class="n">guide_scale</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;guide_scale_log&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">)))</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">guide_loc</span><span class="p">,</span> <span class="n">guide_scale</span><span class="p">))</span>
+
+    <span class="c1"># Generate some data.</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="mf">3.0</span>
+
+    <span class="c1"># Because the API in minipyro matches that of Pyro proper,</span>
+    <span class="c1"># training code works with generic Pyro implementations.</span>
+    <span class="k">with</span> <span class="n">pyro_backend</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">backend</span><span class="p">):</span>
+        <span class="c1"># Construct an SVI object so we can do variational inference on our</span>
+        <span class="c1"># model/guide pair.</span>
+        <span class="n">Elbo</span> <span class="o">=</span> <span class="n">infer</span><span class="o">.</span><span class="n">JitTrace_ELBO</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">jit</span> <span class="k">else</span> <span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span>
+        <span class="n">elbo</span> <span class="o">=</span> <span class="n">Elbo</span><span class="p">()</span>
+        <span class="n">adam</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">})</span>
+        <span class="n">svi</span> <span class="o">=</span> <span class="n">infer</span><span class="o">.</span><span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">adam</span><span class="p">,</span> <span class="n">elbo</span><span class="p">)</span>
+
+        <span class="c1"># Basic training loop</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">get_param_store</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_steps</span><span class="p">):</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;step {} loss = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+
+        <span class="c1"># Report the final values of the variational parameters</span>
+        <span class="c1"># in the guide after training.</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">get_param_store</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;{} = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+
+        <span class="c1"># For this simple (conjugate) model we know the exact posterior. In</span>
+        <span class="c1"># particular we know that the variational distribution should be</span>
+        <span class="c1"># centered near 3.0. So let&#39;s check this explicitly.</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;guide_loc&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.1</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Mini Pyro demo&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="s2">&quot;--backend&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;minipyro&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-steps&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1001</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-lr&quot;</span><span class="p">,</span> <span class="s2">&quot;--learning-rate&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--jit&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="effect_handlers.html" class="btn btn-neutral float-right" title="Poutine: Pyro 中使用 Effect Handlers 编程手册" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="jit.html" class="btn btn-neutral float-left" title="Pyro 模型中使用 PyTorch JIT Compiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

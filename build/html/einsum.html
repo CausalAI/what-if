@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plated Einsum &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Multivariate Forecasting" href="forecast_simple.html" />
+    <link rel="prev" title="Deep Kernel Learning" href="dkl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Plated Einsum</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/einsum.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="plated-einsum">
+<h1>Plated Einsum<a class="headerlink" href="#plated-einsum" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/einsum.py">View einsum.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This example demonstrates how to use plated ``einsum`` with different backends</span>
+<span class="sd">to compute logprob, gradients, MAP estimates, posterior samples, and marginals.</span>
+
+<span class="sd">The interface for adjoint algorithms requires four steps:</span>
+
+<span class="sd">1. Call ``require_backward()`` on all inputs.</span>
+<span class="sd">2. Call ``x, = einsum(..., backend=...)`` with a nonstandard backend.</span>
+<span class="sd">3. Call ``x._pyro_backward()` on the einsum output.</span>
+<span class="sd">4. Retrieve results from ``._pyro_backward_result`` attributes of the inputs.</span>
+
+<span class="sd">The results of these computations are returned, but this script does not</span>
+<span class="sd">make use of them; instead we simply time the operations for profiling.</span>
+<span class="sd">All profiling is done on jit-compiled functions. We exclude jit compilation</span>
+<span class="sd">time from profiling results, assuming this can be done once.</span>
+
+<span class="sd">You can measure complexity of different einsum problems by specifying</span>
+<span class="sd">``--equation`` and ``--plates``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">timeit</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">grad</span>
+
+<span class="kn">from</span> <span class="nn">pyro.ops.contract</span> <span class="kn">import</span> <span class="n">einsum</span>
+<span class="kn">from</span> <span class="nn">pyro.ops.einsum.adjoint</span> <span class="kn">import</span> <span class="n">require_backward</span>
+<span class="kn">from</span> <span class="nn">pyro.util</span> <span class="kn">import</span> <span class="n">ignore_jit_warnings</span>
+
+<span class="c1"># We will cache jit-compiled versions of each function.</span>
+<span class="n">_CACHE</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">jit_prob</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs einsum to compute the partition function.</span>
+
+<span class="sd">    This is cheap but less numerically stable than using the torch_log backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;prob&#39;</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;plates&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CACHE</span><span class="p">:</span>
+
+        <span class="c1"># This simply wraps einsum for jit compilation.</span>
+        <span class="k">def</span> <span class="nf">_einsum</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_einsum</span><span class="p">,</span> <span class="n">operands</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="o">*</span><span class="n">operands</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">jit_logprob</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs einsum to compute the log partition function.</span>
+
+<span class="sd">    This simulates evaluating an undirected graphical model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;logprob&#39;</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;plates&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CACHE</span><span class="p">:</span>
+
+        <span class="c1"># This simply wraps einsum for jit compilation.</span>
+        <span class="k">def</span> <span class="nf">_einsum</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;pyro.ops.einsum.torch_log&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_einsum</span><span class="p">,</span> <span class="n">operands</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="o">*</span><span class="n">operands</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">jit_gradient</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs einsum and calls backward on the partition function.</span>
+
+<span class="sd">    This is simulates training an undirected graphical model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;gradient&#39;</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;plates&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CACHE</span><span class="p">:</span>
+
+        <span class="c1"># This wraps einsum for jit compilation, but we will call backward on the result.</span>
+        <span class="k">def</span> <span class="nf">_einsum</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;pyro.ops.einsum.torch_log&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_einsum</span><span class="p">,</span> <span class="n">operands</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c1"># Run forward pass.</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="o">*</span><span class="n">operands</span><span class="p">)</span>
+
+    <span class="c1"># Work around PyTorch 1.0.0 bug https://github.com/pytorch/pytorch/issues/14875</span>
+    <span class="c1"># whereby tuples of length 1 are unwrapped by the jit.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">losses</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">losses</span><span class="p">,)</span>
+
+    <span class="c1"># Run backward pass.</span>
+    <span class="n">grads</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">grad</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">operands</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">allow_unused</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="n">losses</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">grads</span>
+
+
+<span class="k">def</span> <span class="nf">_jit_adjoint</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs einsum in forward-backward mode using ``pyro.ops.adjoint``.</span>
+
+<span class="sd">    This simulates serving predictions from an undirected graphical model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;backend&#39;</span><span class="p">,</span> <span class="s1">&#39;pyro.ops.einsum.torch_sample&#39;</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">backend</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">),</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;plates&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CACHE</span><span class="p">:</span>
+
+        <span class="c1"># This wraps a complete adjoint algorithm call.</span>
+        <span class="nd">@ignore_jit_warnings</span><span class="p">()</span>
+        <span class="k">def</span> <span class="nf">_forward_backward</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">):</span>
+            <span class="c1"># First we request backward results on each input operand.</span>
+            <span class="c1"># This is the pyro.ops.adjoint equivalent of torch&#39;s .requires_grad_().</span>
+            <span class="k">for</span> <span class="n">operand</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">:</span>
+                <span class="n">require_backward</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span>
+
+            <span class="c1"># Next we run the forward pass.</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># The we run a backward pass.</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">_pyro_backward</span><span class="p">()</span>
+
+            <span class="c1"># Finally we retrieve results from the ._pyro_backward_result attribute</span>
+            <span class="c1"># that has been set on each input operand. If you only want results on a</span>
+            <span class="c1"># subset of operands, you can call require_backward() on only those.</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">_pyro_backward_result</span><span class="p">)</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">_pyro_backward_result</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+        <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">_forward_backward</span><span class="p">,</span> <span class="n">operands</span><span class="p">,</span> <span class="n">check_trace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_CACHE</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="o">*</span><span class="n">operands</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">jit_map</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_jit_adjoint</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;pyro.ops.einsum.torch_map&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">jit_sample</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_jit_adjoint</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;pyro.ops.einsum.torch_sample&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">jit_marginal</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_jit_adjoint</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;pyro.ops.einsum.torch_marginal&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">time_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">iters</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;iters&#39;</span><span class="p">)</span>
+    <span class="n">_CACHE</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>  <span class="c1"># Avoid memory leaks.</span>
+    <span class="n">fn</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">time_start</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iters</span><span class="p">):</span>
+        <span class="n">fn</span><span class="p">(</span><span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">time_end</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">time_end</span> <span class="o">-</span> <span class="n">time_start</span><span class="p">)</span> <span class="o">/</span> <span class="n">iters</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_tensor_type</span><span class="p">(</span><span class="s1">&#39;torch.cuda.FloatTensor&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">set_default_tensor_type</span><span class="p">(</span><span class="s1">&#39;torch.FloatTensor&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;prob&#39;</span><span class="p">,</span> <span class="s1">&#39;logprob&#39;</span><span class="p">,</span> <span class="s1">&#39;gradient&#39;</span><span class="p">,</span> <span class="s1">&#39;marginal&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;sample&#39;</span><span class="p">]:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Plate size  Time per iteration of {} (ms)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">method</span><span class="p">))</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;jit_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">method</span><span class="p">)]</span>
+    <span class="n">equation</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">equation</span>
+    <span class="n">plates</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">plates</span>
+    <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="n">equation</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&gt;&#39;</span><span class="p">)</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Vary all plate sizes at the same time.</span>
+    <span class="k">for</span> <span class="n">plate_size</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">max_plate_size</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+        <span class="n">operands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dims</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">plate_size</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">plates</span> <span class="k">else</span> <span class="n">args</span><span class="o">.</span><span class="n">dim_size</span>
+                                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">])</span>
+            <span class="n">operands</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">uniform_</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">())</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">time_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">equation</span><span class="p">,</span> <span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="n">plates</span><span class="o">=</span><span class="n">plates</span><span class="p">,</span> <span class="n">modulo_total</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                       <span class="n">iters</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">iters</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;{: &lt;11s} {:0.4g}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;{} ** {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plate_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">plates</span><span class="p">)),</span> <span class="n">time</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;plated einsum profiler&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="s1">&#39;--equation&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;a,abi,bcij,adj,deij-&gt;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--plates&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;--dim-size&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--max-plate-size&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--iters&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--cuda&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--method&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;one of: prob, logprob, gradient, marginal, map, sample&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="forecast_simple.html" class="btn btn-neutral float-right" title="Multivariate Forecasting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dkl.html" class="btn btn-neutral float-left" title="Deep Kernel Learning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
