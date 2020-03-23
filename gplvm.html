@@ -1,0 +1,901 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gaussian Process Latent Variable Model &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bayesian Optimization" href="bo.html" />
+    <link rel="prev" title="Gaussian Processes" href="gp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gaussian Process Latent Variable Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Modelling">Modelling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Inference">Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Visualizing-the-result">Visualizing the result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Remarks">Remarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Gaussian Process Latent Variable Model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/gplvm.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Gaussian-Process-Latent-Variable-Model">
+<h1>Gaussian Process Latent Variable Model<a class="headerlink" href="#Gaussian-Process-Latent-Variable-Model" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction#Gaussian_process_latent_variable_models">Gaussian Process Latent Variable Model</a> (GPLVM) is a dimensionality reduction method that uses a Gaussian process to learn a low-dimensional representation of (potentially) high-dimensional data. In the typical setting of Gaussian process regression, where we are given inputs <span class="math notranslate nohighlight">\(X\)</span> and outputs <span class="math notranslate nohighlight">\(y\)</span>, we choose a kernel and learn hyperparameters that best describe the mapping
+from <span class="math notranslate nohighlight">\(X\)</span> to <span class="math notranslate nohighlight">\(y\)</span>. In the GPLVM, we are not given <span class="math notranslate nohighlight">\(X\)</span>: we are only given <span class="math notranslate nohighlight">\(y\)</span>. So we need to learn <span class="math notranslate nohighlight">\(X\)</span> along with the kernel hyperparameters.</p>
+<p>We do not do maximum likelihood inference on <span class="math notranslate nohighlight">\(X\)</span>. Instead, we set a Gaussian prior for <span class="math notranslate nohighlight">\(X\)</span> and learn the mean and variance of the approximate (gaussian) posterior <span class="math notranslate nohighlight">\(q(X|y)\)</span>. In this notebook, we show how this can be done using the <code class="docutils literal notranslate"><span class="pre">pyro.contrib.gp</span></code> module. In particular we reproduce a result described in [2].</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.contrib.gp</span> <span class="k">as</span> <span class="nn">gp</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">pyro.ops.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>  <span class="c1"># ignore; used to check code integrity in the Pyro repo</span>
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>       <span class="c1"># can help with debugging</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Dataset">
+<h2>Dataset<a class="headerlink" href="#Dataset" title="Permalink to this headline">¶</a></h2>
+<p>The data we are going to use consists of <a class="reference external" href="https://en.wikipedia.org/wiki/Single-cell_analysis">single-cell</a> <a class="reference external" href="https://en.wikipedia.org/wiki/Real-time_polymerase_chain_reaction">qPCR</a> data for 48 genes obtained from mice (Guo <em>et al.</em>, [1]). This data is available at the <a class="reference external" href="https://github.com/sods/ods">Open Data Science repository</a>. The data contains 48 columns, with each column corresponding to (normalized) measurements of each gene. Cells differentiate during their development and these
+data were obtained at various stages of development. The various stages are labelled from the 1-cell stage to the 64-cell stage. For the 32-cell stage, the data is further differentiated into ‘trophectoderm’ (TE) and ‘inner cell mass’ (ICM). ICM further differentiates into ‘epiblast’ (EPI) and ‘primitive endoderm’ (PE) at the 64-cell stage. Each of the rows in the dataset is labelled with one of these stages.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># license: Copyright (c) 2014, the Open Data Science Initiative</span>
+<span class="c1"># license: https://www.elsevier.com/legal/elsevier-website-terms-and-conditions</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/sods/ods/master/datasets/guo_qpcr.csv&quot;</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data shape: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">21</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Data labels: </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">86</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Show a small subset of the data:&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Data shape: (437, 48)
+---------------------
+
+Data labels: [&#39;1&#39;, &#39;2&#39;, &#39;4&#39;, &#39;8&#39;, &#39;16&#39;, &#39;32 TE&#39;, &#39;32 ICM&#39;, &#39;64 PE&#39;, &#39;64 TE&#39;, &#39;64 EPI&#39;]
+--------------------------------------------------------------------------------------
+
+Show a small subset of the data:
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Actb</th>
+      <th>Ahcy</th>
+      <th>Aqp3</th>
+      <th>Atp12a</th>
+      <th>Bmp4</th>
+      <th>Cdx2</th>
+      <th>Creb312</th>
+      <th>Cebpa</th>
+      <th>Dab2</th>
+      <th>DppaI</th>
+      <th>...</th>
+      <th>Sox2</th>
+      <th>Sall4</th>
+      <th>Sox17</th>
+      <th>Snail</th>
+      <th>Sox13</th>
+      <th>Tcfap2a</th>
+      <th>Tcfap2c</th>
+      <th>Tcf23</th>
+      <th>Utf1</th>
+      <th>Tspan8</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>0.541050</td>
+      <td>-1.203007</td>
+      <td>1.030746</td>
+      <td>1.064808</td>
+      <td>0.494782</td>
+      <td>-0.167143</td>
+      <td>-1.369092</td>
+      <td>1.083061</td>
+      <td>0.668057</td>
+      <td>-1.553758</td>
+      <td>...</td>
+      <td>-1.351757</td>
+      <td>-1.793476</td>
+      <td>0.783185</td>
+      <td>-1.408063</td>
+      <td>-0.031991</td>
+      <td>-0.351257</td>
+      <td>-1.078982</td>
+      <td>0.942981</td>
+      <td>1.348892</td>
+      <td>-1.051999</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.680832</td>
+      <td>-1.355306</td>
+      <td>2.456375</td>
+      <td>1.234350</td>
+      <td>0.645494</td>
+      <td>1.003868</td>
+      <td>-1.207595</td>
+      <td>1.208023</td>
+      <td>0.800388</td>
+      <td>-1.435306</td>
+      <td>...</td>
+      <td>-1.363533</td>
+      <td>-1.782172</td>
+      <td>1.532477</td>
+      <td>-1.361172</td>
+      <td>-0.501715</td>
+      <td>1.082362</td>
+      <td>-0.930112</td>
+      <td>1.064399</td>
+      <td>1.469397</td>
+      <td>-0.996275</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.056038</td>
+      <td>-1.280447</td>
+      <td>2.046133</td>
+      <td>1.439795</td>
+      <td>0.828121</td>
+      <td>0.983404</td>
+      <td>-1.460032</td>
+      <td>1.359447</td>
+      <td>0.530701</td>
+      <td>-1.340283</td>
+      <td>...</td>
+      <td>-1.296802</td>
+      <td>-1.567402</td>
+      <td>3.194157</td>
+      <td>-1.301777</td>
+      <td>-0.445219</td>
+      <td>0.031284</td>
+      <td>-1.005767</td>
+      <td>1.211529</td>
+      <td>1.615421</td>
+      <td>-0.651393</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.732331</td>
+      <td>-1.326911</td>
+      <td>2.464234</td>
+      <td>1.244323</td>
+      <td>0.654359</td>
+      <td>0.947023</td>
+      <td>-1.265609</td>
+      <td>1.215373</td>
+      <td>0.765212</td>
+      <td>-1.431401</td>
+      <td>...</td>
+      <td>-1.684100</td>
+      <td>-1.915556</td>
+      <td>2.962515</td>
+      <td>-1.349710</td>
+      <td>1.875957</td>
+      <td>1.699892</td>
+      <td>-1.059458</td>
+      <td>1.071541</td>
+      <td>1.476485</td>
+      <td>-0.699586</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.629333</td>
+      <td>-1.244308</td>
+      <td>1.316815</td>
+      <td>1.304162</td>
+      <td>0.707552</td>
+      <td>1.429070</td>
+      <td>-0.895578</td>
+      <td>-0.007785</td>
+      <td>0.644606</td>
+      <td>-1.381937</td>
+      <td>...</td>
+      <td>-1.304653</td>
+      <td>-1.761825</td>
+      <td>1.265379</td>
+      <td>-1.320533</td>
+      <td>-0.609864</td>
+      <td>0.413826</td>
+      <td>-0.888624</td>
+      <td>1.114394</td>
+      <td>1.519017</td>
+      <td>-0.798985</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 48 columns</p>
+</div></div>
+</div>
+</div>
+<div class="section" id="Modelling">
+<h2>Modelling<a class="headerlink" href="#Modelling" title="Permalink to this headline">¶</a></h2>
+<p>First, we need to define the output tensor <span class="math notranslate nohighlight">\(y\)</span>. To predict values for all <span class="math notranslate nohighlight">\(48\)</span> genes, we need <span class="math notranslate nohighlight">\(48\)</span> Gaussian processes. So the required shape for <span class="math notranslate nohighlight">\(y\)</span> is <code class="docutils literal notranslate"><span class="pre">num_GPs</span> <span class="pre">x</span> <span class="pre">num_data</span> <span class="pre">=</span> <span class="pre">48</span> <span class="pre">x</span> <span class="pre">437</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">get_default_dtype</span><span class="p">())</span>
+<span class="c1"># we need to transpose data to correct its shape</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Now comes the most interesting part. We know that the observed data <span class="math notranslate nohighlight">\(y\)</span> has latent structure: in particular different datapoints correspond to different cell stages. We would like our GPLVM to learn this structure in an unsupervised manner. In principle, if we do a good job of inference then we should be able to discover this structure—at least if we choose reasonable priors. First, we have to choose the dimension of our latent space <span class="math notranslate nohighlight">\(X\)</span>. We choose <span class="math notranslate nohighlight">\(dim(X)=2\)</span>, since we would
+like our model to disentangle ‘capture time’ (<span class="math notranslate nohighlight">\(1\)</span>, <span class="math notranslate nohighlight">\(2\)</span>, <span class="math notranslate nohighlight">\(4\)</span>, <span class="math notranslate nohighlight">\(8\)</span>, <span class="math notranslate nohighlight">\(16\)</span>, <span class="math notranslate nohighlight">\(32\)</span>, and <span class="math notranslate nohighlight">\(64\)</span>) from cell branching types (TE, ICM, PE, EPI). Next, when we set the mean of our prior over <span class="math notranslate nohighlight">\(X\)</span>, we set the first dimension to be equal to the observed capture time. This will help the GPLVM discover the structure we are interested in and will make it more likely that that structure will be axis-aligned in a way that is easier for us to interpret.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">capture_time</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">new_tensor</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">cell_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">cell_name</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">])</span>
+<span class="c1"># we scale the time into the interval [0, 1]</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">capture_time</span><span class="o">.</span><span class="n">log2</span><span class="p">()</span> <span class="o">/</span> <span class="mi">6</span>
+
+<span class="c1"># we setup the mean of our prior over X</span>
+<span class="n">X_prior_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># shape: 437 x 2</span>
+<span class="n">X_prior_mean</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span>
+</pre></div>
+</div>
+</div>
+<p>We will use a sparse version of Gaussian process inference to make training faster. Remember that we also need to define <span class="math notranslate nohighlight">\(X\)</span> as a <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> so that we can set a prior and guide (variational distribution) for it.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">kernel</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">RBF</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lengthscale</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># we clone here so that we don&#39;t change our prior during the course of training</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">X_prior_mean</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+
+<span class="c1"># we will use SparseGPRegression model with num_inducing=32;</span>
+<span class="c1"># initial values for Xu are sampled randomly from X_prior_mean</span>
+<span class="n">Xu</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">X_prior_mean</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="mi">32</span><span class="p">)</span>
+<span class="n">gplvm</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">SparseGPRegression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">Xu</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.01</span><span class="p">),</span> <span class="n">jitter</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We will use the <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#pyro.contrib.gp.parameterized.Parameterized.autoguide">autoguide()</a> method from the <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#module-pyro.contrib.gp.parameterized">Parameterized</a> class to set an auto Normal guide for <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># we use `.to_event()` to tell Pyro that the prior distribution for X has no batch_shape</span>
+<span class="n">gplvm</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">PyroSample</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">X_prior_mean</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">())</span>
+<span class="n">gplvm</span><span class="o">.</span><span class="n">autoguide</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Inference">
+<h2>Inference<a class="headerlink" href="#Inference" title="Permalink to this headline">¶</a></h2>
+<p>As mentioned in the <a class="reference internal" href="gp.html"><span class="doc">Gaussian Processes tutorial</span></a>, we can use the helper function <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#pyro.contrib.gp.util.train">gp.util.train</a> to train a Pyro GP module. By default, this helper function uses the Adam optimizer with a learning rate of <code class="docutils literal notranslate"><span class="pre">0.01</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># note that training is expected to take a minute or so</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">gplvm</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">)</span>
+
+<span class="c1"># let&#39;s plot the loss curve after 4000 steps of training</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gplvm_18_0.png" src="_images/gplvm_18_0.png" />
+</div>
+</div>
+<p>After inference, the mean and standard deviation of the approximated posterior <span class="math notranslate nohighlight">\(q(X) \sim p(X | y)\)</span> will be stored in the parameters <code class="docutils literal notranslate"><span class="pre">X_loc</span></code> and <code class="docutils literal notranslate"><span class="pre">X_scale</span></code>. To get a sample from <span class="math notranslate nohighlight">\(q(X)\)</span>, we need to set the <code class="docutils literal notranslate"><span class="pre">mode</span></code> of <code class="docutils literal notranslate"><span class="pre">gplvm</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;guide&quot;</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">gplvm</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;guide&quot;</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">gplvm</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># draw a sample from the guide of the variable X</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Visualizing-the-result">
+<h2>Visualizing the result<a class="headerlink" href="#Visualizing-the-result" title="Permalink to this headline">¶</a></h2>
+<p>Let’s see what we got by applying GPLVM to our dataset.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">colors</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">gplvm</span><span class="o">.</span><span class="n">X_loc</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+    <span class="n">X_i</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X_i</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X_i</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;pseudotime&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;branching&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;GPLVM on Single-Cell qPCR data&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gplvm_23_0.png" src="_images/gplvm_23_0.png" />
+</div>
+</div>
+<p>We can see that the first dimension of the latent <span class="math notranslate nohighlight">\(X\)</span> for each cell (horizontal axis) corresponds well with the observed capture time (colors). On the other hand, the 32 TE cell and 64 TE cell are clustered near each other. And the fact that ICM cells differentiate into PE and EPI can also be observed from the figure!</p>
+</div>
+<div class="section" id="Remarks">
+<h2>Remarks<a class="headerlink" href="#Remarks" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>The sparse version scales well (linearly) with the number of data points. So the GPLVM can be used with large datasets. Indeed in [2] the authors have applied GPLVM to a dataset with 68k peripheral blood mononuclear cells.</p></li>
+<li><p>Much of the power of Gaussian Processes lies in the function prior defined by the kernel. We recommend users try out different combinations of kernels for different types of datasets! For example, if the data contains periodicities, it might make sense to use a <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#periodic">Periodic kernel</a>. Other kernels can also be found in the <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#module-pyro.contrib.gp.kernels">Pyro GP docs</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="References">
+<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+<p>[1] <code class="docutils literal notranslate"><span class="pre">Resolution</span> <span class="pre">of</span> <span class="pre">Cell</span> <span class="pre">Fate</span> <span class="pre">Decisions</span> <span class="pre">Revealed</span> <span class="pre">by</span> <span class="pre">Single-Cell</span> <span class="pre">Gene</span> <span class="pre">Expression</span> <span class="pre">Analysis</span> <span class="pre">from</span> <span class="pre">Zygote</span> <span class="pre">to</span> <span class="pre">Blastocyst</span></code>,     Guoji Guo, Mikael Huss, Guo Qing Tong, Chaoyang Wang, Li Li Sun, Neil D. Clarke, Paul Robson</p>
+<p>[2] <code class="docutils literal notranslate"><span class="pre">GrandPrix:</span> <span class="pre">Scaling</span> <span class="pre">up</span> <span class="pre">the</span> <span class="pre">Bayesian</span> <span class="pre">GPLVM</span> <span class="pre">for</span> <span class="pre">single-cell</span> <span class="pre">data</span></code>,     Sumon Ahmed, Magnus Rattray, Alexis Boukouvalas</p>
+<p>[3] <code class="docutils literal notranslate"><span class="pre">Bayesian</span> <span class="pre">Gaussian</span> <span class="pre">Process</span> <span class="pre">Latent</span> <span class="pre">Variable</span> <span class="pre">Model</span></code>,     Michalis K. Titsias, Neil D. Lawrence</p>
+<p>[4] <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">novel</span> <span class="pre">approach</span> <span class="pre">for</span> <span class="pre">resolving</span> <span class="pre">differences</span> <span class="pre">in</span> <span class="pre">single-cell</span> <span class="pre">gene</span> <span class="pre">expression</span> <span class="pre">patterns</span> <span class="pre">from</span> <span class="pre">zygote</span> <span class="pre">to</span> <span class="pre">blastocyst</span></code>,     Florian Buettner, Fabian J. Theis</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bo.html" class="btn btn-neutral float-right" title="Bayesian Optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gp.html" class="btn btn-neutral float-left" title="Gaussian Processes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

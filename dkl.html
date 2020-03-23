@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Deep Kernel Learning &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Plated Einsum" href="einsum.html" />
+    <link rel="prev" title="Sparse Gamma Deep Exponential Family" href="sparse_gamma.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Deep Kernel Learning</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/dkl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="deep-kernel-learning">
+<h1>Deep Kernel Learning<a class="headerlink" href="#deep-kernel-learning" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/contrib/gp/sv-dkl.py">View sv-dkl.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">An example to use Pyro Gaussian Process module to classify MNIST and binary MNIST.</span>
+
+<span class="sd">Follow the idea from reference [1], we will combine a convolutional neural network</span>
+<span class="sd">(CNN) with a RBF kernel to create a &quot;deep&quot; kernel:</span>
+
+<span class="sd">    &gt;&gt;&gt; deep_kernel = gp.kernels.Warping(rbf, iwarping_fn=cnn)</span>
+
+<span class="sd">SparseVariationalGP model allows us train the data in mini-batch (time complexity</span>
+<span class="sd">scales linearly to the number of data points).</span>
+
+<span class="sd">Note that the implementation here is different from [1]. There the authors</span>
+<span class="sd">use CNN as a feature extraction layer, then add a Gaussian Process layer on the</span>
+<span class="sd">top of CNN. Hence, their inducing points lie in the space of extracted features.</span>
+<span class="sd">Here we join CNN module and RBF kernel together to make it a deep kernel.</span>
+<span class="sd">Hence, our inducing points lie in the space of original images.</span>
+
+<span class="sd">After 16 epochs with default hyperparameters, the accuaracy of 10-class MNIST</span>
+<span class="sd">is 98.45% and the accuaracy of binary MNIST is 99.41%.</span>
+
+<span class="sd">Reference:</span>
+
+<span class="sd">[1] Stochastic Variational Deep Kernel Learning</span>
+<span class="sd">    Andrew G. Wilson, Zhiting Hu, Ruslan R. Salakhutdinov, Eric P. Xing</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Code adapted from https://github.com/pytorch/examples/tree/master/mnist</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="kn">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="kn">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">transforms</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.contrib.gp</span> <span class="kn">as</span> <span class="nn">gp</span>
+<span class="kn">import</span> <span class="nn">pyro.infer</span> <span class="kn">as</span> <span class="nn">infer</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.examples.util</span> <span class="kn">import</span> <span class="n">get_data_loader</span><span class="p">,</span> <span class="n">get_data_directory</span>
+
+
+<span class="k">class</span> <span class="nc">CNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">320</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">320</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">gpmodule</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">binary</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>  <span class="c1"># convert numbers 0-&gt;9 to 0 or 1</span>
+
+        <span class="n">gpmodule</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">gpmodule</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">gpmodule</span><span class="o">.</span><span class="n">guide</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">batch_idx</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Train Epoch: {:2d} [{:5d}/{} ({:2.0f}%)]</span><span class="se">\t</span><span class="s2">Loss: {:.6f}&quot;</span>
+                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">batch_idx</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">),</span>
+                          <span class="mf">100.</span> <span class="o">*</span> <span class="n">batch_idx</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="p">),</span> <span class="n">loss</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">,</span> <span class="n">gpmodule</span><span class="p">):</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">binary</span><span class="p">:</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>  <span class="c1"># convert numbers 0-&gt;9 to 0 or 1</span>
+
+        <span class="c1"># get prediction of GP model on new data</span>
+        <span class="n">f_loc</span><span class="p">,</span> <span class="n">f_var</span> <span class="o">=</span> <span class="n">gpmodule</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># use its likelihood to give prediction class</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">gpmodule</span><span class="o">.</span><span class="n">likelihood</span><span class="p">(</span><span class="n">f_loc</span><span class="p">,</span> <span class="n">f_var</span><span class="p">)</span>
+        <span class="c1"># compare prediction and target to count accuaracy</span>
+        <span class="n">correct</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Test set: Accuracy: {}/{} ({:.2f}%)</span><span class="se">\n</span><span class="s2">&quot;</span>
+          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">correct</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">),</span> <span class="mf">100.</span> <span class="o">*</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">data_dir</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">data_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">get_data_directory</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+    <span class="n">train_loader</span> <span class="o">=</span> <span class="n">get_data_loader</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;MNIST&#39;</span><span class="p">,</span>
+                                   <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                                   <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                                   <span class="n">dataset_transforms</span><span class="o">=</span><span class="p">[</span><span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.1307</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.3081</span><span class="p">,))],</span>
+                                   <span class="n">is_training_set</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                   <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">test_loader</span> <span class="o">=</span> <span class="n">get_data_loader</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;MNIST&#39;</span><span class="p">,</span>
+                                  <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+                                  <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">test_batch_size</span><span class="p">,</span>
+                                  <span class="n">dataset_transforms</span><span class="o">=</span><span class="p">[</span><span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mf">0.1307</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.3081</span><span class="p">,))],</span>
+                                  <span class="n">is_training_set</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                  <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+        <span class="n">train_loader</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">test_loader</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">cnn</span> <span class="o">=</span> <span class="n">CNN</span><span class="p">()</span>
+
+    <span class="c1"># Create deep kernel by warping RBF with CNN.</span>
+    <span class="c1"># CNN will transform a high dimension image into a low dimension 2D tensors for RBF kernel.</span>
+    <span class="c1"># This kernel accepts inputs are inputs of CNN and gives outputs are covariance matrix of RBF</span>
+    <span class="c1"># on outputs of CNN.</span>
+    <span class="n">rbf</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">RBF</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lengthscale</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">deep_kernel</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">Warping</span><span class="p">(</span><span class="n">rbf</span><span class="p">,</span> <span class="n">iwarping_fn</span><span class="o">=</span><span class="n">cnn</span><span class="p">)</span>
+
+    <span class="c1"># init inducing points (taken randomly from dataset)</span>
+    <span class="n">batches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+        <span class="n">batches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="p">((</span><span class="n">args</span><span class="o">.</span><span class="n">num_inducing</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">):</span>
+            <span class="k">break</span>
+    <span class="n">Xu</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">batches</span><span class="p">)[:</span><span class="n">args</span><span class="o">.</span><span class="n">num_inducing</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">binary</span><span class="p">:</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">likelihoods</span><span class="o">.</span><span class="n">Binary</span><span class="p">()</span>
+        <span class="n">latent_shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># use MultiClass likelihood for 10-class classification problem</span>
+        <span class="n">likelihood</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">likelihoods</span><span class="o">.</span><span class="n">MultiClass</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="c1"># Because we use Categorical distribution in MultiClass likelihood, we need GP model</span>
+        <span class="c1"># returns a list of probabilities of each class. Hence it is required to use</span>
+        <span class="c1"># latent_shape = 10.</span>
+        <span class="n">latent_shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">10</span><span class="p">])</span>
+
+    <span class="c1"># Turns on &quot;whiten&quot; flag will help optimization for variational models.</span>
+    <span class="n">gpmodule</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">VariationalSparseGP</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">Xu</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">deep_kernel</span><span class="p">,</span> <span class="n">Xu</span><span class="o">=</span><span class="n">Xu</span><span class="p">,</span>
+                                             <span class="n">likelihood</span><span class="o">=</span><span class="n">likelihood</span><span class="p">,</span> <span class="n">latent_shape</span><span class="o">=</span><span class="n">latent_shape</span><span class="p">,</span>
+                                             <span class="n">num_data</span><span class="o">=</span><span class="mi">60000</span><span class="p">,</span> <span class="n">whiten</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="mf">2e-6</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+        <span class="n">gpmodule</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">gpmodule</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">infer</span><span class="o">.</span><span class="n">JitTraceMeanField_ELBO</span><span class="p">()</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">jit</span> <span class="k">else</span> <span class="n">infer</span><span class="o">.</span><span class="n">TraceMeanField_ELBO</span><span class="p">()</span>
+    <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">elbo</span><span class="o">.</span><span class="n">differentiable_loss</span>
+
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">train</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">gpmodule</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">test</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">,</span> <span class="n">gpmodule</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Amount of time spent for epoch {}: {}s</span><span class="se">\n</span><span class="s2">&quot;</span>
+              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Pyro GP MNIST Example&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--data-dir&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;PATH&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;default directory to cache MNIST data&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--num-inducing&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;number of inducing input (default: 70)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--binary&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;do binary classification&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--batch-size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;input batch size for training (default: 64)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--test-batch-size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;input batch size for testing (default: 1000)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--epochs&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;number of epochs to train (default: 10)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--lr&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;LR&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;learning rate (default: 0.01)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--cuda&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;enables CUDA training&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--jit&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;enables PyTorch jit&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--seed&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;S&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;random seed (default: 1)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--log-interval&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;how many batches to wait before logging training status&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cuda</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="einsum.html" class="btn btn-neutral float-right" title="Plated Einsum" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sparse_gamma.html" class="btn btn-neutral float-left" title="Sparse Gamma Deep Exponential Family" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

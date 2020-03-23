@@ -1,0 +1,812 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>半监督 VAE &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="随机波动率的 Levy 稳定分布模型" href="stable.html" />
+    <link rel="prev" title="Attend Infer Repeat" href="air.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">半监督 VAE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-Challenges-of-Inference">The Challenges of Inference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#First-Variant:-Standard-objective-function,-naive-estimator">First Variant: Standard objective function, naive estimator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Network-Definitions">Network Definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MNIST-Pre-Processing">MNIST Pre-Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-Objective-Function">The Objective Function</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Interlude:-Summing-Out-Discrete-Latents">Interlude: Summing Out Discrete Latents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Second-Variant:-Standard-Objective-Function,-Better-Estimator">Second Variant: Standard Objective Function, Better Estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Third-Variant:-Adding-a-Term-to-the-Objective">Third Variant: Adding a Term to the Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Latent-Space-Visualization">Latent Space Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Conditional-image-generation">Conditional image generation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Final-thoughts">Final thoughts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>半监督 VAE</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ss-vae.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="半监督-VAE">
+<h1>半监督 VAE<a class="headerlink" href="#半监督-VAE" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Introduction">
+<h2>Introduction<a class="headerlink" href="#Introduction" title="Permalink to this headline">¶</a></h2>
+<p>Most of the models we’ve covered in the tutorials are unsupervised:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="vae.html"><span class="doc">Variational Autoencoder (VAE)</span></a></p></li>
+<li><p><a class="reference internal" href="dmm.html"><span class="doc">DMM</span></a></p></li>
+<li><p><a class="reference internal" href="air.html"><span class="doc">Attend-Infer-Repeat</span></a></p></li>
+</ul>
+<p>We’ve also covered a simple supervised model:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="bayesian_regression.html"><span class="doc">Bayesian Regression</span></a></p></li>
+</ul>
+<p>The semi-supervised setting represents an interesting intermediate case where some of the data is labeled and some is not. It is also of great practical importance, since we often have very little labeled data and much more unlabeled data. We’d clearly like to leverage labeled data to improve our models of the unlabeled data.</p>
+<p>The semi-supervised setting is also well suited to generative models, where missing data can be accounted for quite naturally—at least conceptually. As we will see, in restricting our attention to semi-supervised generative models, there will be no shortage of different model variants and possible inference strategies. Although we’ll only be able to explore a few of these variants in detail, hopefully you will come away from the tutorial with a greater appreciation for the abstractions and
+modularity offered by probabilistic programming.</p>
+<p>So let’s go about building a generative model. We have a dataset <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> datapoints,</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D} = \{ ({\bf x}_i, {\bf y}_i) \}\]</div>
+<p>where the <span class="math notranslate nohighlight">\(\{ {\bf x}_i \}\)</span> are always observed and the labels <span class="math notranslate nohighlight">\(\{ {\bf y}_i \}\)</span> are only observed for some subset of the data. Since we want to be able to model complex variations in the data, we’re going to make this a latent variable model with a local latent variable <span class="math notranslate nohighlight">\({\bf z}_i\)</span> private to each pair <span class="math notranslate nohighlight">\(({\bf x}_i, {\bf y}_i)\)</span>. Even with this set of choices, a number of model variants are possible: we’re going to focus on the model variant depicted in Figure 1 (this is
+model M2 in reference [1]).</p>
+<p>m</p>
+<center><figure><center><figcaption><p>Figure 1: our semi-supervised generative model (c.f. model M2 in reference [1])</p>
+</figcaption></center></figure></center><p>For convenience—and since we’re going to model MNIST in our experiments below—let’s suppose the <span class="math notranslate nohighlight">\(\{ {\bf x}_i \}\)</span> are images and the <span class="math notranslate nohighlight">\(\{ {\bf y}_i \}\)</span> are digit labels. In this model setup, the latent random variable <span class="math notranslate nohighlight">\({\bf z}_i\)</span> and the (partially observed) digit label <em>jointly</em> generate the observed image. The <span class="math notranslate nohighlight">\({\bf z}_i\)</span> represents <em>everything but</em> the digit label, possibly handwriting style or position. Let’s sidestep asking when we expect this particular factorization
+of <span class="math notranslate nohighlight">\(({\bf x}_i, {\bf y}_i, {\bf z}_i)\)</span> to be appropriate, since the answer to that question will depend in large part on the dataset in question (among other things). Let’s instead highlight some of the ways that inference in this model will be challenging as well as some of the solutions that we’ll be exploring in the rest of the tutorial.</p>
+</div>
+<div class="section" id="The-Challenges-of-Inference">
+<h2>The Challenges of Inference<a class="headerlink" href="#The-Challenges-of-Inference" title="Permalink to this headline">¶</a></h2>
+<p>For concreteness we’re going to continue to assume that the partially-observed <span class="math notranslate nohighlight">\(\{ {\bf y}_i \}\)</span> are discrete labels; we will also assume that the <span class="math notranslate nohighlight">\(\{ {\bf z}_i \}\)</span> are continuous.</p>
+<ul class="simple">
+<li><p>If we apply the general recipe for stochastic variational inference to our model (see <a class="reference internal" href="svi_part_i.html"><span class="doc">SVI Part I</span></a>) we would be sampling the discrete (and thus non-reparameterizable) variable <span class="math notranslate nohighlight">\({\bf y}_i\)</span> whenever it’s unobserved. As discussed in <a class="reference internal" href="svi_part_iii.html"><span class="doc">SVI Part III</span></a> this will generally lead to high-variance gradient estimates.</p></li>
+<li><p>A common way to ameliorate this problem—and one that we’ll explore below—is to forego sampling and instead sum out all ten values of the class label <span class="math notranslate nohighlight">\({\bf y}_i\)</span> when we calculate the ELBO for an unlabeled datapoint <span class="math notranslate nohighlight">\({\bf x}_i\)</span>. This is more expensive per step, but can help us reduce the variance of our gradient estimator and thereby take fewer steps.</p></li>
+<li><p>Recall that the role of the guide is to ‘fill in’ <em>latent</em> random variables. Concretely, one component of our guide will be a digit classifier <span class="math notranslate nohighlight">\(q_\phi({\bf y} | {\bf x})\)</span> that will randomly ‘fill in’ labels <span class="math notranslate nohighlight">\(\{ {\bf y}_i \}\)</span> given an image <span class="math notranslate nohighlight">\(\{ {\bf x}_i \}\)</span>. Crucially, this means that the only term in the ELBO that will depend on <span class="math notranslate nohighlight">\(q_\phi(\cdot | {\bf x})\)</span> is the term that involves a sum over <em>unlabeled</em> datapoints. This means that our classifier
+<span class="math notranslate nohighlight">\(q_\phi(\cdot | {\bf x})\)</span>—which in many cases will be the primary object of interest—will not be learning from the labeled datapoints (at least not directly).</p></li>
+<li><p>This seems like a potential problem. Luckily, various fixes are possible. Below we’ll follow the approach in reference [1], which involves introducing an additional objective function for the classifier to ensure that the classifier learns directly from the labeled data.</p></li>
+</ul>
+<p>We have our work cut out for us so let’s get started!</p>
+</div>
+<div class="section" id="First-Variant:-Standard-objective-function,-naive-estimator">
+<h2>First Variant: Standard objective function, naive estimator<a class="headerlink" href="#First-Variant:-Standard-objective-function,-naive-estimator" title="Permalink to this headline">¶</a></h2>
+<p>As discussed in the introduction, we’re considering the model depicted in Figure 1. In more detail, the model has the following structure:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p({\bf y}) = Cat({\bf y}~|~{\bf \pi})\)</span>: multinomial (or categorical) prior for the class label</p></li>
+<li><p><span class="math notranslate nohighlight">\(p({\bf z}) = \mathcal{N}({\bf z}~|~{\bf 0,I})\)</span>: unit normal prior for the latent code <span class="math notranslate nohighlight">\(\bf z\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(p_{\theta}({\bf x}~|~{\bf z,y}) = Bernoulli\left({\bf x}~|~\mu\left({\bf z,y}\right)\right)\)</span>: parameterized Bernoulli likelihood function; <span class="math notranslate nohighlight">\(\mu\left({\bf z,y}\right)\)</span> corresponds to <code class="docutils literal notranslate"><span class="pre">decoder</span></code> in the code</p></li>
+</ul>
+<p>We structure the components of our guide <span class="math notranslate nohighlight">\(q_{\phi}(.)\)</span> as follows:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(q_{\phi}({\bf y}~|~{\bf x}) = Cat({\bf y}~|~{\bf \alpha}_{\phi}\left({\bf x}\right))\)</span>: parameterized multinomial (or categorical) distribution; <span class="math notranslate nohighlight">\({\bf \alpha}_{\phi}\left({\bf x}\right)\)</span> corresponds to <code class="docutils literal notranslate"><span class="pre">encoder_y</span></code> in the code</p></li>
+<li><p><span class="math notranslate nohighlight">\(q_{\phi}({\bf z}~|~{\bf x, y}) = \mathcal{N}({\bf z}~|~{\bf \mu}_{\phi}\left({\bf x, y}\right), {\bf \sigma^2_{\phi}\left(x, y\right)})\)</span>: parameterized normal distribution; <span class="math notranslate nohighlight">\({\bf \mu}_{\phi}\left({\bf x, y}\right)\)</span> and <span class="math notranslate nohighlight">\({\bf \sigma^2_{\phi}\left(x, y\right)}\)</span> correspond to the neural digit classifier <code class="docutils literal notranslate"><span class="pre">encoder_z</span></code> in the code</p></li>
+</ul>
+<p>These choices reproduce the structure of model M2 and its corresponding inference network in reference [1].</p>
+<p>We translate this model and guide pair into Pyro code below. Note that:</p>
+<ul class="simple">
+<li><p>The labels <code class="docutils literal notranslate"><span class="pre">ys</span></code>, which are represented with a one-hot encoding, are only partially observed (<code class="docutils literal notranslate"><span class="pre">None</span></code> denotes unobserved values).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model()</span></code> handles both the observed and unobserved case.</p></li>
+<li><p>The code assumes that <code class="docutils literal notranslate"><span class="pre">xs</span></code> and <code class="docutils literal notranslate"><span class="pre">ys</span></code> are mini-batches of images and labels, respectively, with the size of each batch denoted by <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>.</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># register this pytorch module and all of its sub-modules with pyro</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s2">&quot;ss_vae&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># inform Pyro that the variables in the batch of xs, ys are conditionally independent</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+
+        <span class="c1"># sample the handwriting style from the constant prior distribution</span>
+        <span class="n">prior_loc</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">([</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">])</span>
+        <span class="n">prior_scale</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">new_ones</span><span class="p">([</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_dim</span><span class="p">])</span>
+        <span class="n">zs</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">prior_loc</span><span class="p">,</span> <span class="n">prior_scale</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># if the label y (which digit to write) is supervised, sample from the</span>
+        <span class="c1"># constant prior, otherwise, observe the value (i.e. score it against the constant prior)</span>
+        <span class="n">alpha_prior</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">new_ones</span><span class="p">([</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_size</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">OneHotCategorical</span><span class="p">(</span><span class="n">alpha_prior</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">ys</span><span class="p">)</span>
+
+        <span class="c1"># finally, score the image (x) using the handwriting style (z) and</span>
+        <span class="c1"># the class label y (which digit to write) against the</span>
+        <span class="c1"># parametrized distribution p(x|y,z) = bernoulli(decoder(y,z))</span>
+        <span class="c1"># where `decoder` is a neural network</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="n">zs</span><span class="p">,</span> <span class="n">ys</span><span class="p">])</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+        <span class="c1"># if the class label (the digit) is not supervised, sample</span>
+        <span class="c1"># (and score) the digit with the variational distribution</span>
+        <span class="c1"># q(y|x) = categorical(alpha(x))</span>
+        <span class="k">if</span> <span class="n">ys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_y</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">OneHotCategorical</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+
+        <span class="c1"># sample (and score) the latent handwriting-style with the variational</span>
+        <span class="c1"># distribution q(z|x,y) = normal(loc(x,y),scale(x,y))</span>
+        <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_z</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">])</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Network-Definitions">
+<h3>Network Definitions<a class="headerlink" href="#Network-Definitions" title="Permalink to this headline">¶</a></h3>
+<p>In our experiments we use the same network configurations as used in reference [1]. The encoder and decoder networks have one hidden layer with <span class="math notranslate nohighlight">\(500\)</span> hidden units and softplus activation functions. We use softmax as the activation function for the output of <code class="docutils literal notranslate"><span class="pre">encoder_y</span></code>, sigmoid as the output activation function for <code class="docutils literal notranslate"><span class="pre">decoder</span></code> and exponentiation for the scale part of the output of <code class="docutils literal notranslate"><span class="pre">encoder_z</span></code>. The latent dimension is 50.</p>
+</div>
+<div class="section" id="MNIST-Pre-Processing">
+<h3>MNIST Pre-Processing<a class="headerlink" href="#MNIST-Pre-Processing" title="Permalink to this headline">¶</a></h3>
+<p>We normalize the pixel values to the range <span class="math notranslate nohighlight">\([0.0, 1.0]\)</span>. We use the <a class="reference external" href="http://pytorch.org/docs/master/torchvision/datasets.html#torchvision.datasets.MNIST">MNIST data loader</a> from the <code class="docutils literal notranslate"><span class="pre">torchvision</span></code> library. The testing set consists of <span class="math notranslate nohighlight">\(10000\)</span> examples. The default training set consists of <span class="math notranslate nohighlight">\(60000\)</span> examples. We use the first <span class="math notranslate nohighlight">\(50000\)</span> examples for training (divided into supervised and un-supervised parts) and the remaining <span class="math notranslate nohighlight">\(10000\)</span> images for validation. For our
+experiments, we use <span class="math notranslate nohighlight">\(4\)</span> configurations of supervision in the training set, i.e. we consider <span class="math notranslate nohighlight">\(3000\)</span>, <span class="math notranslate nohighlight">\(1000\)</span>, <span class="math notranslate nohighlight">\(600\)</span> and <span class="math notranslate nohighlight">\(100\)</span> supervised examples selected randomly (while ensuring that each class is balanced).</p>
+</div>
+<div class="section" id="The-Objective-Function">
+<h3>The Objective Function<a class="headerlink" href="#The-Objective-Function" title="Permalink to this headline">¶</a></h3>
+<p>The objective function for this model has the two terms (c.f. Eqn. 8 in reference [1]):</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{J} = \!\!\sum_{({\bf x,y}) \in \mathcal{D}_{supervised} } \!\!\!\!\!\!\!\!\mathcal{L}\big({\bf x,y}\big) +\!\!\! \sum_{{\bf x} \in \mathcal{D}_{unsupervised}} \!\!\!\!\!\!\!\mathcal{U}\left({\bf x}\right)\]</div>
+<p>To implement this in Pyro, we setup a single instance of the <code class="docutils literal notranslate"><span class="pre">SVI</span></code> class. The two different terms in the objective functions will emerge automatically depending on whether we pass the <code class="docutils literal notranslate"><span class="pre">step</span></code> method labeled or unlabeled data. We will alternate taking steps with labeled and unlabeled mini-batches, with the number of steps taken for each type of mini-batch depending on the total fraction of data that is labeled. For example, if we have 1,000 labeled images and 49,000 unlabeled ones, then we’ll
+take 49 steps with unlabeled mini-batches for each labeled mini-batch. (Note that there are different ways we could do this, but for simplicity we only consider this variant.) The code for this setup is given below:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span><span class="p">,</span> <span class="n">TraceEnum_ELBO</span><span class="p">,</span> <span class="n">config_enumerate</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+
+<span class="c1"># setup the optimizer</span>
+<span class="n">adam_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.0003</span><span class="p">}</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">adam_params</span><span class="p">)</span>
+
+<span class="c1"># setup the inference algorithm</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>When we run this inference in Pyro, the performance seen during test time is degraded by the noise inherent in the sampling of the categorical variables (see Figure 2 and Table 1 at the end of this tutorial). To deal with this we’re going to need a better ELBO gradient estimator.</p>
+<center><figure><table><tr><td style="width: 450px"></td><td style="width: 450px"></td></tr></table><figcaption><p>Figure 2: Variant 1 (Left) Training losses for the case with 3000 supervised examples. (Right) Test and validation accuracies.</p>
+</figcaption></figure></center></div>
+</div>
+<div class="section" id="Interlude:-Summing-Out-Discrete-Latents">
+<h2>Interlude: Summing Out Discrete Latents<a class="headerlink" href="#Interlude:-Summing-Out-Discrete-Latents" title="Permalink to this headline">¶</a></h2>
+<p>As highlighted in the introduction, when the discrete latent labels <span class="math notranslate nohighlight">\({\bf y}\)</span> are not observed, the ELBO gradient estimates rely on sampling from <span class="math notranslate nohighlight">\(q_\phi({\bf y}|{\bf x})\)</span>. These gradient estimates can be very high-variance, especially early in the learning process when the guessed labels are often incorrect. A common approach to reduce variance in this case is to sum out discrete latent variables, replacing the Monte Carlo expectation</p>
+<div class="math notranslate nohighlight">
+\[\mathbb E_{{\bf y}\sim q_\phi(\cdot|{\bf x})}\nabla\operatorname{ELBO}\]</div>
+<p>with an explicit sum</p>
+<div class="math notranslate nohighlight">
+\[\sum_{\bf y} q_\phi({\bf y}|{\bf x})\nabla\operatorname{ELBO}\]</div>
+<p>This sum is usually implemented by hand, as in [1], but Pyro can automate this in many cases. To automatically sum out all discrete latent variables (here only <span class="math notranslate nohighlight">\({\bf y}\)</span>), we simply wrap the guide in <code class="docutils literal notranslate"><span class="pre">config_enumerate()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">config_enumerate</span><span class="p">(</span><span class="n">guide</span><span class="p">),</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">TraceEnum_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In this mode of operation, each <code class="docutils literal notranslate"><span class="pre">svi.step(...)</span></code> computes a gradient term for each of the ten latent states of <span class="math notranslate nohighlight">\(y\)</span>. Although each step is thus <span class="math notranslate nohighlight">\(10\times\)</span> more expensive, we’ll see that the lower-variance gradient estimate outweighs the additional cost.</p>
+<p>Going beyond the particular model in this tutorial, Pyro supports summing over arbitrarily many discrete latent variables. Beware that the cost of summing is exponential in the number of discrete variables, but is cheap(er) if multiple independent discrete variables are packed into a single tensor (as in this tutorial, where the discrete labels for the entire mini-batch are packed into the single tensor <span class="math notranslate nohighlight">\({\bf y}\)</span>). To use this parallel form of <code class="docutils literal notranslate"><span class="pre">config_enumerate()</span></code>, we must inform Pyro
+that the items in a minibatch are indeed independent by wrapping our vectorized code in a <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">plate(&quot;name&quot;)</span></code> block.</p>
+</div>
+<div class="section" id="Second-Variant:-Standard-Objective-Function,-Better-Estimator">
+<h2>Second Variant: Standard Objective Function, Better Estimator<a class="headerlink" href="#Second-Variant:-Standard-Objective-Function,-Better-Estimator" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have the tools to sum out discrete latents, we can see if doing so helps our performance. First, as we can see from Figure 3, the test and validation accuracies now evolve much more smoothly over the course of training. More importantly, this single modification improved test accuracy from around <code class="docutils literal notranslate"><span class="pre">20%</span></code> to about <code class="docutils literal notranslate"><span class="pre">90%</span></code> for the case of <span class="math notranslate nohighlight">\(3000\)</span> labeled examples. See Table 1 for the full results. This is great, but can we do better?</p>
+<center><figure><table><tr><td></td><td></td></tr></table><figcaption><p>Figure 3: Variant 2 (Left) Training losses for the case with 3000 supervised examples. (Right) Test and validation accuracies.</p>
+</figcaption></figure></center></div>
+<div class="section" id="Third-Variant:-Adding-a-Term-to-the-Objective">
+<h2>Third Variant: Adding a Term to the Objective<a class="headerlink" href="#Third-Variant:-Adding-a-Term-to-the-Objective" title="Permalink to this headline">¶</a></h2>
+<p>For the two variants we’ve explored so far, the classifier <span class="math notranslate nohighlight">\(q_{\phi}({\bf y}~|~ {\bf x})\)</span> doesn’t learn directly from labeled data. As we discussed in the introduction, this seems like a potential problem. One approach to addressing this problem is to add an extra term to the objective so that the classifier learns directly from labeled data. Note that this is exactly the approach adopted in reference [1] (see their Eqn. 9). The modified objective function is given by:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    \mathcal{J}^{\alpha} &amp;= \mathcal{J} + \alpha \mathop{\mathbb{E}}_{\tilde{p_l}({\bf x,y})} \big[-\log\big(q_{\phi}({\bf y}~|~ {\bf x})\big)\big] \\
+    &amp;= \mathcal{J} + \alpha' \sum_{({\bf x,y}) \in \mathcal{D}_{supervised}}  \big[-\log\big(q_{\phi}({\bf y}~|~ {\bf x})\big)\big]
+\end{align}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tilde{p_l}({\bf x,y})\)</span> is the empirical distribution over the labeled (or supervised) data and <span class="math notranslate nohighlight">\(\alpha' \equiv \frac{\alpha}{|\mathcal{D}_{supervised}|}\)</span>. Note that we’ve introduced an arbitrary hyperparameter <span class="math notranslate nohighlight">\(\alpha\)</span> that modulates the importance of the new term.</p>
+<p>To learn using this modified objective in Pyro we do the following:</p>
+<ul class="simple">
+<li><p>We use a new model and guide pair (see the code snippet below) that corresponds to scoring the observed label <span class="math notranslate nohighlight">\({\bf y}\)</span> for a given image <span class="math notranslate nohighlight">\({\bf x}\)</span> against the predictive distribution <span class="math notranslate nohighlight">\(q_{\phi}({\bf y}~|~ {\bf x})\)</span></p></li>
+<li><p>We specify the scaling factor <span class="math notranslate nohighlight">\(\alpha'\)</span> (<code class="docutils literal notranslate"><span class="pre">aux_loss_multiplier</span></code> in the code) in the <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> call by making use of <code class="docutils literal notranslate"><span class="pre">poutine.scale</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">poutine.scale</span></code> was used to similar effect in the <a class="reference internal" href="dmm.html"><span class="doc">Deep Markov Model</span></a> to implement KL annealing.</p></li>
+<li><p>We create a new <code class="docutils literal notranslate"><span class="pre">SVI</span></code> object and use it to take gradient steps on the new objective term</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model_classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s2">&quot;ss_vae&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">):</span>
+        <span class="c1"># this here is the extra term to yield an auxiliary loss</span>
+        <span class="c1"># that we do gradient descent on</span>
+        <span class="k">if</span> <span class="n">ys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_y</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">poutine</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aux_loss_multiplier</span><span class="p">):</span>
+                <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y_aux&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">OneHotCategorical</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">ys</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">guide_classify</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="c1"># the guide is trivial, since there are no</span>
+    <span class="c1"># latent random variables</span>
+    <span class="k">pass</span>
+
+<span class="n">svi_aux</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model_classify</span><span class="p">,</span> <span class="n">guide_classify</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>When we run inference in Pyro with the additional term in the objective, we outperform both previous inference setups. For example, the test accuracy for the case with <span class="math notranslate nohighlight">\(3000\)</span> labeled examples improves from <code class="docutils literal notranslate"><span class="pre">90%</span></code> to <code class="docutils literal notranslate"><span class="pre">96%</span></code> (see Figure 4 below and Table 1 in the next section). Note that we used validation accuracy to select the hyperparameter <span class="math notranslate nohighlight">\(\alpha'\)</span>.</p>
+<center><figure><table><tr><td></td><td></td></tr></table><figcaption><p>Figure 4: Variant 3 (Left) Training losses for the case with 3000 supervised examples. (Right) Test and validation accuracies.</p>
+</figcaption></figure></center></div>
+<div class="section" id="Results">
+<h2>Results<a class="headerlink" href="#Results" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Supervised data</p></th>
+<th class="head"><p>First variant</p></th>
+<th class="head"><p>Second variant</p></th>
+<th class="head"><p>Third variant</p></th>
+<th class="head"><p>Baseline classifier</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p>0.2007(0.0353)</p></td>
+<td><p>0.2254(0.0346)</p></td>
+<td><p>0.9319(0.0060)</p></td>
+<td><p>0.7712(0.0159)</p></td>
+</tr>
+<tr class="row-odd"><td><p>600</p></td>
+<td><p>0.1791(0.0244)</p></td>
+<td><p>0.6939(0.0345)</p></td>
+<td><p>0.9437(0.0070)</p></td>
+<td><p>0.8716(0.0064)</p></td>
+</tr>
+<tr class="row-even"><td><p>1000</p></td>
+<td><p>0.2006(0.0295)</p></td>
+<td><p>0.7562(0.0235)</p></td>
+<td><p>0.9487(0.0038)</p></td>
+<td><p>0.8863(0.0025)</p></td>
+</tr>
+<tr class="row-odd"><td><p>3000</p></td>
+<td><p>0.1982(0.0522)</p></td>
+<td><p>0.8932(0.0159)</p></td>
+<td><p>0.9582(0.0012)</p></td>
+<td><p>0.9108(0.0015)</p></td>
+</tr>
+</tbody>
+</table>
+<center><p>Table 1: Result accuracies (with 95% confidence bounds) for different inference methods</p>
+</center><p>Table 1 collects our results from the three variants explored in the tutorial. For comparison, we also show results from a simple classifier baseline, which only makes use of the supervised data (and no latent random variables). Reported are mean accuracies (with 95% confidence bounds in parentheses) across five random selections of supervised data.</p>
+<p>We first note that the results for the third variant—where we summed out the discrete latent random variable <span class="math notranslate nohighlight">\(\bf y\)</span> and made use of the additional term in the objective function—reproduce the results reported in reference [1]. This is encouraging, since it means that the abstractions in Pyro proved flexible enough to accomodate the required modeling and inference setup. Significantly, this flexibility was evidently necessary to outperform the baseline. It’s also worth emphasizing that the
+gap between the baseline and third variant of our generative model setup increases as the number of labeled datapoints decreases (maxing out at about 15% for the case with only 100 labeled datapoints). This is a tantalizing result because it’s precisely in the regime where we have few labeled data points that semi-supervised learning is particularly attractive.</p>
+<div class="section" id="Latent-Space-Visualization">
+<h3>Latent Space Visualization<a class="headerlink" href="#Latent-Space-Visualization" title="Permalink to this headline">¶</a></h3>
+<center><figure><table><tr><td></td></tr></table><center><figcaption><p>Figure 5: Latent space embedding for variant 3 with 3000 supervised examples</p>
+</figcaption></center></figure></center><p>We use T-SNE to reduce the dimensionality of the latent <span class="math notranslate nohighlight">\(\bf z\)</span> from <span class="math notranslate nohighlight">\(50\)</span> to <span class="math notranslate nohighlight">\(2\)</span> and visualize the 10 digit classes in Figure 5. Note that the structure of the embedding is quite different than that in the <a class="reference internal" href="vae.html"><span class="doc">VAE</span></a> case, where the digits are clearly separated from one another in the embedding. This make sense, since for the semi-supervised case the latent <span class="math notranslate nohighlight">\(\bf z\)</span> is free to use its representational capacity to model, e.g., handwriting style, since the variation
+between digits is provided by the (partially observed) labels.</p>
+</div>
+<div class="section" id="Conditional-image-generation">
+<h3>Conditional image generation<a class="headerlink" href="#Conditional-image-generation" title="Permalink to this headline">¶</a></h3>
+<center><figure><table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr></table><center><figcaption><p>Figure 6: Conditional samples obtained by fixing the class label and varying z (for variant 3 with 3000 supervised examples)</p>
+</figcaption></center></figure></center><p>We sampled <span class="math notranslate nohighlight">\(100\)</span> images for each class label (<span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(9\)</span>) by sampling different values of the latent variable <span class="math notranslate nohighlight">\({\bf z}\)</span>. The diversity of handwriting styles exhibited by each digit is consistent with what we saw in the T-SNE visualization, suggesting that the representation learned by <span class="math notranslate nohighlight">\(\bf z\)</span> is disentangled from the class labels.</p>
+</div>
+</div>
+<div class="section" id="Final-thoughts">
+<h2>Final thoughts<a class="headerlink" href="#Final-thoughts" title="Permalink to this headline">¶</a></h2>
+<p>We’ve seen that generative models offer a natural approach to semi-supervised machine learning. One of the most attractive features of generative models is that we can explore a large variety of models in a single unified setting. In this tutorial we’ve only been able to explore a small fraction of the possible model and inference setups that are possible. There is no reason to expect that one variant is best; depending on the dataset and application, there will be reason to prefer one over
+another. And there are a lot of variants (see Figure 7)!</p>
+<center><figure><figcaption><center><p>Figure 7: A zoo of semi-supervised generative models</p>
+</center></figcaption></figure></center><p>Some of these variants clearly make more sense than others, but a priori it’s difficult to know which ones are worth trying out. This is especially true once we open the door to more complicated setups, like the two models at the bottom of the figure, which include an always latent random variable <span class="math notranslate nohighlight">\(\tilde{\bf y}\)</span> in addition to the partially observed label <span class="math notranslate nohighlight">\({\bf y}\)</span>. (Incidentally, this class of models—see reference [2] for similar variants—offers another potential solution to the
+‘no training’ problem that we identified above.)</p>
+<p>The reader probably doesn’t need any convincing that a systematic exploration of even a fraction of these options would be incredibly time-consuming and error-prone if each model and each inference procedure were coded up by scratch. It’s only with the modularity and abstraction made possible by a probabilistic programming system that we can hope to explore the landscape of generative models with any kind of nimbleness—and reap any awaiting rewards.</p>
+<p>See the full code on <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/vae/ss_vae_M2.py">Github</a>.</p>
+</div>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="Permalink to this headline">¶</a></h2>
+<p>[1] <code class="docutils literal notranslate"><span class="pre">Semi-supervised</span> <span class="pre">Learning</span> <span class="pre">with</span> <span class="pre">Deep</span> <span class="pre">Generative</span> <span class="pre">Models</span></code>,     Diederik P. Kingma, Danilo J. Rezende, Shakir Mohamed, Max Welling</p>
+<p>[2] <code class="docutils literal notranslate"><span class="pre">Learning</span> <span class="pre">Disentangled</span> <span class="pre">Representations</span> <span class="pre">with</span> <span class="pre">Semi-Supervised</span> <span class="pre">Deep</span> <span class="pre">Generative</span> <span class="pre">Models</span></code>,      N. Siddharth, Brooks Paige, Jan-Willem Van de Meent, Alban Desmaison, Frank Wood,      Noah D. Goodman, Pushmeet Kohli, Philip H.S. Torr</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="stable.html" class="btn btn-neutral float-right" title="随机波动率的 Levy 稳定分布模型" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="air.html" class="btn btn-neutral float-left" title="Attend Infer Repeat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

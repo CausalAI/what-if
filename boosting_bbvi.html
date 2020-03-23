@@ -1,0 +1,1020 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Boosting Black Box Variational Inference &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Capture-Recapture Models (CJS Models)" href="capture_recapture.html" />
+    <link rel="prev" title="Dirichlet Process Mixture Models in Pyro" href="dirichlet_process_mixture.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Boosting Black Box Variational Inference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Contents">Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Theoretical-Background">Theoretical Background</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Variational-Inference">Variational Inference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Boosting Black Box Variational Inference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#BBBVI-in-Pyro">BBBVI in Pyro</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#The-Model">The Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-Guide">The Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-RELBO">The RELBO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-Approximation">The Approximation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#The-Greedy-Algorithm">The Greedy Algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#The-Complete-Implementation">The Complete Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Boosting Black Box Variational Inference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/boosting_bbvi.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Boosting-Black-Box-Variational-Inference">
+<h1>Boosting Black Box Variational Inference<a class="headerlink" href="#Boosting-Black-Box-Variational-Inference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Introduction">
+<h2>Introduction<a class="headerlink" href="#Introduction" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial demonstrates how to implement boosting black box Variational Inference [1] in Pyro. In boosting Variational Inference [2], we approximate a target distribution with an iteratively selected mixture of densities. In cases where a single denisity provided by regular Variational Inference doesn’t adequately approximate a target density, boosting VI thus offers a simple way of getting more complex approximations. We show how this can be implemented as a relatively straightforward
+extension of Pyro’s SVI.</p>
+</div>
+<div class="section" id="Contents">
+<h2>Contents<a class="headerlink" href="#Contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#theoretical-background">Theoretical Background</a></p>
+<ul>
+<li><p><a class="reference external" href="#variational-inference">Variational Inference</a></p></li>
+<li><p><a class="reference external" href="#bbbvi">Boosting Black Box Variational Inference</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference external" href="#bbbvi-pyro">BBBVI in Pyro</a></p>
+<ul>
+<li><p><a class="reference external" href="#the-model">The Model</a></p></li>
+<li><p><a class="reference external" href="#the-guide">The Guide</a></p></li>
+<li><p><a class="reference external" href="#the-relbo">The Relbo</a></p></li>
+<li><p><a class="reference external" href="#the-approximation">The Approximation</a></p></li>
+<li><p><a class="reference external" href="#the-greedy-algorithm">The Greedy Algorithm</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="Theoretical-Background">
+<h2>Theoretical Background<a class="headerlink" href="#Theoretical-Background" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Variational-Inference">
+<h3>Variational Inference<a class="headerlink" href="#Variational-Inference" title="Permalink to this headline">¶</a></h3>
+<p>For an introduction to regular Variational Inference, we recommend having a look at <a class="reference external" href="https://pyro.ai/examples/svi_part_i.html">the tutorial on SVI in Pyro</a> and this excellent review [3].</p>
+<p>Briefly, Variational Inference allows us to find approximations of probability densities which are intractable to compute analytically. For instance, one might have observed variables <span class="math notranslate nohighlight">\(\textbf{x}\)</span>, latent variables <span class="math notranslate nohighlight">\(\textbf{z}\)</span> and a joint distribution <span class="math notranslate nohighlight">\(p(\textbf{x}, \textbf{z})\)</span>. One can then use Variational Inference to approximate <span class="math notranslate nohighlight">\(p(\textbf{z}|\textbf{x})\)</span>. To do so, one first chooses a set of tractable densities, a variational family, and then tries to find the
+element of this set which most closely approximates the target distribution <span class="math notranslate nohighlight">\(p(\textbf{z}|\textbf{x})\)</span>. This approximating density is found by maximizing the Evidence Lower BOund (ELBO):</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_q[\log p(\mathbf{x}, \mathbf{z})] - \mathbb{E}_q[\log q(\mathbf{z})]\]</div>
+<p>where <span class="math notranslate nohighlight">\(q(\mathbf{z})\)</span> is the approximating density.</p>
+</div>
+<div class="section" id="id1">
+<h3>Boosting Black Box Variational Inference<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>In boosting black box Variational inference (BBBVI), we approximate the target density with a mixture of densities from the variational family:</p>
+<div class="math notranslate nohighlight">
+\[q^t(\mathbf{z}) = \sum_{i=1}^t \gamma_i s_i(\mathbf{z})\]</div>
+<div class="math notranslate nohighlight">
+\[\text{where} \sum_{i=1}^t \gamma_i =1\]</div>
+<p>and <span class="math notranslate nohighlight">\(s_t(\mathbf{z})\)</span> are elements of the variational family.</p>
+<p>The components of the approximation are selected greedily by maximising the so-called Residual ELBO (RELBO) with respect to the next component <span class="math notranslate nohighlight">\(s_{t+1}(\mathbf{z})\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_s[\log p(\mathbf{x},\mathbf{z})] - \lambda \mathbb{E}_s[\log s(\mathbf{z})] - \mathbb{E}_s[\log q^t(\mathbf{z})]\]</div>
+<p>Where the first two terms are the same as in the ELBO and the last term is the cross entropy between the next component <span class="math notranslate nohighlight">\(s_{t+1}(\mathbf{z})\)</span> and the current approximation <span class="math notranslate nohighlight">\(q^t(\mathbf{z})\)</span>.</p>
+<p>It’s called <em>black box</em> Variational Inference because this optimization does not have to be tailored to the variational family which is being used. By setting <span class="math notranslate nohighlight">\(\lambda\)</span> (the regularization factor of the entropy term) to 1, standard SVI methods can be used to compute <span class="math notranslate nohighlight">\(\mathbb{E}_s[\log p(\mathbf{x}, \mathbf{z})] - \lambda \mathbb{E}_s[\log s(\mathbf{z})]\)</span>. See the explanation of <a class="reference external" href="#the-relbo">the section on the implementation of the RELBO</a> below for an explanation of how we compute
+the term <span class="math notranslate nohighlight">\(- \mathbb{E}_s[\log q^t(\mathbf{z})]\)</span>. Imporantly, we do not need to make any additional assumptions about the variational family that’s being used to ensure that this algorithm converges.</p>
+<p>In [1], a number of different ways of finding the mixture weights <span class="math notranslate nohighlight">\(\gamma_t\)</span> are suggested, ranging from fixed step sizes based on the iteration to solving the optimisation problem of finding <span class="math notranslate nohighlight">\(\gamma_t\)</span> that will minimise the RELBO. Here, we used the fixed step size method. For more details on the theory behind boosting black box variational inference, please refer to [1].</p>
+</div>
+</div>
+<div class="section" id="BBBVI-in-Pyro">
+<h2>BBBVI in Pyro<a class="headerlink" href="#BBBVI-in-Pyro" title="Permalink to this headline">¶</a></h2>
+<p>To implement boosting black box variational inference in Pyro, we need to consider the following points: 1. The approximation components <span class="math notranslate nohighlight">\(s_{t}(\mathbf{z})\)</span> (guides). 2. The RELBO. 3. The approximation itself <span class="math notranslate nohighlight">\(q^t(\mathbf{z})\)</span>. 4. Using Pyro’s SVI to find new components of the approximation.</p>
+<p>We will illustrate these points by looking at simple example: approximating a bimodal posterior.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.distributions.constraints</span> <span class="k">as</span> <span class="nn">constraints</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">pyro.poutine</span> <span class="k">import</span> <span class="n">block</span><span class="p">,</span> <span class="n">replay</span><span class="p">,</span> <span class="n">trace</span>
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="The-Model">
+<h3>The Model<a class="headerlink" href="#The-Model" title="Permalink to this headline">¶</a></h3>
+<p>Boosting BBVI is particularly useful when we want to approximate multimodal distributions. In this tutorial, we’ll thus consider the following model:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{z} \sim \mathcal{N}(0,5)\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{x} \sim \mathcal{N}(\mathbf{z}^2, 0.1)\]</div>
+<p>Given the set of iid. observations <span class="math notranslate nohighlight">\(\text{data} ~ \mathcal{N}(4, 0.1)\)</span>, we thus expect <span class="math notranslate nohighlight">\(p(\mathbf{z}|\mathbf{x})\)</span> to be a bimodal distributions with modes around <span class="math notranslate nohighlight">\(-2\)</span> and <span class="math notranslate nohighlight">\(2\)</span>.</p>
+<p>In Pyro, this model takes the following shape:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">prior_loc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
+    <span class="n">prior_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">5.</span><span class="p">])</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">prior_loc</span><span class="p">,</span> <span class="n">prior_scale</span><span class="p">))</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">])</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="n">scale</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-Guide">
+<h3>The Guide<a class="headerlink" href="#The-Guide" title="Permalink to this headline">¶</a></h3>
+<p>Next, we specify the guide which in our case will make up the components of our mixture. Recall that in Pyro the guide needs to take the same arguments as the model which is why our guide function also takes the data as an input.</p>
+<p>We also need to make sure that every <code class="docutils literal notranslate"><span class="pre">pyro.sample()</span></code> statement from the model has a matching <code class="docutils literal notranslate"><span class="pre">pyro.sample()</span></code> statement in the guide. In our case, we include <code class="docutils literal notranslate"><span class="pre">z</span></code> in both the model and the guide.</p>
+<p>In contrast to regular SVI, our guide takes an additional argument: <code class="docutils literal notranslate"><span class="pre">index</span></code>. Having this argument allows us to easily create new guides in each iteration of the greedy algorithm. Specifically, we make use of <code class="docutils literal notranslate"><span class="pre">partial()</span></code> from the <a class="reference external" href="https://docs.python.org/3.7/library/functools.html">functools library</a> to create guides which only take <code class="docutils literal notranslate"><span class="pre">data</span></code> as an argument. The statement <code class="docutils literal notranslate"><span class="pre">partial(guide,</span> <span class="pre">index=t)</span></code> creates a guide that will take only <code class="docutils literal notranslate"><span class="pre">data</span></code> as an input and which has trainable parameters
+<code class="docutils literal notranslate"><span class="pre">scale_t</span></code> and <code class="docutils literal notranslate"><span class="pre">loc_t</span></code>.</p>
+<p>Choosing our variational distribution to be a Normal distribution parameterized by <span class="math notranslate nohighlight">\(loc_t\)</span> and <span class="math notranslate nohighlight">\(scale_t\)</span> we get the following guide:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="n">scale_q</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;scale_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]),</span> <span class="n">constraints</span><span class="o">.</span><span class="n">positive</span><span class="p">)</span>
+    <span class="n">loc_q</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;loc_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc_q</span><span class="p">,</span> <span class="n">scale_q</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-RELBO">
+<h3>The RELBO<a class="headerlink" href="#The-RELBO" title="Permalink to this headline">¶</a></h3>
+<p>We implement the RELBO as a function which can be passed to Pyro’s SVI class in place of ELBO to find the approximation components <span class="math notranslate nohighlight">\(s_t(z)\)</span>. Recall that the RELBO has the following form:</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_s[\log p(\mathbf{x},\mathbf{z})] - \lambda \mathbb{E}_s[\log s(\mathbf{z})] - \mathbb{E}_s[\log q^t(\mathbf{z})]\]</div>
+<p>Conveniently, this is very similar to the regular ELBO which allows us to reuse Pyro’s existing ELBO. Specifically, we compute</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_s[\log p(x,z)] - \lambda \mathbb{E}_s[\log s]\]</div>
+<p>using Pyro’s <code class="docutils literal notranslate"><span class="pre">Trace_ELBO</span></code> and then compute</p>
+<div class="math notranslate nohighlight">
+\[- \mathbb{E}_s[\log q^t]\]</div>
+<p>using Poutine. For more information on how this works, we recommend going through the Pyro tutorials <a class="reference external" href="https://pyro.ai/examples/effect_handlers.html">on Poutine</a> and <a class="reference external" href="https://pyro.ai/examples/custom_objectives.html">custom SVI objectives</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">relbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">approximation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;approximation&#39;</span><span class="p">)</span>
+
+    <span class="c1"># We first compute the elbo, but record a guide trace for use below.</span>
+    <span class="n">traced_guide</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">elbo</span><span class="o">.</span><span class="n">differentiable_loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">traced_guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># We do not want to update parameters of previously fitted components</span>
+    <span class="c1"># and thus block all parameters in the approximation apart from z.</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">traced_guide</span><span class="o">.</span><span class="n">trace</span>
+    <span class="n">replayed_approximation</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">replay</span><span class="p">(</span><span class="n">block</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">expose</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]),</span> <span class="n">guide_trace</span><span class="p">))</span>
+    <span class="n">approximation_trace</span> <span class="o">=</span> <span class="n">replayed_approximation</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">relbo</span> <span class="o">=</span> <span class="o">-</span><span class="n">loss_fn</span> <span class="o">-</span> <span class="n">approximation_trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">()</span>
+
+    <span class="c1"># By convention, the negative (R)ELBO is returned.</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">relbo</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-Approximation">
+<h3>The Approximation<a class="headerlink" href="#The-Approximation" title="Permalink to this headline">¶</a></h3>
+<p>Our implementation of the approximation <span class="math notranslate nohighlight">\(q^t(z) = \sum_{i=1}^t \gamma_i s_i(z)\)</span> consists of a list of components, i.e. the guides from the greedy selection steps, and a list containing the mixture weights of the components. To sample from the approximation, we thus first sample a component according to the mixture weights. In a second step, we draw a sample from the corresponding component.</p>
+<p>Similarly as with the guide, we use <code class="docutils literal notranslate"><span class="pre">partial(approximation,</span> <span class="pre">components=components,</span> <span class="pre">weights=weights)</span></code> to get an approximation function which has the same signature as the model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">approximation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="n">assignment</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="n">assignment</span><span class="p">](</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="The-Greedy-Algorithm">
+<h3>The Greedy Algorithm<a class="headerlink" href="#The-Greedy-Algorithm" title="Permalink to this headline">¶</a></h3>
+<p>We now have all the necessary parts to implement the greedy algorithm. First, we initialize the approximation:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">initial_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">guide</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_approximation</span><span class="p">]</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">])</span>
+<span class="n">wrapped_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Then we iteratively find the <span class="math notranslate nohighlight">\(T\)</span> components of the approximation by maximizing the RELBO at every step:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># clear the param store in case we&#39;re in a REPL</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+
+<span class="c1"># Sample observations from a Normal distribution with loc 4 and scale 0.1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">4.0</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">]))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">100</span><span class="p">,))</span>
+
+<span class="c1">#T=2</span>
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+<span class="n">n_steps</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">12000</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">locs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+    <span class="c1"># Create guide that only takes data as argument</span>
+    <span class="n">wrapped_guide</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">guide</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">adam_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)}</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">adam_params</span><span class="p">)</span>
+
+    <span class="c1"># Pass our custom RELBO to SVI as the loss function.</span>
+    <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">wrapped_guide</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">relbo</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+        <span class="c1"># Pass the existing approximation to SVI.</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">approximation</span><span class="o">=</span><span class="n">wrapped_approximation</span><span class="p">)</span>
+        <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+    <span class="c1"># Update the list of approximation components.</span>
+    <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapped_guide</span><span class="p">)</span>
+
+    <span class="c1"># Set new mixture weight.</span>
+    <span class="n">new_weight</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># In this specific case, we set the mixture weight of the second component to 0.5.</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">new_weight</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">new_weight</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">weights</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">new_weight</span><span class="p">])))</span>
+
+    <span class="c1"># Update the approximation</span>
+    <span class="n">wrapped_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parameters of component </span><span class="si">{}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;scale_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">scales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;loc_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loc = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loc</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;scale = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Parameters of component 1:
+loc = -2.0068717002868652
+scale = 0.01799079217016697
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Parameters of component 2:
+loc = 2.0046799182891846
+scale = 0.06008879840373993
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Plot the resulting approximation</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">total_approximation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">locs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">scales</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+    <span class="n">total_approximation</span> <span class="o">+=</span> <span class="n">Y</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">total_approximation</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="s1">&#39;k*&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Approximation of posterior over z&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;probability density&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/boosting_bbvi_19_0.png" src="_images/boosting_bbvi_19_0.png" />
+</div>
+</div>
+<p>We see that boosting BBVI successfully approximates the bimodal posterior distributions with modes around -2 and +2.</p>
+</div>
+</div>
+<div class="section" id="The-Complete-Implementation">
+<h2>The Complete Implementation<a class="headerlink" href="#The-Complete-Implementation" title="Permalink to this headline">¶</a></h2>
+<p>Putting all the components together, we then get the complete implementation of boosting black box Variational Inference:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.distributions.constraints</span> <span class="k">as</span> <span class="nn">constraints</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">pyro.poutine</span> <span class="k">import</span> <span class="n">block</span><span class="p">,</span> <span class="n">replay</span><span class="p">,</span> <span class="n">trace</span>
+
+<span class="c1"># this is for running the notebook in our testing framework</span>
+<span class="n">n_steps</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">12000</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># enable validation (e.g. validate parameters of distributions)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># clear the param store in case we&#39;re in a REPL</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+
+<span class="c1"># Sample observations from a Normal distribution with loc 4 and scale 0.1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">4.0</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">]))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">100</span><span class="p">,))</span>
+
+
+<span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="n">scale_q</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;scale_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]),</span> <span class="n">constraints</span><span class="o">.</span><span class="n">positive</span><span class="p">)</span>
+    <span class="n">loc_q</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;loc_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]))</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">loc_q</span><span class="p">,</span> <span class="n">scale_q</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">prior_loc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
+    <span class="n">prior_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">5.</span><span class="p">])</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">prior_loc</span><span class="p">,</span> <span class="n">prior_scale</span><span class="p">))</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">])</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="n">scale</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">relbo</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">approximation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;approximation&#39;</span><span class="p">)</span>
+
+    <span class="c1"># We first compute the elbo, but record a guide trace for use below.</span>
+    <span class="n">traced_guide</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">guide</span><span class="p">)</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">infer</span><span class="o">.</span><span class="n">Trace_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">loss_fn</span> <span class="o">=</span> <span class="n">elbo</span><span class="o">.</span><span class="n">differentiable_loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">traced_guide</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># We do not want to update parameters of previously fitted components</span>
+    <span class="c1"># and thus block all parameters in the approximation apart from z.</span>
+    <span class="n">guide_trace</span> <span class="o">=</span> <span class="n">traced_guide</span><span class="o">.</span><span class="n">trace</span>
+    <span class="n">replayed_approximation</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">replay</span><span class="p">(</span><span class="n">block</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">expose</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]),</span> <span class="n">guide_trace</span><span class="p">))</span>
+    <span class="n">approximation_trace</span> <span class="o">=</span> <span class="n">replayed_approximation</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">relbo</span> <span class="o">=</span> <span class="o">-</span><span class="n">loss_fn</span> <span class="o">-</span> <span class="n">approximation_trace</span><span class="o">.</span><span class="n">log_prob_sum</span><span class="p">()</span>
+
+    <span class="c1"># By convention, the negative (R)ELBO is returned.</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">relbo</span>
+
+
+<span class="k">def</span> <span class="nf">approximation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="n">assignment</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">components</span><span class="p">[</span><span class="n">assignment</span><span class="p">](</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">boosting_bbvi</span><span class="p">():</span>
+    <span class="c1"># T=2</span>
+    <span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">initial_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">guide</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_approximation</span><span class="p">]</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">])</span>
+    <span class="n">wrapped_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+
+    <span class="n">locs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">scales</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+        <span class="c1"># Create guide that only takes data as argument</span>
+        <span class="n">wrapped_guide</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">guide</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">adam_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">)}</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">adam_params</span><span class="p">)</span>
+
+        <span class="c1"># Pass our custom RELBO to SVI as the loss function.</span>
+        <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">wrapped_guide</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">relbo</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+            <span class="c1"># Pass the existing approximation to SVI.</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">approximation</span><span class="o">=</span><span class="n">wrapped_approximation</span><span class="p">)</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="c1"># Update the list of approximation components.</span>
+        <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapped_guide</span><span class="p">)</span>
+
+        <span class="c1"># Set new mixture weight.</span>
+        <span class="n">new_weight</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># In this specific case, we set the mixture weight of the second component to 0.5.</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">new_weight</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">new_weight</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">weights</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">new_weight</span><span class="p">])))</span>
+
+        <span class="c1"># Update the approximation</span>
+        <span class="n">wrapped_approximation</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">approximation</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parameters of component </span><span class="si">{}</span><span class="s1">:&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;scale_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">scales</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;loc_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">locs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loc = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loc</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;scale = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
+
+
+    <span class="c1"># Plot the resulting approximation</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+    <span class="n">total_approximation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">locs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">scales</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">total_approximation</span> <span class="o">+=</span> <span class="n">Y</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">total_approximation</span><span class="p">)</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="s1">&#39;k*&#39;</span><span class="p">)</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Approximation of posterior over z&#39;</span><span class="p">)</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;probability density&#39;</span><span class="p">)</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">boosting_bbvi</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Parameters of component 1:
+loc = -1.9996534585952759
+scale = 0.016739774495363235
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Parameters of component 2:
+loc = 1.998241901397705
+scale = 0.01308442372828722
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/boosting_bbvi_23_1.png" src="_images/boosting_bbvi_23_1.png" />
+</div>
+</div>
+<div class="section" id="References">
+<h3>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h3>
+<p>[1] Locatello, Francesco, et al. “Boosting black box variational inference.” Advances in Neural Information Processing Systems. 2018.</p>
+<p>[2] Ranganath, Rajesh, Sean Gerrish, and David Blei. “Black box variational inference.” Artificial Intelligence and Statistics. 2014.</p>
+<p>[3] Blei, David M., Alp Kucukelbir, and Jon D. McAuliffe. “Variational inference: A review for statisticians.” Journal of the American statistical Association 112.518 (2017): 859-877.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="capture_recapture.html" class="btn btn-neutral float-right" title="Capture-Recapture Models (CJS Models)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dirichlet_process_mixture.html" class="btn btn-neutral float-left" title="Dirichlet Process Mixture Models in Pyro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,1127 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Designing Adaptive Experiments to Study Working Memory &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Predicting the outcome of a US presidential election using Bayesian optimal experimental design" href="elections.html" />
+    <link rel="prev" title="Kalman Filter" href="ekf.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Designing Adaptive Experiments to Study Working Memory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#The-experiment-set-up">The experiment set-up</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#A-model-of-working-memory">A model of working memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Inference-in-the-model">Inference in the model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Bayesian-optimal-experimental-design">Bayesian optimal experimental design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Optimal-experimental-design-in-Pyro">Optimal experimental design in Pyro</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#The-adaptive-experiment">The adaptive experiment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Extensions">Extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Designing Adaptive Experiments to Study Working Memory</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/working_memory.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Designing-Adaptive-Experiments-to-Study-Working-Memory">
+<h1>Designing Adaptive Experiments to Study Working Memory<a class="headerlink" href="#Designing-Adaptive-Experiments-to-Study-Working-Memory" title="Permalink to this headline">¶</a></h1>
+<p>In most of machine learning, we begin with data and go on to learn a model. In other contexts, we also have a hand in the data generation process. This gives us an exciting opportunity: we can try to obtain data that will help our model learn more effectively. This procedure is called <em>optimal experimental design</em> (OED) and Pyro supports choosing optimal designs through the <code class="docutils literal notranslate"><span class="pre">pyro.contrib.oed</span></code> module.</p>
+<p>When using OED, the data generation and modelling works as follows:</p>
+<ol class="arabic simple">
+<li><p>Write down a Bayesian model involving a design parameter, an unknown latent variable and an observable.</p></li>
+<li><p>Choose the optimal design (more details on this later).</p></li>
+<li><p>Collect the data and fit the model, e.g. using <code class="docutils literal notranslate"><span class="pre">SVI</span></code>.</p></li>
+</ol>
+<p>We can also run multiple ‘rounds’ or iterations of experiments. When doing this, we take the learned model from step 3 and use it as our prior in step 1 for the next round. This approach can be particularly useful because it allows us to design the next experiment based on what has already been learned: the experiments are <em>adaptive</em>.</p>
+<p>In this tutorial, we work through a specific example of this entire OED procedure with multiple rounds. We will show how to design adaptive experiments to learn a participant’s working memory capacity. The design we will be adapting is the <em>length of a sequence of digits that we ask a participant to remember</em>. Let’s dive into the full details.</p>
+<div class="section" id="The-experiment-set-up">
+<h2>The experiment set-up<a class="headerlink" href="#The-experiment-set-up" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you, the participant, are shown a sequence of digits</p>
+<div class="math notranslate nohighlight">
+\[1\ 4\ 7\ 0\ 9\]</div>
+<p>which are then hidden. You have to to reproduce the sequence exactly from memory. In the next round, the length of the sequence may be different</p>
+<div class="math notranslate nohighlight">
+\[6\ 5\ 0\ 2\ 8\ 0 .\]</div>
+<p>The longest sequence that you can remember is your working memory capacity. In this tutorial, we build a Bayesian model for working memory, and use it to run an adaptive sequence of experiments that very quickly learn someone’s working memory capacity.</p>
+<div class="section" id="A-model-of-working-memory">
+<h3>A model of working memory<a class="headerlink" href="#A-model-of-working-memory" title="Permalink to this headline">¶</a></h3>
+<p>Our model for a single round of the digits experiment described above has three components: the length <span class="math notranslate nohighlight">\(l\)</span> of the sequence that the participant has to remember, the participant’s true working memory capacity <span class="math notranslate nohighlight">\(\theta\)</span>, and the outcome of the experiment <span class="math notranslate nohighlight">\(y\)</span> which indicates whether they were able to remember the sequence successfully (<span class="math notranslate nohighlight">\(y=1\)</span>) or not (<span class="math notranslate nohighlight">\(y=0\)</span>). We choose a prior for working memory capacity based on the (in)famous “The magical number seven, plus or minus
+two” [1].</p>
+<p><strong>Note</strong>: <span class="math notranslate nohighlight">\(\theta\)</span> actually represents the point where the participant has a 50/50 chance of remembering the sequence correctly.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+
+
+<span class="n">sensitivity</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">prior_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">7.0</span><span class="p">)</span>
+<span class="n">prior_sd</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="c1"># Dimension -1 of `l` represents the number of rounds</span>
+    <span class="c1"># Other dimensions are batch dimensions: we indicate this with a plate_stack</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate_stack</span><span class="p">(</span><span class="s2">&quot;plate&quot;</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_sd</span><span class="p">))</span>
+        <span class="c1"># Share theta across the number of rounds of the experiment</span>
+        <span class="c1"># This represents repeatedly testing the same participant</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># This define a *logistic regression* model for y</span>
+        <span class="n">logit_p</span> <span class="o">=</span> <span class="n">sensitivity</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span>
+        <span class="c1"># The event shape represents responses from the same participant</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logit_p</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<p>The probability of successfully remembering the sequence is plotted below, for five random samples of <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+
+<span class="c1"># We sample five times from the prior</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">prior_mean</span> <span class="o">+</span> <span class="n">prior_sd</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="c1"># This is the same as using &#39;logits=&#39; in the prior above</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">sensitivity</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">l</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">curve</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Length of sequence $l$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Probability of correctly remembering</span><span class="se">\n</span><span class="s2">a sequence of length $l$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;Person </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/working_memory_4_0.png" src="_images/working_memory_4_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Inference-in-the-model">
+<h3>Inference in the model<a class="headerlink" href="#Inference-in-the-model" title="Permalink to this headline">¶</a></h3>
+<p>With the model in hand, we quickly demonstrate variational inference in Pyro for this model. We define a Normal guide for variational inference.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">torch.distributions.constraints</span> <span class="k">import</span> <span class="n">positive</span>
+
+<span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="c1"># The guide is initialised at the prior</span>
+    <span class="n">posterior_mean</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_mean&quot;</span><span class="p">,</span> <span class="n">prior_mean</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+    <span class="n">posterior_sd</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_sd&quot;</span><span class="p">,</span> <span class="n">prior_sd</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">constraint</span><span class="o">=</span><span class="n">positive</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">posterior_mean</span><span class="p">,</span> <span class="n">posterior_sd</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>We finally specify the following data: the participant was shown sequences of lengths 5, 7 and 9. They remembered the first two correctly, but not the third one.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">l_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">])</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>We can now run SVI on the model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+
+<span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y_data</span><span class="p">})</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">,</span>
+          <span class="n">guide</span><span class="p">,</span>
+          <span class="n">Adam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">001</span><span class="p">}),</span>
+          <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">(),</span>
+          <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">num_iters</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iters</span><span class="p">):</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">l_data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">500</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Neg ELBO:&quot;</span><span class="p">,</span> <span class="n">elbo</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Neg ELBO: 1.6167092323303223
+Neg ELBO: 3.706324815750122
+Neg ELBO: 0.9958380460739136
+Neg ELBO: 1.0630500316619873
+Neg ELBO: 1.1738307476043701
+Neg ELBO: 1.6654635667800903
+Neg ELBO: 1.296904444694519
+Neg ELBO: 1.305729627609253
+Neg ELBO: 1.2626266479492188
+Neg ELBO: 1.3095542192459106
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Prior:     N(</span><span class="si">{:.3f}</span><span class="s2">, </span><span class="si">{:.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_sd</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Posterior: N(</span><span class="si">{:.3f}</span><span class="s2">, </span><span class="si">{:.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_mean&quot;</span><span class="p">),</span>
+                                            <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_sd&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Prior:     N(7.000, 2.000)
+Posterior: N(7.749, 1.282)
+</pre></div></div>
+</div>
+<p>Under our posterior, we can see that we have an updated estimate for the participant’s working memory capacity, and our uncertainty has now decreased.</p>
+</div>
+<div class="section" id="Bayesian-optimal-experimental-design">
+<h3>Bayesian optimal experimental design<a class="headerlink" href="#Bayesian-optimal-experimental-design" title="Permalink to this headline">¶</a></h3>
+<p>So far so standard. In the previous example, the lengths <code class="docutils literal notranslate"><span class="pre">l_data</span></code> were not chosen with a great deal of forethought. Fortunately, in a setting like this, it is possible to use a more sophisticated strategy to choose the sequence lengths to make the most of every question we ask.</p>
+<p>We do this using Bayesian optimal experimental design (BOED). In BOED, we are interested in designing experiments that maximise the information gain, which is defined formally as</p>
+<div class="math notranslate nohighlight">
+\[\text{IG}(l, y) = KL(p(\theta|y,l)||p(\theta)) .\]</div>
+<p>where <span class="math notranslate nohighlight">\(KL\)</span> represents the <a class="reference external" href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence">Kullback-Leiber divergence</a>.</p>
+<p>In words, the information gain is the KL divergence from the posterior to the prior. It therefore represents the distance we “move” the posterior by running an experiment with length <span class="math notranslate nohighlight">\(l\)</span> and getting back the outcome <span class="math notranslate nohighlight">\(y\)</span>.</p>
+<p>Unfortunately, we will not know <span class="math notranslate nohighlight">\(y\)</span> until we actually run the experiment. Therefore, we choose <span class="math notranslate nohighlight">\(l\)</span> on the basis of the <em>expected</em> information gain [2]</p>
+<div class="math notranslate nohighlight">
+\[\text{EIG}(l) = \mathbb{E}_{y\sim p(y|\theta,l)} [KL(p(\theta|y,l)||p(\theta))].\]</div>
+<p>Because it features the posterior density <span class="math notranslate nohighlight">\(p(y|\theta,l)\)</span>, the EIG is not immediately tractable. However, we can make use of the following variational estimator for EIG [3]</p>
+<div class="math notranslate nohighlight">
+\[\text{EIG}(l) = \min_q \mathbb{E}_{\theta,y \sim p(\theta)p(y|\theta,l)} \left[ \log \frac{p(y|\theta,l)}{q(y|l)} \right].\]</div>
+</div>
+</div>
+<div class="section" id="Optimal-experimental-design-in-Pyro">
+<h2>Optimal experimental design in Pyro<a class="headerlink" href="#Optimal-experimental-design-in-Pyro" title="Permalink to this headline">¶</a></h2>
+<p>Fortunately, Pyro comes ready with tools to estimate the EIG. All we have to do is define the “marginal guide” <span class="math notranslate nohighlight">\(q(y|l)\)</span> in the formula above.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">marginal_guide</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">observation_labels</span><span class="p">,</span> <span class="n">target_labels</span><span class="p">):</span>
+    <span class="c1"># This shape allows us to learn a different parameter for each candidate design l</span>
+    <span class="n">q_logit</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;q_logit&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">design</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]))</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">q_logit</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>This is not a guide for inference, like the guides normally encountered in Pyro and used in <code class="docutils literal notranslate"><span class="pre">SVI</span></code>. Instead, this guide samples <em>only</em> the observed sample sites: in this case <code class="docutils literal notranslate"><span class="pre">&quot;y&quot;</span></code>. This makes sense because conventional guides approximate the posterior <span class="math notranslate nohighlight">\(p(\theta|y, l)\)</span> whereas our guide approximates the marginal <span class="math notranslate nohighlight">\(p(y|l)\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyro.contrib.oed.eig</span> <span class="k">import</span> <span class="n">marginal_eig</span>
+
+<span class="c1"># The shape of `candidate_designs` is (number designs, 1)</span>
+<span class="c1"># This represents a batch of candidate designs, each design is for one round of experiment</span>
+<span class="n">candidate_designs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">num_steps</span><span class="p">,</span> <span class="n">start_lr</span><span class="p">,</span> <span class="n">end_lr</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.001</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">ExponentialLR</span><span class="p">({</span><span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+                                      <span class="s1">&#39;optim_args&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">start_lr</span><span class="p">},</span>
+                                      <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_lr</span> <span class="o">/</span> <span class="n">start_lr</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">num_steps</span><span class="p">)})</span>
+
+<span class="n">eig</span> <span class="o">=</span> <span class="n">marginal_eig</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
+                   <span class="n">candidate_designs</span><span class="p">,</span>       <span class="c1"># design, or in this case, tensor of possible designs</span>
+                   <span class="s2">&quot;y&quot;</span><span class="p">,</span>                     <span class="c1"># site label of observations, could be a list</span>
+                   <span class="s2">&quot;theta&quot;</span><span class="p">,</span>                 <span class="c1"># site label of &#39;targets&#39; (latent variables), could also be list</span>
+                   <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>         <span class="c1"># number of samples to draw per step in the expectation</span>
+                   <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span>     <span class="c1"># number of gradient steps</span>
+                   <span class="n">guide</span><span class="o">=</span><span class="n">marginal_guide</span><span class="p">,</span>    <span class="c1"># guide q(y)</span>
+                   <span class="n">optim</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>         <span class="c1"># optimizer with learning rate decay</span>
+                   <span class="n">final_num_samples</span><span class="o">=</span><span class="mi">10000</span>  <span class="c1"># at the last step, we draw more samples</span>
+                                            <span class="c1"># for a more accurate EIG estimate</span>
+                  <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We can visualize the EIG estimates that we found.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">candidate_designs</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">eig</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$l$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;EIG($l$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/working_memory_20_0.png" src="_images/working_memory_20_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">best_l</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal design:&quot;</span><span class="p">,</span> <span class="n">best_l</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optimal design: 7
+</pre></div></div>
+</div>
+<p>This tells us that the first round should be run with a sequence of length 7. Note that, while we might have been able to guess this optimal design intuitively, this same framework applies equally well to more sophisticated models and experiments where finding the optimal design by intuition is more challenging.</p>
+<p>As a side-effect of training, our marginal guide <span class="math notranslate nohighlight">\(q(y|l)\)</span> has approximately learned the marginal distribution <span class="math notranslate nohighlight">\(p(y|l)\)</span>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">q_prob</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;q_logit&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   l | q(y = 1 | l)&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">candidate_designs</span><span class="p">,</span> <span class="n">q_prob</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&gt;4}</span><span class="s2"> | </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">item</span><span class="p">()),</span> <span class="n">q</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   l | q(y = 1 | l)
+   1 | 0.9849993586540222
+   2 | 0.9676634669303894
+   3 | 0.9329487681388855
+   4 | 0.871809720993042
+   5 | 0.7761920690536499
+   6 | 0.6436398029327393
+   7 | 0.4999988079071045
+   8 | 0.34875917434692383
+   9 | 0.22899287939071655
+  10 | 0.13036076724529266
+  11 | 0.06722454726696014
+  12 | 0.03191758319735527
+  13 | 0.015132307074964046
+  14 | 0.00795808993279934
+</pre></div></div>
+</div>
+<p>The elements of this fitted tensor represent the marginal over <span class="math notranslate nohighlight">\(y\)</span>, for each possible sequence length <span class="math notranslate nohighlight">\(l\)</span> in <code class="docutils literal notranslate"><span class="pre">candidate_designs</span></code>. We have marginalised out the unknown <span class="math notranslate nohighlight">\(\theta\)</span> so this fitted tensor shows the probabilities for an ‘average’ participant.</p>
+<div class="section" id="The-adaptive-experiment">
+<h3>The adaptive experiment<a class="headerlink" href="#The-adaptive-experiment" title="Permalink to this headline">¶</a></h3>
+<p>We now have the ingredients to build an adaptive experiment to study working memory. We repeat the following steps:</p>
+<ol class="arabic simple">
+<li><p>Use the EIG to find the optimal sequence length <span class="math notranslate nohighlight">\(l\)</span></p></li>
+<li><p>Run the test using a sequence of length <span class="math notranslate nohighlight">\(l\)</span></p></li>
+<li><p>Update the posterior distribution with the new data</p></li>
+</ol>
+<p>At the first iteration, step 1 is done using the prior as above. However, for subsequent iterations, we use the posterior given all the data so far.</p>
+<p>In this notebook, the “experiment” is performed using the following synthesiser</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">synthetic_person</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="c1"># The synthetic person can remember any sequence shorter than 6</span>
+    <span class="c1"># They cannot remember any sequence of length 6 or above</span>
+    <span class="c1"># (There is no randomness in their responses)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">&lt;</span> <span class="mf">6.</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<p>The following code allows us to update the model as we gather more data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">make_model</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="c1"># Dimension -1 of `l` represents the number of rounds</span>
+        <span class="c1"># Other dimensions are batch dimensions: we indicate this with a plate_stack</span>
+        <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate_stack</span><span class="p">(</span><span class="s2">&quot;plate&quot;</span><span class="p">,</span> <span class="n">l</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sd</span><span class="p">))</span>
+            <span class="c1"># Share theta across the number of rounds of the experiment</span>
+            <span class="c1"># This represents repeatedly testing the same participant</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># This define a *logistic regression* model for y</span>
+            <span class="n">logit_p</span> <span class="o">=</span> <span class="n">sensitivity</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span>
+            <span class="c1"># The event shape represents responses from the same participant</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logit_p</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">y</span>
+    <span class="k">return</span> <span class="n">model</span>
+</pre></div>
+</div>
+</div>
+<p>Now we have everything to run a 10-step experiment using adaptive designs.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span>
+<span class="n">history</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_sd</span><span class="p">)]</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">current_model</span> <span class="o">=</span> <span class="n">make_model</span><span class="p">(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_sd</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">experiment</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Round&quot;</span><span class="p">,</span> <span class="n">experiment</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Step 1: compute the optimal length</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">ExponentialLR</span><span class="p">({</span><span class="s1">&#39;optimizer&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">,</span>
+                                          <span class="s1">&#39;optim_args&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">start_lr</span><span class="p">},</span>
+                                          <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">end_lr</span> <span class="o">/</span> <span class="n">start_lr</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">num_steps</span><span class="p">)})</span>
+    <span class="n">eig</span> <span class="o">=</span> <span class="n">marginal_eig</span><span class="p">(</span><span class="n">current_model</span><span class="p">,</span> <span class="n">candidate_designs</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                       <span class="n">num_steps</span><span class="o">=</span><span class="n">num_steps</span><span class="p">,</span> <span class="n">guide</span><span class="o">=</span><span class="n">marginal_guide</span><span class="p">,</span> <span class="n">optim</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+                       <span class="n">final_num_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+    <span class="n">best_l</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">eig</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="c1"># Step 2: run the experiment, here using the synthetic person</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Asking the participant to remember a sequence of length&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">best_l</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">synthetic_person</span><span class="p">(</span><span class="n">best_l</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Participant remembered correctly&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Participant could not remember the sequence&quot;</span><span class="p">)</span>
+    <span class="c1"># Store the sequence length and outcome</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">ls</span><span class="p">,</span> <span class="n">best_l</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">ys</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+
+    <span class="c1"># Step 3: learn the posterior using all data seen so far</span>
+    <span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">ys</span><span class="p">})</span>
+    <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">,</span>
+              <span class="n">guide</span><span class="p">,</span>
+              <span class="n">Adam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">005</span><span class="p">}),</span>
+              <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">(),</span>
+              <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">num_iters</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iters</span><span class="p">):</span>
+        <span class="n">elbo</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+
+    <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_mean&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+                    <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_sd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+    <span class="n">current_model</span> <span class="o">=</span> <span class="n">make_model</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_mean&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span>
+                               <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_sd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimate of </span><span class="se">\u03b8</span><span class="s2">: </span><span class="si">{:.3f}</span><span class="s2"> </span><span class="se">\u00b1</span><span class="s2"> </span><span class="si">{:.3f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Round 1
+Asking the participant to remember a sequence of length 7
+Participant could not remember the sequence
+Estimate of θ: 5.788 ± 1.636
+
+Round 2
+Asking the participant to remember a sequence of length 6
+Participant could not remember the sequence
+Estimate of θ: 4.943 ± 1.252
+
+Round 3
+Asking the participant to remember a sequence of length 5
+Participant remembered correctly
+Estimate of θ: 5.731 ± 1.043
+
+Round 4
+Asking the participant to remember a sequence of length 6
+Participant could not remember the sequence
+Estimate of θ: 5.261 ± 0.928
+
+Round 5
+Asking the participant to remember a sequence of length 5
+Participant remembered correctly
+Estimate of θ: 5.615 ± 0.859
+
+Round 6
+Asking the participant to remember a sequence of length 6
+Participant could not remember the sequence
+Estimate of θ: 5.423 ± 0.888
+
+Round 7
+Asking the participant to remember a sequence of length 6
+Participant could not remember the sequence
+Estimate of θ: 5.092 ± 0.763
+
+Round 8
+Asking the participant to remember a sequence of length 5
+Participant remembered correctly
+Estimate of θ: 5.371 ± 0.717
+
+Round 9
+Asking the participant to remember a sequence of length 5
+Participant remembered correctly
+Estimate of θ: 5.597 ± 0.720
+
+Round 10
+Asking the participant to remember a sequence of length 6
+Participant could not remember the sequence
+Estimate of θ: 5.434 ± 0.640
+
+</pre></div></div>
+</div>
+<p>Now let’s visualize the evolution of the posterior over <span class="math notranslate nohighlight">\(\theta\)</span>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">colors</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="nn">cmx</span>
+
+
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;winter&#39;</span><span class="p">)</span>
+<span class="n">cNorm</span>  <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">scalarMap</span> <span class="o">=</span> <span class="n">cmx</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">cNorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">scalarMap</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">theta$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;p.d.f.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/working_memory_34_0.png" src="_images/working_memory_34_0.png" />
+</div>
+</div>
+<p>(Blue = prior, light green = 10 step posterior)</p>
+<p>By contrast, suppose we use a simplistic design: try sequences of lengths 1, 2, …, 10.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">ys</span> <span class="o">=</span> <span class="n">synthetic_person</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+<span class="n">conditioned_model</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">ys</span><span class="p">})</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">conditioned_model</span><span class="p">,</span>
+          <span class="n">guide</span><span class="p">,</span>
+          <span class="n">Adam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="o">.</span><span class="mi">005</span><span class="p">}),</span>
+          <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">(),</span>
+          <span class="n">num_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">num_iters</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iters</span><span class="p">):</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+<span class="n">y1</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_mean&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span>
+              <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;posterior_sd&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;Simple design&quot;</span><span class="p">,</span> <span class="s2">&quot;Optimal design&quot;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">theta$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;p.d.f.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/working_memory_38_0.png" src="_images/working_memory_38_0.png" />
+</div>
+</div>
+<p>Although both design strategies give us data, the optimal strategy ends up with a posterior distribution that is more peaked: that means we have greater confidence in our final answer, or may be able to stop experimenting earlier.</p>
+</div>
+<div class="section" id="Extensions">
+<h3>Extensions<a class="headerlink" href="#Extensions" title="Permalink to this headline">¶</a></h3>
+<p>In this tutorial we used variational inference to fit an approximate posterior for <span class="math notranslate nohighlight">\(\theta\)</span>. This could be substituted for an alternative posterior inference strategy, such as Hamiltonian Monte Carlo.</p>
+<p>The model in this tutorial is very simple and could be extended in a number of ways. For instance, it’s possible that as well as measuring whether the participant did or did not remember the sequence, we might collect some other information as well. We could build a model for the number of mistakes made (e.g. the edit distance between the correct sequence and the participant’s response) or jointly model the correctness and the time taken to respond. Here is an example model where we model the
+response time using a LogNormal distribution, as suggested by [4].</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">time_intercept</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">time_scale</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">prior_mean</span><span class="p">,</span> <span class="n">prior_sd</span><span class="p">))</span>
+    <span class="n">logit_p</span> <span class="o">=</span> <span class="n">sensitivity</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logit_p</span><span class="p">))</span>
+    <span class="n">mean_log_time</span> <span class="o">=</span> <span class="n">time_intercept</span> <span class="o">+</span> <span class="n">time_scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="n">mean_log_time</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">correct</span><span class="p">,</span> <span class="n">time</span>
+</pre></div>
+</div>
+</div>
+<p>It would still be possible to compute the EIG using <code class="docutils literal notranslate"><span class="pre">marginal_eig</span></code>. We would replace <code class="docutils literal notranslate"><span class="pre">&quot;y&quot;</span></code> by <code class="docutils literal notranslate"><span class="pre">[&quot;correct&quot;,</span> <span class="pre">&quot;time&quot;]</span></code> and the marginal guide would now model a joint distribution over the two sites <code class="docutils literal notranslate"><span class="pre">&quot;correct&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;time&quot;</span></code>.</p>
+<p>Our model also made a number of assumptions that we may choose to relax. For instance, we assumed that all sequences of the same length are equally easy to remember. We also fixed the <code class="docutils literal notranslate"><span class="pre">sensitivity</span></code> to be a known constant: it’s likely we would need to learn this. We could also think about learning at two levels: learning global variables for population trends as well as local variables for individual level effects. The current model is an individual only model. The EIG could still be used as a
+means to select the optimal design in such scenarios.</p>
+</div>
+<div class="section" id="References">
+<h3>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h3>
+<p>[1] Miller, G.A., 1956. <strong>The magical number seven, plus or minus two: Some limits on our capacity for processing information.</strong> Psychological review, 63(2), p.81.</p>
+<p>[2] Chaloner, K. and Verdinelli, I., 1995. <strong>Bayesian experimental design: A review.</strong> Statistical Science, pp.273-304.</p>
+<p>[3] Foster, A., Jankowiak, M., Bingham, E., Horsfall, P., Teh, Y.W., Rainforth, T. and Goodman, N., 2019. <strong>Variational Bayesian Optimal Experimental Design.</strong> Advances in Neural Information Processing Systems 2019 (to appear).</p>
+<p>[4] van der Linden, W.J., 2006. <strong>A lognormal model for response times on test items.</strong> Journal of Educational and Behavioral Statistics, 31(2), pp.181-204.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="elections.html" class="btn btn-neutral float-right" title="Predicting the outcome of a US presidential election using Bayesian optimal experimental design" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ekf.html" class="btn btn-neutral float-left" title="Kalman Filter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

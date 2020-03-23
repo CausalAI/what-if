@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>随机波动率的 Levy 稳定分布模型 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gaussian Mixture Model" href="gmm.html" />
+    <link rel="prev" title="半监督 VAE" href="ss-vae.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">随机波动率的 Levy 稳定分布模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Summary">Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Table-of-contents">Table of contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Daily-S&amp;P-500-data">Daily S&amp;P 500 data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Fitting-a-single-distribution-to-log-returns">Fitting a single distribution to log returns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Modeling-stochastic-volatility">Modeling stochastic volatility</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>随机波动率的 Levy 稳定分布模型</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/stable.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="随机波动率的-Levy-稳定分布模型">
+<h1>随机波动率的 Levy 稳定分布模型<a class="headerlink" href="#随机波动率的-Levy-稳定分布模型" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>Levy Stable models of Stochastic Volatility</p>
+</div></blockquote>
+<p>本教程通过一个非高斯随机波动率模型(non-Gaussian stochastic volatilty model)的启发性例子，演示了使用 Levy <a class="reference external" href="http://docs.pyro.ai/en/stable/distributions.html#stable">Stable</a> distribution 进行推断。</p>
+<p>Inference with stable distribution is tricky because the density <code class="docutils literal notranslate"><span class="pre">Stable.log_prob()</span></code> is not defined. In this tutorial we demonstrate two approaches to inference: (i) using the <a class="reference external" href="http://docs.pyro.ai/en/latest/poutine.html#pyro.poutine.handlers.reparam">poutine.reparam</a> effect to transform models in to a tractable form, and (ii) using the likelihood-free loss <a class="reference external" href="http://docs.pyro.ai/en/latest/inference_algos.html#pyro.infer.energy_distance.EnergyDistance">EnergyDistance</a> with SVI.</p>
+<div class="section" id="Summary">
+<h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="http://docs.pyro.ai/en/stable/distributions.html#stable">Stable.log_prob()</a> is undefined.</p></li>
+<li><p>Stable inference requires either reparameterization or a likelihood-free loss.</p></li>
+<li><p>Reparameterization:</p>
+<ul>
+<li><p>The <a class="reference external" href="http://docs.pyro.ai/en/latest/poutine.html#pyro.poutine.handlers.reparam">poutine.reparam()</a> handler can transform models using various <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html">strategies</a>.</p></li>
+<li><p>The <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.StableReparam">StableReparam</a> strategy can be used for Stable distributions in SVI or HMC.</p></li>
+<li><p>The <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.LatentStableReparam">LatentStableReparam</a> strategy is a little cheaper, but cannot be used for likelihoods.</p></li>
+<li><p>The <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.discrete_cosine.DiscreteCosine">DiscreteCosineReparam</a> strategy improves geometry in batched latent time series models.</p></li>
+</ul>
+</li>
+<li><p>Likelihood-free loss with SVI:</p>
+<ul>
+<li><p>The <a class="reference external" href="http://docs.pyro.ai/en/latest/inference_algos.html#pyro.infer.energy_distance.EnergyDistance">EnergyDistance</a> loss allows stable distributions in the guide and in model likelihoods.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="Table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#Table-of-contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#data">Daily S&amp;P data</a></p></li>
+<li><p><a class="reference external" href="#fitting">Fitting a single distribution to log returns</a> using <code class="docutils literal notranslate"><span class="pre">EnergyDistance</span></code></p></li>
+<li><p><a class="reference external" href="#modeling">Modeling stochastic volatility</a> using <code class="docutils literal notranslate"><span class="pre">poutine.reparam</span></code></p></li>
+</ul>
+<div class="section" id="Daily-S&amp;P-500-data">
+<h3>Daily S&amp;P 500 data<a class="headerlink" href="#Daily-S&P-500-data" title="Permalink to this headline">¶</a></h3>
+<p>The following daily closing prices for the S&amp;P 500 were loaded from <a class="reference external" href="https://finance.yahoo.com/quote/%5EGSPC/history/">Yahoo finance</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="k">import</span> <span class="n">constraints</span>
+
+<span class="kn">from</span> <span class="nn">pyro</span> <span class="k">import</span> <span class="n">poutine</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.examples.finance</span> <span class="k">import</span> <span class="n">load_snp500</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">EnergyDistance</span><span class="p">,</span> <span class="n">Predictive</span><span class="p">,</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.autoguide</span> <span class="k">import</span> <span class="n">AutoDiagonalNormal</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.reparam</span> <span class="k">import</span> <span class="n">DiscreteCosineReparam</span><span class="p">,</span> <span class="n">StableReparam</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">ClippedAdam</span>
+<span class="kn">from</span> <span class="nn">pyro.ops.tensor_utils</span> <span class="k">import</span> <span class="n">convolve</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">load_snp500</span><span class="p">()</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Date</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Close&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+torch.Size([23116])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;trading day&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;S&amp;P 500 from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]));</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_6_0.png" src="_images/stable_6_0.png" />
+</div>
+</div>
+<p>Of interest are the log returns, i.e. the log ratio of price on two subsequent days.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">/</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;daily log returns&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;trading day&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_8_0.png" src="_images/stable_8_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;daily log returns&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Empirical distribution.  mean=</span><span class="si">{:0.3g}</span><span class="s2">, std=</span><span class="si">{:0.3g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()));</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_9_0.png" src="_images/stable_9_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Fitting-a-single-distribution-to-log-returns">
+<h3>Fitting a single distribution to log returns<a class="headerlink" href="#Fitting-a-single-distribution-to-log-returns" title="Permalink to this headline">¶</a></h3>
+<p>Log returns appear to be heavy-tailed. First let’s fit a single distribution to the returns. To fit the distribution, we’ll use a likelihood free statistical inference algorithm <a class="reference external" href="http://docs.pyro.ai/en/latest/inference_algos.html#pyro.infer.energy_distance.EnergyDistance">EnergyDistance</a>, which matches fractional moments of observed data and can handle data with heavy tails.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">():</span>
+    <span class="n">stability</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;stability&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.9</span><span class="p">),</span>
+                           <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">skew</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.1</span><span class="p">),</span> <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">positive</span><span class="p">)</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Stable</span><span class="p">(</span><span class="n">stability</span><span class="p">,</span> <span class="n">skew</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">loc</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1234567890</span><span class="p">)</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">201</span>
+<span class="n">optim</span> <span class="o">=</span> <span class="n">ClippedAdam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;lrd&quot;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">num_steps</span><span class="p">)})</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">EnergyDistance</span><span class="p">())</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;step </span><span class="si">{}</span><span class="s2"> loss = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;SVI step&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pyro</span><span class="o">.</span><span class="n">get_param_store</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{:0.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+step 0 loss = 8.961664199829102
+step 20 loss = 4.8506011962890625
+step 40 loss = 1.5543489456176758
+step 60 loss = 1.7787070274353027
+step 80 loss = 1.4140945672988892
+step 100 loss = 1.3671720027923584
+step 120 loss = 1.287503719329834
+step 140 loss = 1.2791334390640259
+step 160 loss = 1.2810490131378174
+step 180 loss = 1.2784368991851807
+step 200 loss = 1.2823134660720825
+--------------------
+loc = 0.0003696
+scale = 0.00872
+stability = 1.977
+CPU times: user 15.6 s, sys: 521 ms, total: 16.1 s
+Wall time: 2.38 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_12_1.png" src="_images/stable_12_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">uncondition</span><span class="p">(</span><span class="n">model</span><span class="p">)()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;daily log returns&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Posterior predictive distribution&quot;</span><span class="p">);</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_13_0.png" src="_images/stable_13_0.png" />
+</div>
+</div>
+<p>This is a poor fit, but that was to be expected since we are mixing all time steps together: we would expect this to be a scale-mixture of distributions (Normal, or Stable), but are modeling it as a single distribution (Stable in this case).</p>
+</div>
+<div class="section" id="Modeling-stochastic-volatility">
+<h3>Modeling stochastic volatility<a class="headerlink" href="#Modeling-stochastic-volatility" title="Permalink to this headline">¶</a></h3>
+<p>We’ll next fit a stochastic volatility model. Let’s begin with a constant volatility model where log price <span class="math notranslate nohighlight">\(p\)</span> follows Brownian motion</p>
+<div class="math notranslate nohighlight">
+\[\log p_t = \log p_{t-1} + w_t \sqrt h\]</div>
+<p>where <span class="math notranslate nohighlight">\(w_t\)</span> is a sequence of standard white noise. We can rewrite this model in terms of the log returns <span class="math notranslate nohighlight">\(r_t=\log(p_t\,/\,p_{t-1})\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[r_t = w_t \sqrt h\]</div>
+<p>Now to account for <a class="reference external" href="https://en.wikipedia.org/wiki/Volatility_clustering">volatility clustering</a> we can generalize to a stochastic volatility model where volatility <span class="math notranslate nohighlight">\(h\)</span> depends on time <span class="math notranslate nohighlight">\(t\)</span>. Among the simplest such models is one where <span class="math notranslate nohighlight">\(h_t\)</span> follows geometric Brownian motion</p>
+<div class="math notranslate nohighlight">
+\[\log h_t = \log h_{t-1} + \sigma v_t\]</div>
+<p>where again <span class="math notranslate nohighlight">\(v_t\)</span> is a sequence of standard white noise. The entire model thus consists of a geometric Brownian motion <span class="math notranslate nohighlight">\(h_t\)</span> that determines the diffusion rate of another geometric Brownian motion <span class="math notranslate nohighlight">\(p_t\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\log h_t = \log h_{t-1} + \sigma v_t \\
+\log p_t = \log p_{t-1} + w_t \sqrt h_t\end{split}\]</div>
+<p>Usually <span class="math notranslate nohighlight">\(v_1\)</span> and <span class="math notranslate nohighlight">\(w_t\)</span> are both Gaussian. We will generalize to a Stable distribution for <span class="math notranslate nohighlight">\(w_t\)</span>, learning three parameters (stability, skew, and location), but still scaling by <span class="math notranslate nohighlight">\(\sqrt h_t\)</span>.</p>
+<p>Our Pyro model will sample the increments <span class="math notranslate nohighlight">\(v_t\)</span> and record the computation of <span class="math notranslate nohighlight">\(\log h_t\)</span> via <a class="reference external" href="http://docs.pyro.ai/en/stable/primitives.html#pyro.deterministic">pyro.deterministic</a>. Note that there are many ways of implementing this model in Pyro, and geometry can vary depending on implementation. The following version seems to have good geometry, when combined with reparameterizers.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Note we avoid plates because we&#39;ll later reparameterize along the time axis using</span>
+    <span class="c1"># DiscreteCosineReparam, breaking independence. This requires .unsqueeze()ing scalars.</span>
+    <span class="n">h_0</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;h_0&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">log_h</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">deterministic</span><span class="p">(</span><span class="s2">&quot;log_h&quot;</span><span class="p">,</span> <span class="n">h_0</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">v</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">sqrt_h</span> <span class="o">=</span> <span class="n">log_h</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e8</span><span class="p">)</span>
+
+    <span class="c1"># Observed log returns, assumed to be a Stable distribution scaled by sqrt(h).</span>
+    <span class="n">r_loc</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;r_loc&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">r_skew</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;r_skew&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">r_stability</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;r_stability&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Stable</span><span class="p">(</span><span class="n">r_stability</span><span class="p">,</span> <span class="n">r_skew</span><span class="p">,</span> <span class="n">sqrt_h</span><span class="p">,</span> <span class="n">r_loc</span> <span class="o">*</span> <span class="n">sqrt_h</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We use two reparameterizers: <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.StableReparam">StableReparam</a> to handle the <code class="docutils literal notranslate"><span class="pre">Stable</span></code> likelihood (since <code class="docutils literal notranslate"><span class="pre">Stable.log_prob()</span></code> is undefined), and <a class="reference external" href="http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.discrete_cosine.DiscreteCosineReparam">DiscreteCosineReparam</a> to improve geometry of the latent Gaussian process for <code class="docutils literal notranslate"><span class="pre">v</span></code>. We’ll then use <code class="docutils literal notranslate"><span class="pre">reparam_model</span></code> for both inference and prediction.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">reparam_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">reparam</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="n">DiscreteCosineReparam</span><span class="p">(),</span>
+                                        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">StableReparam</span><span class="p">()})</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%time</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">1234567890</span><span class="p">)</span>
+<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">1001</span>
+<span class="n">optim</span> <span class="o">=</span> <span class="n">ClippedAdam</span><span class="p">({</span><span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">),</span> <span class="s2">&quot;lrd&quot;</span><span class="p">:</span> <span class="mf">0.1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">num_steps</span><span class="p">)})</span>
+<span class="n">guide</span> <span class="o">=</span> <span class="n">AutoDiagonalNormal</span><span class="p">(</span><span class="n">reparam_model</span><span class="p">)</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">reparam_model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">Trace_ELBO</span><span class="p">())</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">50</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">median</span> <span class="o">=</span> <span class="n">guide</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;step </span><span class="si">{}</span><span class="s2"> loss = </span><span class="si">{:0.6g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">guide</span><span class="o">.</span><span class="n">quantiles</span><span class="p">([</span><span class="mf">0.325</span><span class="p">,</span> <span class="mf">0.675</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="n">lb</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="n">lb</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="n">ub</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{:0.4g}</span><span class="s2"> ± </span><span class="si">{:0.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span> <span class="o">+</span> <span class="n">ub</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">lb</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;SVI step&quot;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">losses</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+step 0 loss = 80.7915
+step 50 loss = 2.49764
+step 100 loss = 6.18623
+step 150 loss = -1.42891
+step 200 loss = -2.48601
+step 250 loss = -2.75234
+step 300 loss = -2.80716
+step 350 loss = -2.64854
+step 400 loss = -2.93349
+step 450 loss = -2.90964
+step 500 loss = -2.93564
+step 550 loss = -2.98376
+step 600 loss = -3.01648
+step 650 loss = -3.01208
+step 700 loss = -3.04329
+step 750 loss = -3.03045
+step 800 loss = -3.04258
+step 850 loss = -3.06856
+step 900 loss = -3.05272
+step 950 loss = -3.06414
+step 1000 loss = -3.06487
+--------------------
+h_0 = 0.3713 ± 0.01079
+r_loc = 0.05134 ± 0.002976
+r_skew = 0.0001597 ± 0.0002002
+r_stability = 1.92 ± 0.001772
+sigma = 0.2373 ± 0.000313
+CPU times: user 38.1 s, sys: 6.95 s, total: 45.1 s
+Wall time: 45.1 s
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_19_1.png" src="_images/stable_19_1.png" />
+</div>
+</div>
+<p>It appears the log returns exhibit very little skew, but exhibit a stability parameter slightly but significantly less than 2. This contrasts the usual Normal model corresponding to a Stable distribution with skew=0 and stability=2. We can now visualize the estimated volatility:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;log returns&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+<span class="c1"># We will pull out median log returns using the autoguide&#39;s .median() and poutines.</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">Predictive</span><span class="p">(</span><span class="n">reparam_model</span><span class="p">,</span> <span class="n">guide</span><span class="o">=</span><span class="n">guide</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">log_h</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;log_h&quot;</span><span class="p">]</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">log_h</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_h</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>
+                     <span class="n">log_h</span><span class="o">.</span><span class="n">kthvalue</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                     <span class="n">log_h</span><span class="o">.</span><span class="n">kthvalue</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;log volatility&quot;</span><span class="p">)</span>
+
+<span class="n">stability</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="s2">&quot;r_stability&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Estimated index of stability = </span><span class="si">{:0.4g}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stability</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;trading day&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/stable_21_0.png" src="_images/stable_21_0.png" />
+</div>
+</div>
+<p>Observe that volatility roughly follows areas of large absolute log returns. Note that the uncertainty is underestimated, since we have used an approximate <code class="docutils literal notranslate"><span class="pre">AutoDiagonalNormal</span></code> guide. For more precise uncertainty estimates, one could use <a class="reference external" href="http://docs.pyro.ai/en/stable/mcmc.html#hmc">HMC</a> or <a class="reference external" href="http://docs.pyro.ai/en/stable/mcmc.html#nuts">NUTS</a> inference.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gmm.html" class="btn btn-neutral float-right" title="Gaussian Mixture Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ss-vae.html" class="btn btn-neutral float-left" title="半监督 VAE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,1106 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gaussian Mixture Model &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gaussian Processes" href="gp.html" />
+    <link rel="prev" title="随机波动率的 Levy 稳定分布模型" href="stable.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gaussian Mixture Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Table-of-contents">Table of contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Training-a-MAP-estimator">Training a MAP estimator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Serving-the-model:-predicting-membership">Serving the model: predicting membership</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Predicting-membership-using-discrete-inference">Predicting membership using discrete inference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Predicting-membership-by-enumerating-in-the-guide">Predicting membership by enumerating in the guide</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#MCMC">MCMC</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Gaussian Mixture Model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/gmm.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Gaussian-Mixture-Model">
+<h1>Gaussian Mixture Model<a class="headerlink" href="#Gaussian-Mixture-Model" title="Permalink to this headline">¶</a></h1>
+<p>This is tutorial demonstrates how to marginalize out discrete latent variables in Pyro through the motivating example of a mixture model. We’ll focus on the mechanics of parallel enumeration, keeping the model simple by training a trivial 1-D Gaussian model on a tiny 5-point dataset. See also the <a class="reference external" href="http://pyro.ai/examples/enumeration.html">enumeration tutorial</a> for a broader introduction to parallel enumeration.</p>
+<div class="section" id="Table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#Table-of-contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#Overview">Overview</a></p></li>
+<li><p><a class="reference external" href="#Training-a-MAP-estimator">Training a MAP estimator</a></p></li>
+<li><p><a class="reference external" href="#Serving-the-model:-predicting-membership">Serving the model: predicting membership</a></p>
+<ul>
+<li><p><a class="reference external" href="#Predicting-membership-using-discrete-inference">Predicting membership using discrete inference</a></p></li>
+<li><p><a class="reference external" href="#Predicting-membership-by-enumerating-in-the-guide">Predicting membership by enumerating in the guide</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference external" href="#MCMC">MCMC</a></p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="k">import</span> <span class="n">constraints</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">pyro</span> <span class="k">import</span> <span class="n">poutine</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.autoguide</span> <span class="k">import</span> <span class="n">AutoDelta</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">TraceEnum_ELBO</span><span class="p">,</span> <span class="n">config_enumerate</span><span class="p">,</span> <span class="n">infer_discrete</span>
+
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Overview">
+<h3>Overview<a class="headerlink" href="#Overview" title="Permalink to this headline">¶</a></h3>
+<p>Pyro’s <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.traceenum_elbo.TraceEnum_ELBO">TraceEnum_ELBO</a> can automatically marginalize out variables in both the guide and the model. When enumerating guide variables, Pyro can either enumerate sequentially (which is useful if the variables determine downstream control flow), or enumerate in parallel by allocating a new tensor dimension and using nonstandard evaluation to create a tensor of possible values at the variable’s sample site.
+These nonstandard values are then replayed in the model. When enumerating variables in the model, the variables must be enumerated in parallel and must not appear in the guide. Mathematically, guide-side enumeration simply reduces variance in a stochastic ELBO by enumerating all values, whereas model-side enumeration avoids an application of Jensen’s inequality by exactly marginalizing out a variable.</p>
+<p>Here is our tiny dataset. It has five points.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Training-a-MAP-estimator">
+<h3>Training a MAP estimator<a class="headerlink" href="#Training-a-MAP-estimator" title="Permalink to this headline">¶</a></h3>
+<p>Let’s start by learning model parameters <code class="docutils literal notranslate"><span class="pre">weights</span></code>, <code class="docutils literal notranslate"><span class="pre">locs</span></code>, and <code class="docutils literal notranslate"><span class="pre">scale</span></code> given priors and data. We will learn point estimates of these using an <a class="reference external" href="http://docs.pyro.ai/en/dev/infer.autoguide.html#autodelta">AutoDelta</a> guide (named after its delta distributions). Our model will learn global mixture weights, the location of each mixture component, and a shared scale that is common to both components. During inference,
+<a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.traceenum_elbo.TraceEnum_ELBO">TraceEnum_ELBO</a> will marginalize out the assignments of datapoints to clusters.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">K</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Fixed number of components.</span>
+
+<span class="nd">@config_enumerate</span>
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Global variables.</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Dirichlet</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">K</span><span class="p">)))</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;scale&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">LogNormal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
+        <span class="n">locs</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;locs&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">))</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="c1"># Local variables.</span>
+        <span class="n">assignment</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">weights</span><span class="p">))</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">locs</span><span class="p">[</span><span class="n">assignment</span><span class="p">],</span> <span class="n">scale</span><span class="p">),</span> <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>To run inference with this <code class="docutils literal notranslate"><span class="pre">(model,guide)</span></code> pair, we use Pyro’s <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.infer.enum.config_enumerate">config_enumerate()</a> handler to enumerate over all assignments in each iteration. Since we’ve wrapped the batched Categorical assignments in a <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">pyro.plate</a> indepencence context, this enumeration can happen in parallel: we enumerate only 2 possibilites, rather than <code class="docutils literal notranslate"><span class="pre">2**len(data)</span> <span class="pre">=</span> <span class="pre">32</span></code>. Finally, to
+use the parallel version of enumeration, we inform Pyro that we’re only using a single <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">plate</a> via <code class="docutils literal notranslate"><span class="pre">max_plate_nesting=1</span></code>; this lets Pyro know that we’re using the rightmost dimension <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">plate</a> and that Pyro can use any other dimension for parallelization.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">optim</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;betas&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]})</span>
+<span class="n">elbo</span> <span class="o">=</span> <span class="n">TraceEnum_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Before inference we’ll initialize to plausible values. Mixture models are very succeptible to local modes. A common approach is choose the best among many randomly initializations, where the cluster means are initialized from random subsamples of the data. Since we’re using an <a class="reference external" href="http://docs.pyro.ai/en/dev/infer.autoguide.html#autodelta">AutoDelta</a> guide, we can initialize by defining a custom <code class="docutils literal notranslate"><span class="pre">init_loc_fn()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">init_loc_fn</span><span class="p">(</span><span class="n">site</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;weights&quot;</span><span class="p">:</span>
+        <span class="c1"># Initialize weights to uniform.</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">/</span> <span class="n">K</span>
+    <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;scale&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;locs&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">K</span><span class="p">)]</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">site</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">global_guide</span><span class="p">,</span> <span class="n">svi</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+    <span class="n">global_guide</span> <span class="o">=</span> <span class="n">AutoDelta</span><span class="p">(</span><span class="n">poutine</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">expose</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">,</span> <span class="s1">&#39;locs&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">]),</span>
+                             <span class="n">init_loc_fn</span><span class="o">=</span><span class="n">init_loc_fn</span><span class="p">)</span>
+    <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">global_guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">elbo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">svi</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">global_guide</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Choose the best among 100 random initializations.</span>
+<span class="n">loss</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">initialize</span><span class="p">(</span><span class="n">seed</span><span class="p">),</span> <span class="n">seed</span><span class="p">)</span> <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">initialize</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;seed = </span><span class="si">{}</span><span class="s1">, initial_loss = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+seed = 7, initial_loss = 25.665584564208984
+</pre></div></div>
+</div>
+<p>During training, we’ll collect both losses and gradient norms to monitor convergence. We can do this using PyTorch’s <code class="docutils literal notranslate"><span class="pre">.register_hook()</span></code> method.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Register hooks to monitor gradient norms.</span>
+<span class="n">gradient_norms</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">get_param_store</span><span class="p">()</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">:</span> <span class="n">gradient_norms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+...................................................................................................
+...................................................................................................
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iters&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Convergence of SVI&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_12_0.png" src="_images/gmm_12_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">grad_norms</span> <span class="ow">in</span> <span class="n">gradient_norms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grad_norms</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iters&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;gradient norm&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Gradient norms during SVI&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_13_0.png" src="_images/gmm_13_0.png" />
+</div>
+</div>
+<p>Here are the learned parameters:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">map_estimates</span> <span class="o">=</span> <span class="n">global_guide</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">map_estimates</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span>
+<span class="n">locs</span> <span class="o">=</span> <span class="n">map_estimates</span><span class="p">[</span><span class="s1">&#39;locs&#39;</span><span class="p">]</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="n">map_estimates</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;weights = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;locs = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locs</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;scale = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scale</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+weights = [0.375 0.625]
+locs = [ 0.49887404 10.984463  ]
+scale = 0.6514337062835693
+</pre></div></div>
+</div>
+<p>The model’s <code class="docutils literal notranslate"><span class="pre">weights</span></code> are as expected, with about 2/5 of the data in the first component and 3/5 in the second component. Next let’s visualize the mixture model.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">Y1</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">locs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">/</span> <span class="n">scale</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="n">Y2</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">locs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span> <span class="o">/</span> <span class="n">scale</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y1</span> <span class="o">+</span> <span class="n">Y2</span><span class="p">,</span> <span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="s1">&#39;k*&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Density of two-component mixture model&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;probability density&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_17_0.png" src="_images/gmm_17_0.png" />
+</div>
+</div>
+<p>Finally note that optimization with mixture models is non-convex and can often get stuck in local optima. For example in this tutorial, we observed that the mixture model gets stuck in an everthing-in-one-cluster hypothesis if <code class="docutils literal notranslate"><span class="pre">scale</span></code> is initialized to be too large.</p>
+</div>
+<div class="section" id="Serving-the-model:-predicting-membership">
+<h3>Serving the model: predicting membership<a class="headerlink" href="#Serving-the-model:-predicting-membership" title="Permalink to this headline">¶</a></h3>
+<p>Now that we’ve trained a mixture model, we might want to use the model as a classifier. During training we marginalized out the assignment variables in the model. While this provides fast convergence, it prevents us from reading the cluster assignments from the guide. We’ll discuss two options for treating the model as a classifier: first using <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a> (much faster) and second by training a secondary
+guide using enumeration inside SVI (slower but more general).</p>
+<div class="section" id="Predicting-membership-using-discrete-inference">
+<h4>Predicting membership using discrete inference<a class="headerlink" href="#Predicting-membership-using-discrete-inference" title="Permalink to this headline">¶</a></h4>
+<p>The fastest way to predict membership is to use the <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a> handler, together with <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">replay</span></code>. Let’s start out with a MAP classifier, setting <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>’s temperature parameter to zero. For a deeper look at effect handlers like <code class="docutils literal notranslate"><span class="pre">trace</span></code>, <code class="docutils literal notranslate"><span class="pre">replay</span></code>, and <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>, see the <a class="reference external" href="http://pyro.ai/examples/effect_handlers.html">effect handler tutorial</a>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">guide_trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">global_guide</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># record the globals</span>
+<span class="n">trained_model</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">replay</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="n">guide_trace</span><span class="p">)</span>  <span class="c1"># replay the globals</span>
+
+<span class="k">def</span> <span class="nf">classifier</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">inferred_model</span> <span class="o">=</span> <span class="n">infer_discrete</span><span class="p">(</span><span class="n">trained_model</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+                                    <span class="n">first_available_dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># avoid conflict with data plate</span>
+    <span class="n">trace</span> <span class="o">=</span> <span class="n">poutine</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">inferred_model</span><span class="p">)</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">trace</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;assignment&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">classifier</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor([0, 0, 1, 1, 1])
+</pre></div></div>
+</div>
+<p>Indeed we can run this classifer on new data</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">new_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">assignment</span> <span class="o">=</span> <span class="n">classifier</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new_data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">assignment</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;MAP assignment&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;data value&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;class assignment&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_21_0.png" src="_images/gmm_21_0.png" />
+</div>
+</div>
+<p>To generate random posterior assignments rather than MAP assignments, we could set <code class="docutils literal notranslate"><span class="pre">temperature=1</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">classifier</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor([0, 0, 1, 1, 1])
+</pre></div></div>
+</div>
+<p>Since the classes are very well separated, we zoom in to the boundary between classes, around 5.75.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">new_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.5</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">)</span>
+<span class="n">assignment</span> <span class="o">=</span> <span class="n">classifier</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">new_data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">assignment</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s1">&#39;bx&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Random posterior assignment&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;data value&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;class assignment&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_25_0.png" src="_images/gmm_25_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Predicting-membership-by-enumerating-in-the-guide">
+<h4>Predicting membership by enumerating in the guide<a class="headerlink" href="#Predicting-membership-by-enumerating-in-the-guide" title="Permalink to this headline">¶</a></h4>
+<p>A second way to predict class membership is to enumerate in the guide. This doesn’t work well for serving classifier models, since we need to run stochastic optimization for each new input data batch, but it is more general in that it can be embedded in larger variational models.</p>
+<p>To read cluster assignments from the guide, we’ll define a new <code class="docutils literal notranslate"><span class="pre">full_guide</span></code> that fits both global parameters (as above) and local parameters (which were previously marginalized out). Since we’ve already learned good values for the global variables, we will block SVI from updating those by using <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.poutine.block">poutine.block</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nd">@config_enumerate</span>
+<span class="k">def</span> <span class="nf">full_guide</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Global variables.</span>
+    <span class="k">with</span> <span class="n">poutine</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">hide_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;param&quot;</span><span class="p">]):</span>  <span class="c1"># Keep our learned values of global parameters.</span>
+        <span class="n">global_guide</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Local variables.</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="n">assignment_probs</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;assignment_probs&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">K</span><span class="p">)</span> <span class="o">/</span> <span class="n">K</span><span class="p">,</span>
+                                      <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">unit_interval</span><span class="p">)</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;assignment&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">assignment_probs</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">optim</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;betas&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]})</span>
+<span class="n">elbo</span> <span class="o">=</span> <span class="n">TraceEnum_ELBO</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">full_guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">elbo</span><span class="p">)</span>
+
+<span class="c1"># Register hooks to monitor gradient norms.</span>
+<span class="n">gradient_norms</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="n">svi</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">full_guide</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># Initializes param store.</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pyro</span><span class="o">.</span><span class="n">get_param_store</span><span class="p">()</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">:</span> <span class="n">gradient_norms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">norm</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+...................................................................................................
+...................................................................................................
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iters&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Convergence of SVI&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_29_0.png" src="_images/gmm_29_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">grad_norms</span> <span class="ow">in</span> <span class="n">gradient_norms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grad_norms</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;iters&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;gradient norm&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Gradient norms during SVI&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_30_0.png" src="_images/gmm_30_0.png" />
+</div>
+</div>
+<p>We can now examine the guide’s local <code class="docutils literal notranslate"><span class="pre">assignment_probs</span></code> variable.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">assignment_probs</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s1">&#39;assignment_probs&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">assignment_probs</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;component with mean </span><span class="si">{:0.2g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">assignment_probs</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;bo&#39;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;component with mean </span><span class="si">{:0.2g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">locs</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mixture assignment probabilities&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;data value&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;assignment probability&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_32_0.png" src="_images/gmm_32_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="MCMC">
+<h3>MCMC<a class="headerlink" href="#MCMC" title="Permalink to this headline">¶</a></h3>
+<p>Next we’ll explore the full posterior over component parameters using collapsed NUTS, i.e. we’ll use NUTS and marginalize out all discrete latent variables.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pyro.infer.mcmc.api</span> <span class="k">import</span> <span class="n">MCMC</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.mcmc</span> <span class="k">import</span> <span class="n">NUTS</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">kernel</span> <span class="o">=</span> <span class="n">NUTS</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">mcmc</span> <span class="o">=</span> <span class="n">MCMC</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">mcmc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">posterior_samples</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">get_samples</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Sample: 100%|██████████| 300/300 [00:30&lt;00:00,  9.99it/s, step size=1.69e-01, acc. rate=0.587]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">posterior_samples</span><span class="p">[</span><span class="s2">&quot;locs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">h</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">hist2d</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">h</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">xs</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">xs</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">ys</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">ys</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+               <span class="n">colors</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Posterior density as estimated by collapsed NUTS&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;loc of component 0&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loc of component 1&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_36_0.png" src="_images/gmm_36_0.png" />
+</div>
+</div>
+<p>Note that due to nonidentifiability of the mixture components the likelihood landscape has two equally likely modes, near <code class="docutils literal notranslate"><span class="pre">(11,0.5)</span></code> and <code class="docutils literal notranslate"><span class="pre">(0.5,11)</span></code>. NUTS has difficulty switching between the two modes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;NUTS step&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;loc&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Trace plot of loc parameter during NUTS inference&#39;</span><span class="p">)</span>
+<span class="n">pyplot</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/gmm_38_0.png" src="_images/gmm_38_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gp.html" class="btn btn-neutral float-right" title="Gaussian Processes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="stable.html" class="btn btn-neutral float-left" title="随机波动率的 Levy 稳定分布模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

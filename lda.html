@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Latent Dirichlet Allocation &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Markov Chain Monte Carlo" href="mcmc.html" />
+    <link rel="prev" title="Hidden Markov Model" href="hmm.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Latent Dirichlet Allocation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/lda.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="latent-dirichlet-allocation">
+<h1>Latent Dirichlet Allocation<a class="headerlink" href="#latent-dirichlet-allocation" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/lda.py">View lda.py on github</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (c) 2017-2019 Uber Technologies, Inc.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This example implements amortized Latent Dirichlet Allocation [1],</span>
+<span class="sd">demonstrating how to marginalize out discrete assignment variables in a Pyro</span>
+<span class="sd">model. This model and inference algorithm treat documents as vectors of</span>
+<span class="sd">categorical variables (vectors of word ids), and collapses word-topic</span>
+<span class="sd">assignments using Pyro&#39;s enumeration. We use PyTorch&#39;s reparametrized Gamma and</span>
+<span class="sd">Dirichlet distributions [2], avoiding the need for Laplace approximations as in</span>
+<span class="sd">[1]. Following [1] we use the Adam optimizer and clip gradients.</span>
+
+<span class="sd">**References:**</span>
+
+<span class="sd">[1] Akash Srivastava, Charles Sutton. ICLR 2017.</span>
+<span class="sd">    &quot;Autoencoding Variational Inference for Topic Models&quot;</span>
+<span class="sd">    https://arxiv.org/pdf/1703.01488.pdf</span>
+<span class="sd">[2] Martin Jankowiak, Fritz Obermeyer. ICML 2018.</span>
+<span class="sd">    &quot;Pathwise gradients beyond the reparametrization trick&quot;</span>
+<span class="sd">    https://arxiv.org/pdf/1806.01851.pdf</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">constraints</span>
+
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="kn">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="kn">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">JitTraceEnum_ELBO</span><span class="p">,</span> <span class="n">TraceEnum_ELBO</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="kn">import</span> <span class="n">ClippedAdam</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(relativeCreated) 9d</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<span class="c1"># This is a fully generative model of a batch of documents.</span>
+<span class="c1"># data is a [num_words_per_doc, num_documents] shaped array of word ids</span>
+<span class="c1"># (specifically it is not a histogram). We assume in this simple example</span>
+<span class="c1"># that all documents have the same number of words.</span>
+<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c1"># Globals.</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;topics&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">):</span>
+        <span class="n">topic_weights</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;topic_weights&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Gamma</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+        <span class="n">topic_words</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;topic_words&quot;</span><span class="p">,</span>
+                                  <span class="n">dist</span><span class="o">.</span><span class="n">Dirichlet</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_words</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">num_words</span><span class="p">))</span>
+
+    <span class="c1"># Locals.</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;documents&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_docs</span><span class="p">)</span> <span class="k">as</span> <span class="n">ind</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">ignore_jit_warnings</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_words_per_doc</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_docs</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
+        <span class="n">doc_topics</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;doc_topics&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Dirichlet</span><span class="p">(</span><span class="n">topic_weights</span><span class="p">))</span>
+        <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_words_per_doc</span><span class="p">):</span>
+            <span class="c1"># The word_topics variable is marginalized out during inference,</span>
+            <span class="c1"># achieved by specifying infer={&quot;enumerate&quot;: &quot;parallel&quot;} and using</span>
+            <span class="c1"># TraceEnum_ELBO for inference. Thus we can ignore this variable in</span>
+            <span class="c1"># the guide.</span>
+            <span class="n">word_topics</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;word_topics&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">doc_topics</span><span class="p">),</span>
+                                      <span class="n">infer</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enumerate&quot;</span><span class="p">:</span> <span class="s2">&quot;parallel&quot;</span><span class="p">})</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;doc_words&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">topic_words</span><span class="p">[</span><span class="n">word_topics</span><span class="p">]),</span>
+                               <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">topic_weights</span><span class="p">,</span> <span class="n">topic_words</span><span class="p">,</span> <span class="n">data</span>
+
+
+<span class="c1"># We will use amortized inference of the local topic variables, achieved by a</span>
+<span class="c1"># multi-layer perceptron. We&#39;ll wrap the guide in an nn.Module.</span>
+<span class="k">def</span> <span class="nf">make_predictor</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">layer_sizes</span> <span class="o">=</span> <span class="p">([</span><span class="n">args</span><span class="o">.</span><span class="n">num_words</span><span class="p">]</span> <span class="o">+</span>
+                   <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">layer_sizes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span> <span class="o">+</span>
+                   <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">])</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Creating MLP with sizes {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">))</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">in_size</span><span class="p">,</span> <span class="n">out_size</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layer_sizes</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_size</span><span class="p">,</span> <span class="n">out_size</span><span class="p">)</span>
+        <span class="n">layer</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+        <span class="n">layer</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">())</span>
+    <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">parametrized_guide</span><span class="p">(</span><span class="n">predictor</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c1"># Use a conjugate guide for global variables.</span>
+    <span class="n">topic_weights_posterior</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;topic_weights_posterior&quot;</span><span class="p">,</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">),</span>
+            <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">positive</span><span class="p">)</span>
+    <span class="n">topic_words_posterior</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;topic_words_posterior&quot;</span><span class="p">,</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_words</span><span class="p">),</span>
+            <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">greater_than</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;topics&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_topics</span><span class="p">):</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;topic_weights&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Gamma</span><span class="p">(</span><span class="n">topic_weights_posterior</span><span class="p">,</span> <span class="mf">1.</span><span class="p">))</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;topic_words&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Dirichlet</span><span class="p">(</span><span class="n">topic_words_posterior</span><span class="p">))</span>
+
+    <span class="c1"># Use an amortized guide for local variables.</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s2">&quot;predictor&quot;</span><span class="p">,</span> <span class="n">predictor</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;documents&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">num_docs</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span> <span class="k">as</span> <span class="n">ind</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
+        <span class="c1"># The neural network will operate on histograms rather than word</span>
+        <span class="c1"># index vectors, so we&#39;ll convert the raw data to a histogram.</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_words</span><span class="p">,</span> <span class="n">ind</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                       <span class="o">.</span><span class="n">scatter_add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+        <span class="n">doc_topics</span> <span class="o">=</span> <span class="n">predictor</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;doc_topics&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Delta</span><span class="p">(</span><span class="n">doc_topics</span><span class="p">,</span> <span class="n">event_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Generating data&#39;</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="n">__debug__</span><span class="p">)</span>
+
+    <span class="c1"># We can generate synthetic data directly by calling the model.</span>
+    <span class="n">true_topic_weights</span><span class="p">,</span> <span class="n">true_topic_words</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># We&#39;ll train using SVI.</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Training on {} documents&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_docs</span><span class="p">))</span>
+    <span class="n">predictor</span> <span class="o">=</span> <span class="n">make_predictor</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">guide</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">parametrized_guide</span><span class="p">,</span> <span class="n">predictor</span><span class="p">)</span>
+    <span class="n">Elbo</span> <span class="o">=</span> <span class="n">JitTraceEnum_ELBO</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">jit</span> <span class="k">else</span> <span class="n">TraceEnum_ELBO</span>
+    <span class="n">elbo</span> <span class="o">=</span> <span class="n">Elbo</span><span class="p">(</span><span class="n">max_plate_nesting</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">optim</span> <span class="o">=</span> <span class="n">ClippedAdam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">})</span>
+    <span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">elbo</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Step</span><span class="se">\t</span><span class="s1">Loss&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">num_steps</span><span class="p">):</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;{: &gt;5d}</span><span class="se">\t</span><span class="s1">{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">loss</span><span class="p">))</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">elbo</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;final loss = {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">loss</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Amortized Latent Dirichlet Allocation&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-topics&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-w&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-words&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-docs&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-wd&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-words-per-doc&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="s2">&quot;--num-steps&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-l&quot;</span><span class="p">,</span> <span class="s2">&quot;--layer-sizes&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;100-100&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-lr&quot;</span><span class="p">,</span> <span class="s2">&quot;--learning-rate&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="s2">&quot;--batch-size&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--jit&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mcmc.html" class="btn btn-neutral float-right" title="Markov Chain Monte Carlo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="hmm.html" class="btn btn-neutral float-left" title="Hidden Markov Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

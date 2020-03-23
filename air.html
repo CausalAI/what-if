@@ -1,0 +1,1243 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Attend Infer Repeat &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="半监督 VAE" href="ss-vae.html" />
+    <link rel="prev" title="深马尔可夫模型" href="dmm.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Attend Infer Repeat</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Generating-a-single-object">Generating a single object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Generating-an-entire-image">Generating an entire image</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Aside:-Vectorized-mini-batches">Aside: Vectorized mini-batches</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Specifying-the-likelihood">Specifying the likelihood</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Guide">Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Another-perspective">Another perspective</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Inference">Inference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Data-dependent-baselines">Data dependent baselines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Putting-it-all-together">Putting it all together</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#In-practice">In practice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#参考文献">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Attend Infer Repeat</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/air.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Attend-Infer-Repeat">
+<h1>Attend Infer Repeat<a class="headerlink" href="#Attend-Infer-Repeat" title="Permalink to this headline">¶</a></h1>
+<p>在本教程中，we will implement the model and inference strategy described in “Attend, Infer, Repeat: Fast Scene Understanding with Generative Models” (AIR) [1] 并将其应用于 multi-mnist dataset.</p>
+<p>A <a class="reference external" href="https://github.com/pyro-ppl/pyro/tree/dev/examples/air">standalone implementation</a> is also available.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">pylab</span> inline
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">TraceGraph_ELBO</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">pyro.poutine</span> <span class="k">as</span> <span class="nn">poutine</span>
+<span class="kn">import</span> <span class="nn">pyro.contrib.examples.multi_mnist</span> <span class="k">as</span> <span class="nn">multi_mnist</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn.functional</span> <span class="k">import</span> <span class="n">relu</span><span class="p">,</span> <span class="n">sigmoid</span><span class="p">,</span> <span class="n">softplus</span><span class="p">,</span> <span class="n">grid_sample</span><span class="p">,</span> <span class="n">affine_grid</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Populating the interactive namespace from numpy and matplotlib
+</pre></div></div>
+</div>
+<div class="section" id="Introduction">
+<h2>Introduction<a class="headerlink" href="#Introduction" title="Permalink to this headline">¶</a></h2>
+<p>The model described in [1] is a generative model of scenes. In this tutorial we will use it to model images from a dataset that is similar to the multi-mnist dataset in [1]. Here are some data points from this data set:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">inpath</span> <span class="o">=</span> <span class="s1">&#39;../../examples/air/.data&#39;</span>
+<span class="n">X_np</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">multi_mnist</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inpath</span><span class="p">)</span>
+<span class="n">X_np</span> <span class="o">=</span> <span class="n">X_np</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">X_np</span> <span class="o">/=</span> <span class="mf">255.0</span>
+<span class="n">mnist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">X_np</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">show_images</span><span class="p">(</span><span class="n">imgs</span><span class="p">):</span>
+    <span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgs</span><span class="p">):</span>
+        <span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">),</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">show_images</span><span class="p">(</span><span class="n">mnist</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">14</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/air_3_0.png" src="_images/air_3_0.png" />
+</div>
+</div>
+<p>To get an idea where we’re heading, we first give a brief overview of the model and the approach we’ll take to inference. We’ll follow the naming conventions used in [1] as closely as possible.</p>
+<p>AIR decomposes the process of generating an image into discrete steps, each of which generates only part of the image. More specifically, at each step the model will generate a small image (<code class="docutils literal notranslate"><span class="pre">y_att</span></code>) by passing a latent “code” variable (<code class="docutils literal notranslate"><span class="pre">z_what</span></code>) through a neural network. We’ll refer to these small images as “objects”. In the case of AIR applied to the multi-mnist dataset we expect each of these objects to represent a single digit. The model also includes uncertainty about the location and
+size of each object. We’ll describe an object’s location and size as its “pose” (<code class="docutils literal notranslate"><span class="pre">z_where</span></code>). To produce the final image, each object will first be located within a larger image (<code class="docutils literal notranslate"><span class="pre">y</span></code>) using the pose infomation <code class="docutils literal notranslate"><span class="pre">z_where</span></code>. Finally, the <code class="docutils literal notranslate"><span class="pre">y</span></code>s from all time steps will be combined additively to produce the final image <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<p>Here’s a picture (reproduced from [1]) that shows two steps of this process:</p>
+<center>
+<figure style='padding: 0 0 1em'>
+<img src='_static/img/model-generative.png' style='width: 35%;'>
+<figcaption style='font-size: 90%; padding: 0.5em 0 0'>
+<b>Figure 1:</b> Two steps of the generative process.
+</figcaption>
+</figure>
+</center><p>Inference is performed in this model using <a class="reference internal" href="svi_part_i.html"><span class="doc">amortized stochastic variational inference</span></a> (SVI). The parameters of the neural network are also optimized during inference. Performing inference in such rich models is always difficult, but the presence of discrete choices (the number of steps in this case) makes inference in this model particularly tricky. For this reason the authors use a technique called data dependent baselines to achieve good performance. This technique can
+be implemented in Pyro, and we’ll see how later in the tutorial.</p>
+</div>
+<div class="section" id="Model">
+<h2>Model<a class="headerlink" href="#Model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Generating-a-single-object">
+<h3>Generating a single object<a class="headerlink" href="#Generating-a-single-object" title="Permalink to this headline">¶</a></h3>
+<p>Let’s look at the model more closely. At the core of the model is the generative process for a single object. Recall that:</p>
+<ul class="simple">
+<li><p>At each step a single object is generated.</p></li>
+<li><p>Each object is generated by passing its latent code through a neural network.</p></li>
+<li><p>We maintain uncertainty about the latent code used to generate each object, as well as its pose.</p></li>
+</ul>
+<p>This can be expressed in Pyro like so:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Create the neural network. This takes a latent code, z_what, to pixel intensities.</span>
+<span class="k">class</span> <span class="nc">Decoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_what</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">z_what</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+
+<span class="n">decode</span> <span class="o">=</span> <span class="n">Decoder</span><span class="p">()</span>
+
+<span class="n">z_where_prior_loc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="n">z_where_prior_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+<span class="n">z_what_prior_loc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">z_what_prior_scale</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">prior_step_sketch</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="c1"># Sample object pose. This is a 3-dimensional vector representing x,y position and size.</span>
+    <span class="n">z_where</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_where_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                          <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_where_prior_loc</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                      <span class="n">z_where_prior_scale</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                              <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Sample object code. This is a 50-dimensional vector.</span>
+    <span class="n">z_what</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_what_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_what_prior_loc</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                     <span class="n">z_what_prior_scale</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Map code to pixel space using the neural network.</span>
+    <span class="n">y_att</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">z_what</span><span class="p">)</span>
+
+    <span class="c1"># Position/scale object within larger image.</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">object_to_image</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">y_att</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+<p>Hopefully the use of <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> and PyTorch networks within a model seem familiar at this point. If not you might want to review the <a class="reference internal" href="vae.html"><span class="doc">VAE tutorial</span></a>. One thing to note is that we include the current step <code class="docutils literal notranslate"><span class="pre">t</span></code> in the name passed to <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> to ensure that names are unique across steps.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">object_to_image</span></code> function is specific to this model and warrants further attention. Recall that the neural network (<code class="docutils literal notranslate"><span class="pre">decode</span></code> here) will output a small image, and that we would like to add this to the output image after performing any translation and scaling required to achieve the pose (location and size) described by <code class="docutils literal notranslate"><span class="pre">z_where</span></code>. It’s not clear how to do this, and in particular it’s not obvious that this can be implemented in a way that preserves the differentiability of our model,
+which we require in order to perform <a class="reference internal" href="svi_part_i.html"><span class="doc">SVI</span></a>. However, it turns out we can do this this using a spatial transformer network (STN) [2].</p>
+<p>Happily for us, PyTorch makes it easy to implement a STN using its <a class="reference external" href="http://pytorch.org/docs/master/nn.html#grid-sample">grid_sample</a> and <a class="reference external" href="http://pytorch.org/docs/master/nn.html#affine-grid">affine_grid</a> functions. <code class="docutils literal notranslate"><span class="pre">object_to_image</span></code> is a simple function that calls these, doing a little extra work to massage <code class="docutils literal notranslate"><span class="pre">z_where</span></code> into the expected format.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">expand_z_where</span><span class="p">(</span><span class="n">z_where</span><span class="p">):</span>
+    <span class="c1"># Takes 3-dimensional vectors, and massages them into 2x3 matrices with elements like so:</span>
+    <span class="c1"># [s,x,y] -&gt; [[s,0,x],</span>
+    <span class="c1">#             [0,s,y]]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">z_where</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">expansion_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">z_where</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">expansion_indices</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">object_to_image</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">expand_z_where</span><span class="p">(</span><span class="n">z_where</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">affine_grid</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">grid_sample</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">grid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>A discussion of the details of the STN is beyond the scope of this tutorial. For our purposes however, it suffices to keep in mind that <code class="docutils literal notranslate"><span class="pre">object_to_image</span></code> takes the small image generated by the neural network and places it within a larger image with the desired pose.</p>
+<p>Let’s visualize the results of calling <code class="docutils literal notranslate"><span class="pre">prior_step_sketch</span></code> a few times to clarify this:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">prior_step_sketch</span><span class="p">(</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="n">show_images</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/air_11_0.png" src="_images/air_11_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Generating-an-entire-image">
+<h3>Generating an entire image<a class="headerlink" href="#Generating-an-entire-image" title="Permalink to this headline">¶</a></h3>
+<p>Having completed the implementation of a single step, we next consider how we can use this to generate an entire image. Recall that we would like to maintain uncertainty over the number of steps used to generate each data point. One choice we could make for the prior over the number of steps is the geometric distribution, which can be expressed as follows:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">geom</span><span class="p">(</span><span class="n">num_trials</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;x</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_trials</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">num_trials</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">geom</span><span class="p">(</span><span class="n">num_trials</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Generate some samples.</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sampled </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">geom</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+sampled 2
+sampled 3
+sampled 0
+sampled 1
+sampled 0
+</pre></div></div>
+</div>
+<p>This is a direct translation of the definition of the geometric distribution as the number of failures before a success in a series of Bernoulli trials. Here we express this as a recursive function that passes around a counter representing the number of trials made, <code class="docutils literal notranslate"><span class="pre">num_trials</span></code>. This function samples from the Bernoulli and returns <code class="docutils literal notranslate"><span class="pre">num_trials</span></code> if <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">1</span></code> (which represents success), otherwise it makes a recursive call, incrementing the counter.</p>
+<p>The use of a geometric prior is appealing because it does not bound the number of steps the model can use a priori. It’s also convenient, because by extending <code class="docutils literal notranslate"><span class="pre">geometric</span></code> to generate an object before each recursive call, we turn this from a geometric distribution over counts to a distribution over images with a geometrically distributed number of steps.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">geom_prior</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;i</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step</span><span class="p">),</span> <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">prior_step_sketch</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">geom_prior</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s visualize some samples from this distribution:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">x_empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">geom_prior</span><span class="p">(</span><span class="n">x_empty</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="n">show_images</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/air_17_0.png" src="_images/air_17_0.png" />
+</div>
+</div>
+<div class="section" id="Aside:-Vectorized-mini-batches">
+<h4>Aside: Vectorized mini-batches<a class="headerlink" href="#Aside:-Vectorized-mini-batches" title="Permalink to this headline">¶</a></h4>
+<p>In our final implementation we would like to generate a mini batch of samples in parallel for efficiency. While Pyro supports vectorized mini batches with <code class="docutils literal notranslate"><span class="pre">plate</span></code>, it currently requires that each <code class="docutils literal notranslate"><span class="pre">sample</span></code> statement within <code class="docutils literal notranslate"><span class="pre">plate</span></code> makes a choice for all samples in the mini batch. Another way to say this is that each sample in the mini batch will encounter the same set of <code class="docutils literal notranslate"><span class="pre">sample</span></code> statements. This is problematic for us, because as we’ve just seen, samples can make differing numbers of
+choices under our model.</p>
+<p>One way around this is to have all samples take the same number of steps, but to nullify (so far as is possible) the effect of the superfuous random choices made after the sample is conceptually “complete”. We’ll say that a sample is “complete” once a zero is sampled from the Bernoulli random choice, and prior to that we’ll say that a sample is “active”.</p>
+<p>The first part of this is straight forward. Following [1] we choose to take a fixed number of steps for each sample. (By doing so we no longer specify a geometric distribution over the number of steps, since the number of steps is now bounded. It would be interesting to explore the alternative of having each sample in the batch take steps until a successful Bernoulli trial has occured in each, as this would retain the geometric prior.)</p>
+<p>To address the second part we will take the following steps:</p>
+<ol class="arabic simple">
+<li><p>Only add objects to the output while a sample is active.</p></li>
+<li><p>Set the log probability of random choices made by complete samples to zero. (Since the <a class="reference internal" href="svi_part_iii.html"><span class="doc">SVI loss</span></a> is a weighted sum of log probabilities, setting a choice’s log probability to zero effectively removes its contribution to the loss.) This is achieved using the <code class="docutils literal notranslate"><span class="pre">mask()</span></code> method of distributions.</p></li>
+</ol>
+<p>(Looking ahead, we’ll need to take similar measures when we implement the guide and add baselines later in this tutorial.)</p>
+<p>Of course, one thing we can’t undo is the work done in performing unncessary sampling. Nevertheless, even though this approach performs redundant computation, the gains from using mini batches are so large that this is still a win overall.</p>
+<p>Here’s an updated model step function that implements these ideas. In summary, the changes from <code class="docutils literal notranslate"><span class="pre">prior_step_sketch</span></code> are:</p>
+<ol class="arabic simple">
+<li><p>We’ve added a new parameter <code class="docutils literal notranslate"><span class="pre">n</span></code> that specifies the size of the mini batch.</p></li>
+<li><p>We now conditionally add the object to the output image based on a value sampled from a Bernoulli distribution.</p></li>
+<li><p>We use <code class="docutils literal notranslate"><span class="pre">mask()</span></code> to zero out the log probability of random choices made by complete samples.</p></li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">prior_step</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">prev_x</span><span class="p">,</span> <span class="n">prev_z_pres</span><span class="p">):</span>
+
+    <span class="c1"># Sample variable indicating whether to add this object to the output.</span>
+
+    <span class="c1"># We multiply the success probability of 0.5 by the value sampled for this</span>
+    <span class="c1"># choice in the previous step. By doing so we add objects to the output until</span>
+    <span class="c1"># the first 0 is sampled, after which we add no further objects.</span>
+    <span class="n">z_pres</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_pres_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">prev_z_pres</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">z_where</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_where_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                          <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_where_prior_loc</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                      <span class="n">z_where_prior_scale</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                              <span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">z_pres</span><span class="p">)</span>
+                              <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">z_what</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_what_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_what_prior_loc</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                                     <span class="n">z_what_prior_scale</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                             <span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">z_pres</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">y_att</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">z_what</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">object_to_image</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">y_att</span><span class="p">)</span>
+
+    <span class="c1"># Combine the image generated at this step with the image so far.</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">prev_x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z_pres</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">z_pres</span>
+</pre></div>
+</div>
+</div>
+<p>By iterating this step function we can produce an entire image, composed of multiple objects. Since each image in the multi-mnist dataset contains zero, one or two digits we will allow the model to use up to (and including) three steps. In this way we ensure that inference has to avoid using one or more steps in order to correctly count the number of objects in the input.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">prior</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">z_pres</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">z_pres</span> <span class="o">=</span> <span class="n">prior_step</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">z_pres</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<p>We have now fully specified the prior for our model. Let’s visualize some samples to get a feel for this distribution:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">show_images</span><span class="p">(</span><span class="n">prior</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/air_23_0.png" src="_images/air_23_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Specifying-the-likelihood">
+<h4>Specifying the likelihood<a class="headerlink" href="#Specifying-the-likelihood" title="Permalink to this headline">¶</a></h4>
+<p>The last thing we need in order to complete the specification of the model is a likelihood function. Following [1] we will use a Gaussian likelihood with a fixed standard deviation of 0.3. This is straight forward to implement with <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> using the <code class="docutils literal notranslate"><span class="pre">obs</span></code> argument.</p>
+<p>When we later come to perform inference we will find it convenient to package the prior and likelihood into a single function. This is also a convenient place to introduce <code class="docutils literal notranslate"><span class="pre">plate</span></code>, which we use to implement data subsampling, and to register the networks we would like to optimize with <code class="docutils literal notranslate"><span class="pre">pyro.module</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Register network for optimization.</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s2">&quot;decode&quot;</span><span class="p">,</span> <span class="n">decode</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="k">as</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">prior</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.3</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">obs</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Guide">
+<h2>Guide<a class="headerlink" href="#Guide" title="Permalink to this headline">¶</a></h2>
+<p>Following [1] we will perform <a class="reference internal" href="svi_part_i.html"><span class="doc">amortized stochastic variational inference</span></a> in this model. Pyro provides general purpose machinery that implements most of this inference strategy, but as we have seen in earlier tutorials we are required to provide a model specific guide. What we call a guide in Pyro is exactly the entity called the “inference network” in the paper.</p>
+<p>We will structure the guide around a recurrent network to allow the guide to capture (some of) the dependencies we expect to be present in the true posterior. At each step the recurrent network will generate the parameters for the choices made within the step. The values sampled will be fed back into the recurrent network so that this information can be used when computing the parameters for the next step. The guide for the <a class="reference internal" href="dmm.html"><span class="doc">Deep Markov Model</span></a> shares a similar structure.</p>
+<p>As in the model, the core of the guide is the logic for a single step. Here’s a sketch of an implementation of this:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">guide_step_basic</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+
+    <span class="c1"># The RNN takes the images and choices from the previous step as input.</span>
+    <span class="n">rnn_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_where</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_what</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">rnn_input</span><span class="p">,</span> <span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+
+    <span class="c1"># Compute parameters for all choices made this step, by passing</span>
+    <span class="c1"># the RNN hidden start through another neural network.</span>
+    <span class="n">z_pres_p</span><span class="p">,</span> <span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span><span class="p">,</span> <span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span> <span class="o">=</span> <span class="n">predict_basic</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="n">z_pres</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_pres_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">z_pres_p</span> <span class="o">*</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">))</span>
+
+    <span class="n">z_where</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_where_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                          <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span><span class="p">))</span>
+
+    <span class="n">z_what</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_what_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="c1"># values for next step</span>
+</pre></div>
+</div>
+</div>
+<p>This would be a reasonable guide to use with this model, but the paper describes a crucial improvement we can make to the code above. Recall that the guide will output information about an object’s pose and its latent code at each step. The improvement we can make is based on the observation that once we have inferred the pose of an object, we can do a better job of inferring its latent code if we use the pose information to crop the object from the input image, and pass the result (which we’ll
+call a “window”) through an additional network in order to compute the parameters of the latent code. We’ll call this additional network the “encoder” below.</p>
+<p>Here’s how we can implement this improved guide, and a fleshed out implementation of the networks involved:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">rnn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTMCell</span><span class="p">(</span><span class="mi">2554</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+
+<span class="c1"># Takes pixel intensities of the attention window to parameters (mean,</span>
+<span class="c1"># standard deviation) of the distribution over the latent code,</span>
+<span class="c1"># z_what.</span>
+<span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">50</span><span class="p">],</span> <span class="n">softplus</span><span class="p">(</span><span class="n">a</span><span class="p">[:,</span> <span class="mi">50</span><span class="p">:])</span>
+
+<span class="n">encode</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span>
+
+<span class="c1"># Takes the guide RNN hidden state to parameters of</span>
+<span class="c1"># the guide distributions over z_where and z_pres.</span>
+<span class="k">class</span> <span class="nc">Predict</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">z_pres_p</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">a</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># Squish to [0,1]</span>
+        <span class="n">z_where_loc</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">z_where_scale</span> <span class="o">=</span> <span class="n">softplus</span><span class="p">(</span><span class="n">a</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:])</span> <span class="c1"># Squish to &gt;0</span>
+        <span class="k">return</span> <span class="n">z_pres_p</span><span class="p">,</span> <span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span>
+
+<span class="n">predict</span> <span class="o">=</span> <span class="n">Predict</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">guide_step_improved</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+
+    <span class="n">rnn_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_where</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_what</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">rnn_input</span><span class="p">,</span> <span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+    <span class="n">z_pres_p</span><span class="p">,</span> <span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="n">z_pres</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_pres_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">z_pres_p</span> <span class="o">*</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">z_where</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_where_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                          <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span><span class="p">)</span>
+                              <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># New. Crop a small window from the input.</span>
+    <span class="n">x_att</span> <span class="o">=</span> <span class="n">image_to_object</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Compute the parameter of the distribution over z_what</span>
+    <span class="c1"># by passing the window through the encoder network.</span>
+    <span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span> <span class="o">=</span> <span class="n">encode</span><span class="p">(</span><span class="n">x_att</span><span class="p">)</span>
+
+    <span class="n">z_what</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_what_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="c1"># values for next step</span>
+</pre></div>
+</div>
+</div>
+<p>Since we would like to maintain differentiability of the guide we again use a STN to perform the required “cropping”. The <code class="docutils literal notranslate"><span class="pre">image_to_object</span></code> function performs the opposite transform to the object_to_image function used in the guide. That is, the former takes a small image and places it on a larger image, and the latter crops a small image from a larger image.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">z_where_inv</span><span class="p">(</span><span class="n">z_where</span><span class="p">):</span>
+    <span class="c1"># Take a batch of z_where vectors, and compute their &quot;inverse&quot;.</span>
+    <span class="c1"># That is, for each row compute:</span>
+    <span class="c1"># [s,x,y] -&gt; [1/s,-x/s,-y/s]</span>
+    <span class="c1"># These are the parameters required to perform the inverse of the</span>
+    <span class="c1"># spatial transform performed in the generative model.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">z_where</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">z_where</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="n">z_where</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="n">z_where</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="k">def</span> <span class="nf">image_to_object</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">theta_inv</span> <span class="o">=</span> <span class="n">expand_z_where</span><span class="p">(</span><span class="n">z_where_inv</span><span class="p">(</span><span class="n">z_where</span><span class="p">))</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">affine_grid</span><span class="p">(</span><span class="n">theta_inv</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">grid_sample</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">grid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Another-perspective">
+<h3>Another perspective<a class="headerlink" href="#Another-perspective" title="Permalink to this headline">¶</a></h3>
+<p>So far we’ve considered the model and the guide in isolation, but we gain an interesting perspective if we zoom out and look at the model and guide computation as a whole. Doing so, we see that at each step AIR includes a sub-computation that has the same structure as a <a class="reference internal" href="vae.html"><span class="doc">Variational Auto-encoder</span></a> (VAE).</p>
+<p>To see this, notice that the guide passes the window through a neural network (the encoder) to generate the parameters of the distribution over a latent code, and the model passes samples from this latent code distribution through another neural network (the decoder) to generate an output window. This structure is highlighted in the following figure, reproduced from [1]:</p>
+<center>
+<figure style='padding: 0 0 1em'>
+<img src='_static/img/model-micro.png' style='width: 35%;'>
+<figcaption style='font-size: 90%; padding: 0.5em 0 0'>
+<b>Figure 2:</b> Interaction between the guide and model at each step.
+</figcaption>
+</figure>
+</center><p>From this perspective AIR is seen as a sequential variant of the VAE. The act of cropping a small window from the input image serves to restrict the attention of a VAE to a small region of the input image at each step; hence “Attend, Infer, Repeat”.</p>
+</div>
+</div>
+<div class="section" id="Inference">
+<h2>Inference<a class="headerlink" href="#Inference" title="Permalink to this headline">¶</a></h2>
+<p>As we mentioned in the introduction, successfully performing inference in this model is a challenge. In particular, the presence of discrete choices in the model makes inference trickier than in a model in which all choices can be reparameterized. The underlying problem we face is that the gradient estimates we use in the optimization performed by variational inference have much higher variance in the presence of <a class="reference internal" href="svi_part_iii.html#Tricky-Case:-不可重参数化"><span class="std std-ref">Tricky Case: 不可重参数化</span></a>.</p>
+<p>To bring this variance under control, the paper applies a technique called “data dependent baselines” (AKA “neural baselines”) to the discrete choices in the model.</p>
+<div class="section" id="Data-dependent-baselines">
+<h3>Data dependent baselines<a class="headerlink" href="#Data-dependent-baselines" title="Permalink to this headline">¶</a></h3>
+<p>Happily for us, Pyro includes support for data dependent baselines. If you are not already familiar with this idea, you might want to read <a class="reference internal" href="svi_part_iii.html#Baselines-in-Pyro"><span class="std std-ref">our introduction</span></a> before continuing. As model authors we only have to implement the neural network, pass it our data as input, and feed its output to <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code>. Pyro’s inference back-end will ensure that the baseline is included in the gradient estimator used for inference, and that the network parameters are
+updated appropriately.</p>
+<p>Let’s see how we can add data dependent baselines to our AIR implementation. We need a neural network that can output a (scalar) baseline value at each discrete choice in the guide, having received a multi-mnist image and the values sampled by the guide so far as input. Notice that this is very similar to the structure of the guide network, and indeed we will again use a recurrent network.</p>
+<p>To implement this we will first write a short helper function that implements a single step of the RNN we’ve just described:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">bl_rnn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTMCell</span><span class="p">(</span><span class="mi">2554</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+<span class="n">bl_predict</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Use an RNN to compute the baseline value. This network takes the</span>
+<span class="c1"># input images and the values samples so far as input.</span>
+<span class="k">def</span> <span class="nf">baseline_step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+    <span class="n">rnn_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span>
+                           <span class="n">prev</span><span class="o">.</span><span class="n">z_where</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+                           <span class="n">prev</span><span class="o">.</span><span class="n">z_what</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+                           <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="o">.</span><span class="n">detach</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">bl_h</span><span class="p">,</span> <span class="n">bl_c</span> <span class="o">=</span> <span class="n">bl_rnn</span><span class="p">(</span><span class="n">rnn_input</span><span class="p">,</span> <span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">bl_h</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">bl_c</span><span class="p">))</span>
+    <span class="n">bl_value</span> <span class="o">=</span> <span class="n">bl_predict</span><span class="p">(</span><span class="n">bl_h</span><span class="p">)</span> <span class="o">*</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span>
+    <span class="k">return</span> <span class="n">bl_value</span><span class="p">,</span> <span class="n">bl_h</span><span class="p">,</span> <span class="n">bl_c</span>
+</pre></div>
+</div>
+</div>
+<p>There are two important details to highlight here:</p>
+<p>First, we <code class="docutils literal notranslate"><span class="pre">detach</span></code> values sampled by the guide before passing them to the baseline network. This is important as the baseline network and the guide network are entirely separate networks optimized with different objectives. Without this, gradients would flow from the baseline network into the guide network. When using data dependent baselines we must do this whenever we feed values sampled by the guide into the baselines network. (If we don’t we’ll trigger a PyTorch run-time error.)</p>
+<p>Second, we multiply the output of the baseline network by the value of <code class="docutils literal notranslate"><span class="pre">z_pres</span></code> from the previous step. This relieves the baseline network from the burdon of having to output accurate predictions for completed samples. (The outputs for completed samples will be multiplied by zero, so the derivative of the <a class="reference internal" href="svi_part_iii.html#Neural-Baselines"><span class="std std-ref">baseline loss</span></a> for these outputs will be zero.) It’s OK to do this because in effect we’ve already removed random choices for completed samples from
+the inference objective, so there’s no need to apply any variance reduction to them.</p>
+<p>We now have everything we need to complete the implementation of the guide. Our final <code class="docutils literal notranslate"><span class="pre">guide_step</span></code> function will be very similar to <code class="docutils literal notranslate"><span class="pre">guide_step_improved</span></code> introduced above. The only changes are:</p>
+<ol class="arabic simple">
+<li><p>We now call the <code class="docutils literal notranslate"><span class="pre">baseline_step</span></code> helper and pass the baseline value it returns to <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code>.</p></li>
+<li><p>We now mask out the <code class="docutils literal notranslate"><span class="pre">z_where</span></code> and <code class="docutils literal notranslate"><span class="pre">z_what</span></code> choices for complete sample. This serves exactly the same purpose as the masks added to the model. (See the earlier discussion for the motivation behind this change.)</p></li>
+</ol>
+<p>We’ll also write a <code class="docutils literal notranslate"><span class="pre">guide</span></code> function that will iterate <code class="docutils literal notranslate"><span class="pre">guide_step</span></code> in order to provide a guide for the whole model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">GuideState</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;GuideState&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;bl_h&#39;</span><span class="p">,</span> <span class="s1">&#39;bl_c&#39;</span><span class="p">,</span> <span class="s1">&#39;z_pres&#39;</span><span class="p">,</span> <span class="s1">&#39;z_where&#39;</span><span class="p">,</span> <span class="s1">&#39;z_what&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">initial_guide_state</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">GuideState</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                      <span class="n">c</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                      <span class="n">bl_h</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                      <span class="n">bl_c</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+                      <span class="n">z_pres</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                      <span class="n">z_where</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                      <span class="n">z_what</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">guide_step</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="p">):</span>
+
+    <span class="n">rnn_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_where</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_what</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">rnn</span><span class="p">(</span><span class="n">rnn_input</span><span class="p">,</span> <span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">prev</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+    <span class="n">z_pres_p</span><span class="p">,</span> <span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="c1"># Here we compute the baseline value, and pass it to sample.</span>
+    <span class="n">baseline_value</span><span class="p">,</span> <span class="n">bl_h</span><span class="p">,</span> <span class="n">bl_c</span> <span class="o">=</span> <span class="n">baseline_step</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">prev</span><span class="p">)</span>
+    <span class="n">z_pres</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_pres_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Bernoulli</span><span class="p">(</span><span class="n">z_pres_p</span> <span class="o">*</span> <span class="n">prev</span><span class="o">.</span><span class="n">z_pres</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                         <span class="n">infer</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">baseline</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">baseline_value</span><span class="o">=</span><span class="n">baseline_value</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))))</span>
+
+    <span class="n">z_where</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_where_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                          <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_where_loc</span><span class="p">,</span> <span class="n">z_where_scale</span><span class="p">)</span>
+                              <span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">z_pres</span><span class="p">)</span>
+                              <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">x_att</span> <span class="o">=</span> <span class="n">image_to_object</span><span class="p">(</span><span class="n">z_where</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span> <span class="o">=</span> <span class="n">encode</span><span class="p">(</span><span class="n">x_att</span><span class="p">)</span>
+
+    <span class="n">z_what</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;z_what_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+                         <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">z_what_loc</span><span class="p">,</span> <span class="n">z_what_scale</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">z_pres</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">GuideState</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">bl_h</span><span class="o">=</span><span class="n">bl_h</span><span class="p">,</span> <span class="n">bl_c</span><span class="o">=</span><span class="n">bl_c</span><span class="p">,</span> <span class="n">z_pres</span><span class="o">=</span><span class="n">z_pres</span><span class="p">,</span> <span class="n">z_where</span><span class="o">=</span><span class="n">z_where</span><span class="p">,</span> <span class="n">z_what</span><span class="o">=</span><span class="n">z_what</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">guide</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Register networks for optimization.</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s1">&#39;rnn&#39;</span><span class="p">,</span> <span class="n">rnn</span><span class="p">),</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s1">&#39;predict&#39;</span><span class="p">,</span> <span class="n">predict</span><span class="p">),</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s1">&#39;encode&#39;</span><span class="p">,</span> <span class="n">encode</span><span class="p">),</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s1">&#39;bl_rnn&#39;</span><span class="p">,</span> <span class="n">bl_rnn</span><span class="p">)</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">module</span><span class="p">(</span><span class="s1">&#39;bl_predict&#39;</span><span class="p">,</span> <span class="n">bl_predict</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">subsample_size</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span> <span class="k">as</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">initial_guide_state</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">guide_step</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">steps</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Putting-it-all-together">
+<h3>Putting it all together<a class="headerlink" href="#Putting-it-all-together" title="Permalink to this headline">¶</a></h3>
+<p>We have now completed the implementation of the model and the guide. As we have seen in earlier tutorials, we need write only a few more lines of code to begin performing inference:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mnist</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
+          <span class="n">guide</span><span class="p">,</span>
+          <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">}),</span>
+          <span class="n">loss</span><span class="o">=</span><span class="n">TraceGraph_ELBO</span><span class="p">())</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;i=</span><span class="si">{}</span><span class="s1">, elbo=</span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">loss</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+i=0, elbo=2806.79
+i=1, elbo=3656.81
+i=2, elbo=3222.37
+i=3, elbo=3872.77
+i=4, elbo=2818.27
+</pre></div></div>
+</div>
+<p>One key detail here is that we use a <code class="docutils literal notranslate"><span class="pre">TraceGraph_ELBO</span></code> loss rather than a simpler <code class="docutils literal notranslate"><span class="pre">Trace_ELBO</span></code>. This indicates that we wish to use the gradient estimator that supports data dependent baselines. This estimator also <a class="reference internal" href="svi_part_iii.html#Reducing-Variance-via-Dependency-Structure"><span class="std std-ref">reduces the variance</span></a> of gradient estimates by making use of independence information included in the model. Something similar is implicity used in [1], and is necessary in order to achieve good results on this
+model.</p>
+</div>
+</div>
+<div class="section" id="Results">
+<h2>Results<a class="headerlink" href="#Results" title="Permalink to this headline">¶</a></h2>
+<p>To sanity check our implementation we ran inference using our <a class="reference external" href="https://github.com/pyro-ppl/pyro/tree/dev/examples/air">standalone implementation</a> and compared its performance against some of the results reported in [1].</p>
+<p>Here we show progress made on the ELBO and training set count accuracy during optimization:</p>
+<center>
+<figure style='padding: 0 0 1em'>
+<div style='width: 50%; float: left;'><img src="_static/img/air/progress_elbo.png" /></div>
+<div style='width: 50%; float: left;'><img src="_static/img/air/progress_accuracy.png" /></div>
+<figcaption style='font-size: 90%; clear: both;'><b>Figure 3:</b> <i>Left:</i> Progress on the evidence lower bound (ELBO) during optimization. <i>Right:</i> Progress on training set count accuracy during optimization.</figcaption>
+</figure>
+</center><p>Count accuracy reached around 98.7%, which is in the same ballpark as the count accuracy reported in [1]. The value reached on the ELBO differs a little from that reported in [1], which may be due to small differences in the priors used.</p>
+<p>In the next figure the top row shows ten data points from the test set. The bottom row is a visualization of a single sample from the guide for each of these inputs, that shows the values sampled for <code class="docutils literal notranslate"><span class="pre">z_pres</span></code> and <code class="docutils literal notranslate"><span class="pre">z_where</span></code>. Following [1], the first, second and third steps are displayed using red, green and blue borders respectively. (No blue borders are shown as the guide did not use three steps for any of these samples.) It also shows reconstructions of the input obtained by passing the
+latent variables sampled from the guide back through the model to generate an output image.</p>
+<center>
+<figure style='padding: 0 0 1em'>
+<img src="_static/img/air/reconstructions.png" />
+<figcaption style='font-size: 90%; padding: 0.5em 0 0'><b>Figure 4:</b> <i>Top row:</i> Data points from the multi-mnist test set. <i>Bottom row:</i> Visualization of samples from the guide and the model's reconstruction of the inputs.</figcaption>
+</figure>
+</center><p>These results were collected using the following parameters:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">n</span> <span class="mi">200000</span> <span class="o">-</span><span class="n">blr</span> <span class="mf">0.1</span> <span class="o">--</span><span class="n">z</span><span class="o">-</span><span class="n">pres</span><span class="o">-</span><span class="n">prior</span> <span class="mf">0.01</span> <span class="o">--</span><span class="n">scale</span><span class="o">-</span><span class="n">prior</span><span class="o">-</span><span class="n">sd</span> <span class="mf">0.2</span> <span class="o">--</span><span class="n">predict</span><span class="o">-</span><span class="n">net</span> <span class="mi">200</span> <span class="o">--</span><span class="n">bl</span><span class="o">-</span><span class="n">predict</span><span class="o">-</span><span class="n">net</span> <span class="mi">200</span> <span class="o">--</span><span class="n">decoder</span><span class="o">-</span><span class="n">output</span><span class="o">-</span><span class="n">use</span><span class="o">-</span><span class="n">sigmoid</span> <span class="o">--</span><span class="n">decoder</span><span class="o">-</span><span class="n">output</span><span class="o">-</span><span class="n">bias</span> <span class="o">-</span><span class="mi">2</span> <span class="o">--</span><span class="n">seed</span> <span class="mi">287710</span>
+</pre></div>
+</div>
+<p>We used Pyro commit <code class="docutils literal notranslate"><span class="pre">c0b38ad</span></code> with PyTorch <code class="docutils literal notranslate"><span class="pre">0.2.0.post4</span></code>. Inference ran for approximately 4 hours on an NVIDIA K80 GPU. (Note that even though we set the random seed, this isn’t sufficient to make inference deterministic when using CUDA.)</p>
+</div>
+<div class="section" id="In-practice">
+<h2>In practice<a class="headerlink" href="#In-practice" title="Permalink to this headline">¶</a></h2>
+<p>We found it important to pay attention to the following details in order to achieve good results with AIR.</p>
+<ul class="simple">
+<li><p>Inference is unlikely to recover correct object counts unless a small prior success probability for <code class="docutils literal notranslate"><span class="pre">z_pres</span></code> is used. In [1] this <a class="reference external" href="http://akosiorek.github.io/ml/2017/09/03/implementing-air.html">probability was annealed</a> from a value close to one to <code class="docutils literal notranslate"><span class="pre">1e-5</span></code> (or less) during optimization, though we found that a fixed value of around <code class="docutils literal notranslate"><span class="pre">0.01</span></code> worked well with our implementation.</p></li>
+<li><p>We initialize the decoder network to generate mostly empty objects initially. (Using the <code class="docutils literal notranslate"><span class="pre">--decoder-output-bias</span></code> argument.) This encourages the guide to explore the use of objects to explain the input early in optimization. Without this each object is a mid-gray square which is heavily penalized by the likelihood, prompting the guide to turn most steps off.</p></li>
+<li><p>It is reported to be useful in practice to use a different learning rate for the baseline network. This is straight forward to implement in Pyro by tagging modules associated with the baseline network and passing multiple learning rates to the optimizer. (See the section on <a class="reference internal" href="svi_part_i.html#optimizers"><span class="std std-ref">optimizers</span></a> in part I of the SVI tutorial for more detail.) In [1] a learning rate of <code class="docutils literal notranslate"><span class="pre">1e-4</span></code> was used for the guide network, and a learning rate of <code class="docutils literal notranslate"><span class="pre">1e-3</span></code> was used for the baseline
+network. We found it necessary to use a larger learning rate for the baseline network in order to make progress on count accuracy at a similar rate to [1]. This difference is likely caused by Pyro setting up a <a class="reference external" href="https://github.com/pyro-ppl/pyro/issues/555">slightly different baseline loss</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="Permalink to this headline">¶</a></h2>
+<p>[1] <code class="docutils literal notranslate"><span class="pre">Attend,</span> <span class="pre">Infer,</span> <span class="pre">Repeat:</span> <span class="pre">Fast</span> <span class="pre">Scene</span> <span class="pre">Understanding</span> <span class="pre">with</span> <span class="pre">Generative</span> <span class="pre">Models</span></code>      S. M. Ali Eslami and Nicolas Heess and Theophane Weber and Yuval Tassa and Koray Kavukcuoglu and Geoffrey E. Hinton</p>
+<p>[2] <code class="docutils literal notranslate"><span class="pre">Spatial</span> <span class="pre">Transformer</span> <span class="pre">Networks</span></code>      Max Jaderberg and Karen Simonyan and Andrew Zisserman</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ss-vae.html" class="btn btn-neutral float-right" title="半监督 VAE" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dmm.html" class="btn btn-neutral float-left" title="深马尔可夫模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

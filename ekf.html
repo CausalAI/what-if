@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Kalman Filter &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Designing Adaptive Experiments to Study Working Memory" href="working_memory.html" />
+    <link rel="prev" title="Understanding Hyperbole using RSA" href="RSA-hyperbole.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributed:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Kalman Filter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Dynamic-process">Dynamic process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Kalman-Update">Kalman Update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Nonlinear-Estimation:-Extended-Kalman-Filter">Nonlinear Estimation: Extended Kalman Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyro Tutorials 编译</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Kalman Filter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ekf.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Kalman-Filter">
+<h1>Kalman Filter<a class="headerlink" href="#Kalman-Filter" title="Permalink to this headline">¶</a></h1>
+<p>Kalman filters are linear models for state estimation of dynamic systems [1]. They have been the de facto standard in many robotics and tracking/prediction applications because they are well suited for systems with uncertainty about an observable dynamic process. They use a “observe, predict, correct” paradigm to extract information from an otherwise noisy signal. In Pyro, we can build differentiable Kalman filters with learnable parameters using the <code class="docutils literal notranslate"><span class="pre">pyro.contrib.tracking</span></code>
+<a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.tracking.html#module-pyro.contrib.tracking.extended_kalman_filter">library</a></p>
+<div class="section" id="Dynamic-process">
+<h2>Dynamic process<a class="headerlink" href="#Dynamic-process" title="Permalink to this headline">¶</a></h2>
+<p>To start, consider this simple motion model:</p>
+<div class="math notranslate nohighlight">
+\[X_{k+1} = FX_k + \mathbf{W}_k\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{Z}_k = HX_k + \mathbf{V}_k\]</div>
+<p>where <span class="math notranslate nohighlight">\(k\)</span> is the state, <span class="math notranslate nohighlight">\(X\)</span> is the signal estimate, <span class="math notranslate nohighlight">\(Z_k\)</span> is the observed value at timestep <span class="math notranslate nohighlight">\(k\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}_k\)</span> and <span class="math notranslate nohighlight">\(\mathbf{V}_k\)</span> are independent noise processes (ie <span class="math notranslate nohighlight">\(\mathbb{E}[w_k v_j^T] = 0\)</span> for all <span class="math notranslate nohighlight">\(j, k\)</span>) which we’ll approximate as Gaussians. Note that the state transitions are linear.</p>
+</div>
+<div class="section" id="Kalman-Update">
+<h2>Kalman Update<a class="headerlink" href="#Kalman-Update" title="Permalink to this headline">¶</a></h2>
+<p>At each time step, we perform a prediction for the mean and covariance:</p>
+<div class="math notranslate nohighlight">
+\[\hat{X}_k = F\hat{X}_{k-1}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{P}_k = FP_{k-1}F^T + Q\]</div>
+<p>and a correction for the measurement:</p>
+<div class="math notranslate nohighlight">
+\[K_k = \hat{P}_k H^T(H\hat{P}_k H^T + R)^{-1}\]</div>
+<div class="math notranslate nohighlight">
+\[X_k = \hat{X}_k + K_k(z_k - H\hat{X}_k)\]</div>
+<div class="math notranslate nohighlight">
+\[P_k = (I-K_k H)\hat{P}_k\]</div>
+<p>where <span class="math notranslate nohighlight">\(X\)</span> is the position estimate, <span class="math notranslate nohighlight">\(P\)</span> is the covariance matrix, <span class="math notranslate nohighlight">\(K\)</span> is the Kalman Gain, and <span class="math notranslate nohighlight">\(Q\)</span> and <span class="math notranslate nohighlight">\(R\)</span> are covariance matrices.</p>
+<p>For an in-depth derivation, see [2]</p>
+</div>
+<div class="section" id="Nonlinear-Estimation:-Extended-Kalman-Filter">
+<h2>Nonlinear Estimation: Extended Kalman Filter<a class="headerlink" href="#Nonlinear-Estimation:-Extended-Kalman-Filter" title="Permalink to this headline">¶</a></h2>
+<p>What if our system is non-linear, eg in GPS navigation? Consider the following non-linear system:</p>
+<div class="math notranslate nohighlight">
+\[X_{k+1} = \mathbf{f}(X_k) + \mathbf{W}_k\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{Z}_k = \mathbf{h}(X_k) + \mathbf{V}_k\]</div>
+<p>Notice that <span class="math notranslate nohighlight">\(\mathbf{f}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{h}\)</span> are now (smooth) non-linear functions.</p>
+<p>The Extended Kalman Filter (EKF) attacks this problem by using a local linearization of the Kalman filter via a <a class="reference external" href="https://en.wikipedia.org/wiki/Taylor_series">Taylors Series expansion</a>.</p>
+<div class="math notranslate nohighlight">
+\[f(X_k, k) \approx f(x_k^R, k) + \mathbf{H}_k(X_k - x_k^R) + \cdots\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{H}_k\)</span> is the Jacobian matrix at time <span class="math notranslate nohighlight">\(k\)</span>, <span class="math notranslate nohighlight">\(x_k^R\)</span> is the previous optimal estimate, and we ignore the higher order terms. At each time step, we compute a Jacobian conditioned the previous predictions (this computation is handled by Pyro under the hood), and use the result to perform a prediction and update.</p>
+<p>Omitting the derivations, the modification to the above predictions are now:</p>
+<div class="math notranslate nohighlight">
+\[\hat{X}_k \approx \mathbf{f}(X_{k-1}^R)\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{P}_k = \mathbf{H}_\mathbf{f}(X_{k-1})P_{k-1}\mathbf{H}_\mathbf{f}^T(X_{k-1}) + Q\]</div>
+<p>and the updates are now:</p>
+<div class="math notranslate nohighlight">
+\[X_k \approx \hat{X}_k + K_k\big(z_k - \mathbf{h}(\hat{X}_k)\big)\]</div>
+<div class="math notranslate nohighlight">
+\[K_k = \hat{P}_k \mathbf{H}_\mathbf{h}(\hat{X}_k) \Big(\mathbf{H}_\mathbf{h}(\hat{X}_k)\hat{P}_k \mathbf{H}_\mathbf{h}(\hat{X}_k) + R_k\Big)^{-1}\]</div>
+<div class="math notranslate nohighlight">
+\[P_k = \big(I - K_k \mathbf{H}_\mathbf{h}(\hat{X}_k)\big)\hat{P}_K\]</div>
+<p>In Pyro, all we need to do is create an <code class="docutils literal notranslate"><span class="pre">EKFState</span></code> object and use its <code class="docutils literal notranslate"><span class="pre">predict</span></code> and <code class="docutils literal notranslate"><span class="pre">update</span></code> methods. Pyro will do exact inference to compute the innovations and we will use SVI to learn a MAP estimate of the position and measurement covariances.</p>
+<p>As an example, let’s look at an object moving at near-constant velocity in 2-D in a discrete time space over 100 time steps.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">pyro</span>
+<span class="kn">import</span> <span class="nn">pyro.distributions</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">pyro.infer.autoguide</span> <span class="k">import</span> <span class="n">AutoDelta</span>
+<span class="kn">from</span> <span class="nn">pyro.optim</span> <span class="k">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">pyro.infer</span> <span class="k">import</span> <span class="n">SVI</span><span class="p">,</span> <span class="n">Trace_ELBO</span><span class="p">,</span> <span class="n">config_enumerate</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.tracking.extended_kalman_filter</span> <span class="k">import</span> <span class="n">EKFState</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.tracking.distributions</span> <span class="k">import</span> <span class="n">EKFDistribution</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.tracking.dynamic_models</span> <span class="k">import</span> <span class="n">NcvContinuous</span>
+<span class="kn">from</span> <span class="nn">pyro.contrib.tracking.measurements</span> <span class="k">import</span> <span class="n">PositionMeasurement</span>
+
+<span class="n">smoke_test</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CI&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pyro</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;1.3.0&#39;</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">enable_validation</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dt</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="n">num_frames</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">dim</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1"># Continuous model</span>
+<span class="n">ncv</span> <span class="o">=</span> <span class="n">NcvContinuous</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Truth trajectory</span>
+<span class="n">xs_truth</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_frames</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+<span class="c1"># initial direction</span>
+<span class="n">theta0_truth</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="c1"># initial state</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">xs_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta0_truth</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta0_truth</span><span class="p">)])</span>
+    <span class="k">for</span> <span class="n">frame_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">):</span>
+        <span class="c1"># sample independent process noise</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;process_noise_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame_num</span><span class="p">),</span> <span class="n">ncv</span><span class="o">.</span><span class="n">process_noise_dist</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
+        <span class="n">xs_truth</span><span class="p">[</span><span class="n">frame_num</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">ncv</span><span class="p">(</span><span class="n">xs_truth</span><span class="p">[</span><span class="n">frame_num</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span> <span class="o">+</span> <span class="n">dx</span>
+</pre></div>
+</div>
+</div>
+<p>Next, let’s specify the measurements. Notice that we only measure the positions of the particle.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Measurements</span>
+<span class="n">measurements</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># no correlations</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># sample independent measurement noise</span>
+    <span class="n">dzs</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;dzs&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">MultivariateNormal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">((</span><span class="n">num_frames</span><span class="p">,)))</span>
+    <span class="c1"># compute measurement means</span>
+    <span class="n">zs</span> <span class="o">=</span> <span class="n">xs_truth</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">dzs</span>
+</pre></div>
+</div>
+</div>
+<p>We’ll use a <a class="reference external" href="http://docs.pyro.ai/en/dev/infer.autoguide.html#autodelta">Delta autoguide</a> to learn MAP estimates of the position and measurement covariances. The <code class="docutils literal notranslate"><span class="pre">EKFDistribution</span></code> computes the joint log density of all of the EKF states given a tensor of sequential measurements.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># a HalfNormal can be used here as well</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;pv_cov&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">HalfCauchy</span><span class="p">(</span><span class="mf">2e-6</span><span class="p">))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;measurement_cov&#39;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">HalfCauchy</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">))</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># observe the measurements</span>
+    <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s1">&#39;track_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">EKFDistribution</span><span class="p">(</span><span class="n">xs_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">R</span><span class="p">,</span> <span class="n">ncv</span><span class="p">,</span>
+                                                      <span class="n">Q</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">num_frames</span><span class="p">),</span>
+                <span class="n">obs</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">guide</span> <span class="o">=</span> <span class="n">AutoDelta</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>  <span class="c1"># MAP estimation</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">optim</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">({</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">2e-2</span><span class="p">})</span>
+<span class="n">svi</span> <span class="o">=</span> <span class="n">SVI</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">guide</span><span class="p">,</span> <span class="n">optim</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">Trace_ELBO</span><span class="p">(</span><span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="n">pyro</span><span class="o">.</span><span class="n">set_rng_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">pyro</span><span class="o">.</span><span class="n">clear_param_store</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">250</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">smoke_test</span> <span class="k">else</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">svi</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">zs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loss: &#39;</span><span class="p">,</span> <span class="n">loss</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># retrieve states for visualization</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">guide</span><span class="p">()[</span><span class="s1">&#39;pv_cov&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">guide</span><span class="p">()[</span><span class="s1">&#39;measurement_cov&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ekf_dist</span> <span class="o">=</span> <span class="n">EKFDistribution</span><span class="p">(</span><span class="n">xs_truth</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">R</span><span class="p">,</span> <span class="n">ncv</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">time_steps</span><span class="o">=</span><span class="n">num_frames</span><span class="p">)</span>
+<span class="n">states</span><span class="o">=</span> <span class="n">ekf_dist</span><span class="o">.</span><span class="n">filter_states</span><span class="p">(</span><span class="n">zs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<center><figure>
+    <table>
+        <tr>
+            <td>
+                <img src="_static/img/ekf_track.png" style="width: 900px;">
+            </td>
+        </tr>
+    </table> <center>
+    <figcaption>
+        <font size="+1"><b>Figure 1:</b>True track and EKF prediction with error. </font>
+    </figcaption> </center>
+</figure></center></div>
+<div class="section" id="References">
+<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+<p>[1] Kalman, R. E. <em>A New Approach to Linear Filtering and Prediction Problems.</em> 1960</p>
+<p>[2] Welch, Greg, and Bishop, Gary. <em>An Introduction to the Kalman Filter.</em> 2006.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="working_memory.html" class="btn btn-neutral float-right" title="Designing Adaptive Experiments to Study Working Memory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="RSA-hyperbole.html" class="btn btn-neutral float-left" title="Understanding Hyperbole using RSA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
