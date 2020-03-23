@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Pyro 模型简介 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>Pyro 模型介绍 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Introduction:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Pyro 模型简介</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pyro 模型介绍</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#原始随机函数">原始随机函数</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#一个简单模型">一个简单模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#The-pyro.sample-Primitive">The <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> Primitive</a></li>
@@ -119,7 +119,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dmm.html">Deep Markov Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
@@ -203,7 +203,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Pyro 模型简介</li>
+      <li>Pyro 模型介绍</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -464,13 +464,11 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<p>Tips：</p>
-<ul class="simple">
-<li><p>stochastic function 从数学上来说是随机泛函。</p></li>
-<li><p>Pyro 样本相对于 Pytorch 样本最大的不同之处是它们有 names, Pyro 的 backend 使用这些 names to uniquely identify sample statements and change their behavior at runtime depending on how the enclosing stochastic function is being used.</p></li>
-</ul>
-<div class="section" id="Pyro-模型简介">
-<h1>Pyro 模型简介<a class="headerlink" href="#Pyro-模型简介" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><p>* stochastic function 从数学上来说是随机泛函。 * Pyro 样本相对于 Pytorch 样本最大的不同之处是它们有 names, Pyro 的 backend 使用这些 names to uniquely identify sample statements and change their behavior at runtime depending on how the enclosing stochastic function is being used.</p>
+</div></blockquote>
+<div class="section" id="Pyro-模型介绍">
+<h1>Pyro 模型介绍<a class="headerlink" href="#Pyro-模型介绍" title="Permalink to this headline">¶</a></h1>
 <p>概率编程的基本单元是 stochastic function, This is an arbitrary Python callable that combines two ingredients:</p>
 <ul class="simple">
 <li><p>deterministic Python code; and</p></li>

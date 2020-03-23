@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Deep Markov Model &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>深马尔可夫模型 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Introduction:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
@@ -112,7 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Deep Markov Model</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">深马尔可夫模型</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#The-Model">The Model</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#The-Gated-Transition-and-the-Emitter">The Gated Transition and the Emitter</a></li>
@@ -138,8 +138,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#Checkpointing">Checkpointing</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Some-final-comments">Some final comments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#参考文献">参考文献</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -225,7 +224,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Deep Markov Model</li>
+      <li>深马尔可夫模型</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -246,6 +245,224 @@
             
   
 <style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
@@ -268,8 +485,9 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="Deep-Markov-Model">
-<h1>Deep Markov Model<a class="headerlink" href="#Deep-Markov-Model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="深马尔可夫模型">
+<h1>深马尔可夫模型<a class="headerlink" href="#深马尔可夫模型" title="Permalink to this headline">¶</a></h1>
+<p>深马尔可夫模型(Deep Markov Model) is a variant of Hidden Markov Models that uses a feedforward neural network to model the conditional probabilities between hidden states.</p>
 <div class="section" id="Introduction">
 <h2>Introduction<a class="headerlink" href="#Introduction" title="Permalink to this headline">¶</a></h2>
 <p>We’re going to build a deep probabilistic model for sequential data: the deep markov model. The particular dataset we want to model is composed of snippets of polyphonic music. Each time slice in a sequence spans a quarter note and is represented by an 88-dimensional binary vector that encodes the notes at that time step.</p>
@@ -285,7 +503,8 @@ distributions if we hope to learn a good model. Happily, together PyTorch and Py
 <div class="section" id="The-Model">
 <h2>The Model<a class="headerlink" href="#The-Model" title="Permalink to this headline">¶</a></h2>
 <p>A convenient way to describe the high-level structure of the model is with a graphical model.</p>
-<center><figure><img src="_static/img/model.png" style="width: 500px;"><figcaption> <font size="+1"><b>Figure 1</b>: The model rolled out for T=3 time steps.</font></figcaption></figure></center><p>Here, we’ve rolled out the model assuming that the sequence of observations is of length three: <span class="math notranslate nohighlight">\(\{{\bf x}_1, {\bf x}_2, {\bf x}_3\}\)</span>. Mirroring the sequence of observations we also have a sequence of latent random variables: <span class="math notranslate nohighlight">\(\{{\bf z}_1, {\bf z}_2, {\bf z}_3\}\)</span>. The figure encodes the structure of the model. The corresponding joint distribution is</p>
+<center><figure><figcaption><p>Figure 1: The model rolled out for T=3 time steps.</p>
+</figcaption></figure></center><p>Here, we’ve rolled out the model assuming that the sequence of observations is of length three: <span class="math notranslate nohighlight">\(\{{\bf x}_1, {\bf x}_2, {\bf x}_3\}\)</span>. Mirroring the sequence of observations we also have a sequence of latent random variables: <span class="math notranslate nohighlight">\(\{{\bf z}_1, {\bf z}_2, {\bf z}_3\}\)</span>. The figure encodes the structure of the model. The corresponding joint distribution is</p>
 <div class="math notranslate nohighlight">
 \[p({\bf x}_{123} , {\bf z}_{123})=p({\bf x}_1|{\bf z}_1)p({\bf x}_2|{\bf z}_2)p({\bf x}_3|{\bf z}_3)p({\bf z}_1)p({\bf z}_2|{\bf z}_1)p({\bf z}_3|{\bf z}_2)\]</div>
 <p>Conditioned on <span class="math notranslate nohighlight">\({\bf z}_t\)</span>, each observation <span class="math notranslate nohighlight">\({\bf x}_t\)</span> is independent of the other observations. This can be read off from the fact that each <span class="math notranslate nohighlight">\({\bf x}_t\)</span> only depends on the corresponding latent <span class="math notranslate nohighlight">\({\bf z}_t\)</span>, as indicated by the downward pointing arrows. We can also read off the markov property of the model: each latent <span class="math notranslate nohighlight">\({\bf z}_t\)</span>, when conditioned on the previous latent <span class="math notranslate nohighlight">\({\bf z}_{t-1}\)</span>, is independent of all previous latents
@@ -483,7 +702,8 @@ dataset is <em>amortization</em> (see the analogous discussion in <a class="refe
 <p>This works as follows. Instead of introducing variational parameters for each sequence in our dataset, we’re going to learn a single parametric function <span class="math notranslate nohighlight">\(f({\bf x}_{1:T})\)</span> and work with a variational distribution that has the form <span class="math notranslate nohighlight">\(\prod_{n=1}^N q({\bf z}_{1:T_n}^n | f({\bf x}_{1:T_n}^n))\)</span>. The function <span class="math notranslate nohighlight">\(f(\cdot)\)</span>—which basically maps a given observed sequence to a set of variational parameters tailored to that sequence—will need to be sufficiently rich to capture the posterior
 accurately, but now we can handle large datasets without having to introduce an obscene number of variational parameters.</p>
 <p>So our task is to construct the function <span class="math notranslate nohighlight">\(f(\cdot)\)</span>. Since in our case we need to support variable-length sequences, it’s only natural that <span class="math notranslate nohighlight">\(f(\cdot)\)</span> have a RNN in the loop. Before we look at the various component parts that make up our <span class="math notranslate nohighlight">\(f(\cdot)\)</span> in detail, let’s look at a computational graph that encodes the basic structure:</p>
-<p><center><figure><img src="_static/img/guide.png" style="width: 400px;"><figcaption> <font size="+1"><b>Figure 2</b>: The guide rolled out for T=3 time steps. </font></figcaption></figure></center><p>At the bottom of the figure we have our sequence of three observations. These observations will be consumed by a RNN that reads the observations from right to left and outputs three hidden states <span class="math notranslate nohighlight">\(\{ {\bf h}_1, {\bf h}_2,{\bf h}_3\}\)</span>. Note that this computation is done <em>before</em> we sample any latent variables. Next, each of the hidden states will be fed into a <code class="docutils literal notranslate"><span class="pre">Combiner</span></code> module whose job is to output the mean and covariance of the the conditional distribution
+<p><center><figure><figcaption><p>Figure 2: The guide rolled out for T=3 time steps.</p>
+</figcaption></figure></center><p>At the bottom of the figure we have our sequence of three observations. These observations will be consumed by a RNN that reads the observations from right to left and outputs three hidden states <span class="math notranslate nohighlight">\(\{ {\bf h}_1, {\bf h}_2,{\bf h}_3\}\)</span>. Note that this computation is done <em>before</em> we sample any latent variables. Next, each of the hidden states will be fed into a <code class="docutils literal notranslate"><span class="pre">Combiner</span></code> module whose job is to output the mean and covariance of the the conditional distribution
 <span class="math notranslate nohighlight">\(q({\bf z}_t | {\bf z}_{t-1}, {\bf x}_{t:T})\)</span>, which we take to be given by a diagonal gaussian distribution. (Just like in the model, the conditional structure of <span class="math notranslate nohighlight">\({\bf z}_{1:T}\)</span> in the guide is such that we sample <span class="math notranslate nohighlight">\({\bf z}_t\)</span> forward in time.) In addition to the RNN hidden state, the <code class="docutils literal notranslate"><span class="pre">Combiner</span></code> also takes the latent random variable from the previous time step as input, except for <span class="math notranslate nohighlight">\(t=1\)</span>, where it instead takes the trainable (variational) parameter
 <span class="math notranslate nohighlight">\({\bf z}_0^{\rm{q}}\)</span>.</p>
 </div>
@@ -848,40 +1068,53 @@ seems that, at least for this dataset, not using analytic expressions for the KL
 module contains what are called ’persistent buffers’ in PyTorch parlance. These are things that carry state but are not <code class="docutils literal notranslate"><span class="pre">Parameter</span></code>s. The <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code> and <code class="docutils literal notranslate"><span class="pre">load_state_dict()</span></code> methods of <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> know how to deal with buffers correctly.</p>
 <p>To save the state of the optimizers, we have to use functionality inside of <code class="docutils literal notranslate"><span class="pre">pyro.optim.PyroOptim</span></code>. Recall that the typical user never interacts directly with PyTorch <code class="docutils literal notranslate"><span class="pre">Optimizers</span></code> when using Pyro; since parameters can be created dynamically in an arbitrary probabilistic program, Pyro needs to manage <code class="docutils literal notranslate"><span class="pre">Optimizers</span></code> for us. In our case saving the optimizer state will be as easy as calling <code class="docutils literal notranslate"><span class="pre">optimizer.save()</span></code>. The loading logic is entirely analagous. So our entire logic for saving and loading
 checkpoints only takes a few lines:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># saves the model and optimizer states to disk</span>
-<span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">():</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;saving model to </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">save_model</span><span class="p">)</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">args</span><span class="o">.</span><span class="n">save_model</span><span class="p">)</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;saving optimizer states to </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">save_opt</span><span class="p">)</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">save_opt</span><span class="p">)</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;done saving model and optimizer checkpoints to disk.&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="c1"># saves the model and optimizer states to disk</span>
+  <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">():</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;saving model to </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">save_model</span><span class="p">)</span>
+      <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dmm</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">args</span><span class="o">.</span><span class="n">save_model</span><span class="p">)</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;saving optimizer states to </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">save_opt</span><span class="p">)</span>
+      <span class="n">optimizer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">save_opt</span><span class="p">)</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;done saving model and optimizer checkpoints to disk.&quot;</span><span class="p">)</span>
 
-<span class="c1"># loads the model and optimizer states from disk</span>
-<span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">():</span>
-    <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">),</span> \
-        <span class="s2">&quot;--load-model and/or --load-opt misspecified&quot;</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;loading model from </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">)</span>
-    <span class="n">dmm</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">))</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;loading optimizer states from </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span>
-    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;done loading model and optimizer states.&quot;</span><span class="p">)</span>
+  <span class="c1"># loads the model and optimizer states from disk</span>
+  <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">():</span>
+      <span class="k">assert</span> <span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">),</span> \
+          <span class="s2">&quot;--load-model and/or --load-opt misspecified&quot;</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;loading model from </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">)</span>
+      <span class="n">dmm</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_model</span><span class="p">))</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;loading optimizer states from </span><span class="si">%s</span><span class="s2">...&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span>
+      <span class="n">optimizer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">load_opt</span><span class="p">)</span>
+      <span class="n">log</span><span class="p">(</span><span class="s2">&quot;done loading model and optimizer states.&quot;</span><span class="p">)</span>
+
+
+
+
+
+
+<span class="n">Some</span> <span class="n">final</span> <span class="n">comments</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="Some-final-comments">
-<h2>Some final comments<a class="headerlink" href="#Some-final-comments" title="Permalink to this headline">¶</a></h2>
-<p>A deep markov model is a relatively complex model. Now that we’ve taken the effort to implement a version of the deep markov model tailored to the polyphonic music dataset, we should ask ourselves what else we can do. What if we’re handed a different sequential dataset? Do we have to start all over?</p>
+<p>深马尔可夫模型是一个相对复杂的模型。Now that we’ve taken the effort to implement a version of the deep markov model tailored to the polyphonic music dataset, 我们应该问自己自己还能做些什么。What if we’re handed a different sequential dataset? Do we have to start all over?</p>
 <p>Not at all! The beauty of probalistic programming is that it enables—and encourages—modular approaches to modeling and inference. Adapting our polyphonic music model to a dataset with continuous observations is as simple as changing the observation likelihood. The vast majority of the code could be taken over unchanged. This means that with a little bit of extra work, the code in this tutorial could be repurposed to enable a huge variety of different models.</p>
 <p>See the complete code on <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/dmm/dmm.py">Github</a>.</p>
 </div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="Permalink to this headline">¶</a></h2>
 <p>[1] <code class="docutils literal notranslate"><span class="pre">Structured</span> <span class="pre">Inference</span> <span class="pre">Networks</span> <span class="pre">for</span> <span class="pre">Nonlinear</span> <span class="pre">State</span> <span class="pre">Space</span> <span class="pre">Models</span></code>,     Rahul G. Krishnan, Uri Shalit, David Sontag</p>
 <p>[2] <code class="docutils literal notranslate"><span class="pre">Variational</span> <span class="pre">Inference</span> <span class="pre">with</span> <span class="pre">Normalizing</span> <span class="pre">Flows</span></code>,      Danilo Jimenez Rezende, Shakir Mohamed</p>
 <p>[3] <code class="docutils literal notranslate"><span class="pre">Improving</span> <span class="pre">Variational</span> <span class="pre">Inference</span> <span class="pre">with</span> <span class="pre">Inverse</span> <span class="pre">Autoregressive</span> <span class="pre">Flow</span></code>,      Diederik P. Kingma, Tim Salimans, Rafal Jozefowicz, Xi Chen, Ilya Sutskever, Max Welling</p>
 <p>[4] <code class="docutils literal notranslate"><span class="pre">MADE:</span> <span class="pre">Masked</span> <span class="pre">Autoencoder</span> <span class="pre">for</span> <span class="pre">Distribution</span> <span class="pre">Estimation</span></code>,      Mathieu Germain, Karol Gregor, Iain Murray, Hugo Larochelle</p>
 <p>[5] <code class="docutils literal notranslate"><span class="pre">Modeling</span> <span class="pre">Temporal</span> <span class="pre">Dependencies</span> <span class="pre">in</span> <span class="pre">High-Dimensional</span> <span class="pre">Sequences:</span></code>      <code class="docutils literal notranslate"><span class="pre">Application</span> <span class="pre">to</span> <span class="pre">Polyphonic</span> <span class="pre">Music</span> <span class="pre">Generation</span> <span class="pre">and</span> <span class="pre">Transcription</span></code>,      Boulanger-Lewandowski, N., Bengio, Y. and Vincent, P.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
