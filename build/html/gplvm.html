@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Gaussian Process Latent Variable Model &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>高斯过程潜变量模型 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bayesian Optimization" href="bo.html" />
-    <link rel="prev" title="Gaussian Processes" href="gp.html" /> 
+    <link rel="next" title="贝叶斯优化" href="bo.html" />
+    <link rel="prev" title="高斯过程" href="gp.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,12 +96,12 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
@@ -110,7 +110,7 @@
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -119,46 +119,46 @@
 </ul>
 <p class="caption"><span class="caption-text">Contributed:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Gaussian Process Latent Variable Model</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">高斯过程潜变量模型</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Dataset">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Modelling">Modelling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Inference">Inference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Visualizing-the-result">Visualizing the result</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Remarks">Remarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#参考文献">参考文献</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 
             
@@ -204,7 +204,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Gaussian Process Latent Variable Model</li>
+      <li>高斯过程潜变量模型</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -465,8 +465,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Gaussian-Process-Latent-Variable-Model">
-<h1>Gaussian Process Latent Variable Model<a class="headerlink" href="#Gaussian-Process-Latent-Variable-Model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="高斯过程潜变量模型">
+<h1>高斯过程潜变量模型<a class="headerlink" href="#高斯过程潜变量模型" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference external" href="https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction#Gaussian_process_latent_variable_models">Gaussian Process Latent Variable Model</a> (GPLVM) is a dimensionality reduction method that uses a Gaussian process to learn a low-dimensional representation of (potentially) high-dimensional data. In the typical setting of Gaussian process regression, where we are given inputs <span class="math notranslate nohighlight">\(X\)</span> and outputs <span class="math notranslate nohighlight">\(y\)</span>, we choose a kernel and learn hyperparameters that best describe the mapping
 from <span class="math notranslate nohighlight">\(X\)</span> to <span class="math notranslate nohighlight">\(y\)</span>. In the GPLVM, we are not given <span class="math notranslate nohighlight">\(X\)</span>: we are only given <span class="math notranslate nohighlight">\(y\)</span>. So we need to learn <span class="math notranslate nohighlight">\(X\)</span> along with the kernel hyperparameters.</p>
 <p>We do not do maximum likelihood inference on <span class="math notranslate nohighlight">\(X\)</span>. Instead, we set a Gaussian prior for <span class="math notranslate nohighlight">\(X\)</span> and learn the mean and variance of the approximate (gaussian) posterior <span class="math notranslate nohighlight">\(q(X|y)\)</span>. In this notebook, we show how this can be done using the <code class="docutils literal notranslate"><span class="pre">pyro.contrib.gp</span></code> module. In particular we reproduce a result described in [2].</p>
@@ -840,8 +840,8 @@ like our model to disentangle ‘capture time’ (<span class="math notranslate 
 <li><p>Much of the power of Gaussian Processes lies in the function prior defined by the kernel. We recommend users try out different combinations of kernels for different types of datasets! For example, if the data contains periodicities, it might make sense to use a <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#periodic">Periodic kernel</a>. Other kernels can also be found in the <a class="reference external" href="http://docs.pyro.ai/en/dev/contrib.gp.html#module-pyro.contrib.gp.kernels">Pyro GP docs</a>.</p></li>
 </ul>
 </div>
-<div class="section" id="References">
-<h2>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="Permalink to this headline">¶</a></h2>
 <p>[1] <code class="docutils literal notranslate"><span class="pre">Resolution</span> <span class="pre">of</span> <span class="pre">Cell</span> <span class="pre">Fate</span> <span class="pre">Decisions</span> <span class="pre">Revealed</span> <span class="pre">by</span> <span class="pre">Single-Cell</span> <span class="pre">Gene</span> <span class="pre">Expression</span> <span class="pre">Analysis</span> <span class="pre">from</span> <span class="pre">Zygote</span> <span class="pre">to</span> <span class="pre">Blastocyst</span></code>,     Guoji Guo, Mikael Huss, Guo Qing Tong, Chaoyang Wang, Li Li Sun, Neil D. Clarke, Paul Robson</p>
 <p>[2] <code class="docutils literal notranslate"><span class="pre">GrandPrix:</span> <span class="pre">Scaling</span> <span class="pre">up</span> <span class="pre">the</span> <span class="pre">Bayesian</span> <span class="pre">GPLVM</span> <span class="pre">for</span> <span class="pre">single-cell</span> <span class="pre">data</span></code>,     Sumon Ahmed, Magnus Rattray, Alexis Boukouvalas</p>
 <p>[3] <code class="docutils literal notranslate"><span class="pre">Bayesian</span> <span class="pre">Gaussian</span> <span class="pre">Process</span> <span class="pre">Latent</span> <span class="pre">Variable</span> <span class="pre">Model</span></code>,     Michalis K. Titsias, Neil D. Lawrence</p>
@@ -857,10 +857,10 @@ like our model to disentangle ‘capture time’ (<span class="math notranslate 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="bo.html" class="btn btn-neutral float-right" title="Bayesian Optimization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="bo.html" class="btn btn-neutral float-right" title="贝叶斯优化" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="gp.html" class="btn btn-neutral float-left" title="Gaussian Processes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="gp.html" class="btn btn-neutral float-left" title="高斯过程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Inference with Discrete Latent Variables &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>Inference with 离散潜变量 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="自定义 SVI 目标函数" href="custom_objectives.html" />
-    <link rel="prev" title="Tensor shapes in Pyro" href="tensor_shapes.html" /> 
+    <link rel="prev" title="Pyro中模型和数据维度" href="tensor_shapes.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,34 +96,30 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Inference with Discrete Latent Variables</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Summary">Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Table-of-contents">Table of contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Overview">Overview</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Mechanics-of-enumeration">Mechanics of enumeration</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Multiple-latent-variables">Multiple latent variables</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Examining-discrete-latent-states">Examining discrete latent states</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Indexing-with-enumerated-variables">Indexing with enumerated variables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Inference with 离散潜变量</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Mechanics-of-enumeration">Mechanics of enumeration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Multiple-latent-variables">Multiple latent variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Examining-discrete-latent-states">Examining discrete latent states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Indexing-with-enumerated-variables">Indexing with enumerated variables</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#Plates-and-enumeration">Plates and enumeration</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Dependencies-among-plates">Dependencies among plates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Plates-and-enumeration">Plates and enumeration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Dependencies-among-plates">Dependencies among plates</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Restriction-1:-conditional-independence">Restriction 1: conditional independence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Restriction-2:-no-downstream-coupling">Restriction 2: no downstream coupling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Restriction-3:-single-path-leaving-each-plate">Restriction 3: single path leaving each plate</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Restriction-1:-conditional-independence">Restriction 1: conditional independence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Restriction-2:-no-downstream-coupling">Restriction 2: no downstream coupling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Restriction-3:-single-path-leaving-each-plate">Restriction 3: single path leaving each plate</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Time-series-example">Time series example</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#How-to-enumerate-more-than-25-variables">How to enumerate more than 25 variables</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#Time-series-example">Time series example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#How-to-enumerate-more-than-25-variables">How to enumerate more than 25 variables</a></li>
 </ul>
 </li>
 </ul>
@@ -136,7 +132,7 @@
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -145,38 +141,38 @@
 </ul>
 <p class="caption"><span class="caption-text">Contributed:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 
             
@@ -222,7 +218,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Inference with Discrete Latent Variables</li>
+      <li>Inference with 离散潜变量</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -483,11 +479,10 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Inference-with-Discrete-Latent-Variables">
-<h1>Inference with Discrete Latent Variables<a class="headerlink" href="#Inference-with-Discrete-Latent-Variables" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Inference-with-离散潜变量">
+<h1>Inference with 离散潜变量<a class="headerlink" href="#Inference-with-离散潜变量" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial describes Pyro’s enumeration strategy for discrete latent variable models. 本教程假定读者已经熟悉 <a class="reference external" href="http://pyro.ai/examples/tensor_shapes.html">Tensor Shapes Tutorial</a>.</p>
-<div class="section" id="Summary">
-<h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline">¶</a></h2>
+<p><strong>Summary</strong></p>
 <ul class="simple">
 <li><p>Pyro implements automatic enumeration over discrete latent variables.</p></li>
 <li><p>This strategy can be used alone or inside SVI (via <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.traceenum_elbo.TraceEnum_ELBO">TraceEnum_ELBO</a>), HMC, or NUTS.</p></li>
@@ -498,9 +493,7 @@ div.rendered_html tbody tr:hover {
 <li><p>Inference cost is exponential in treewidth, so try to write models with narrow treewidth.</p></li>
 <li><p>If you have trouble, ask for help on <a class="reference external" href="https://forum.pyro.ai">forum.pyro.ai</a>!</p></li>
 </ul>
-</div>
-<div class="section" id="Table-of-contents">
-<h2>Table of contents<a class="headerlink" href="#Table-of-contents" title="Permalink to this headline">¶</a></h2>
+<p><strong>Table of contents</strong></p>
 <ul class="simple">
 <li><p><a class="reference external" href="#Overview">Overview</a></p></li>
 <li><p><a class="reference external" href="#Mechanics-of-enumeration">Mechanics of enumeration</a></p>
@@ -544,12 +537,12 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="section" id="Overview">
-<h3>Overview<a class="headerlink" href="#Overview" title="Permalink to this headline">¶</a></h3>
+<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this headline">¶</a></h2>
 <p>Pyro’s enumeration strategy encompasses popular algorithms including variable elimination, exact message passing, forward-filter-backward-sample, inside-out, Baum-Welch, and many other special-case algorithms. Aside from enumeration, Pyro implements a number of inference strategies including variational inference (<a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html">SVI</a>) and monte carlo (<a class="reference external" href="http://docs.pyro.ai/en/dev/mcmc.html#pyro.infer.mcmc.HMC">HMC</a> and
 <a class="reference external" href="http://docs.pyro.ai/en/dev/mcmc.html#pyro.infer.mcmc.NUTS">NUTS</a>). Enumeration can be used either as a stand-alone strategy via <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a>, or as a component of other strategies. Thus enumeration allows Pyro to marginalize out discrete latent variables in HMC and SVI models, and to use variational enumeration of discrete variables in SVI guides.</p>
 </div>
 <div class="section" id="Mechanics-of-enumeration">
-<h3>Mechanics of enumeration<a class="headerlink" href="#Mechanics-of-enumeration" title="Permalink to this headline">¶</a></h3>
+<h2>Mechanics of enumeration<a class="headerlink" href="#Mechanics-of-enumeration" title="Permalink to this headline">¶</a></h2>
 <p>The core idea of enumeration is to interpret discrete <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.sample">pyro.sample</a> statements as full enumeration rather than random sampling. Other inference algorithms can then sum out the enumerated values. For example a sample statement might return a tensor of scalar shape under the standard “sample” interpretation (we’ll illustrate with trivial model and guide):</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -628,7 +621,7 @@ model z = 0
 </div>
 <p>Parallel enumeration is cheaper but more complex than sequential enumeration, so we’ll focus the rest of this tutorial on the parallel variant. Note that both forms can be interleaved.</p>
 <div class="section" id="Multiple-latent-variables">
-<h4>Multiple latent variables<a class="headerlink" href="#Multiple-latent-variables" title="Permalink to this headline">¶</a></h4>
+<h3>Multiple latent variables<a class="headerlink" href="#Multiple-latent-variables" title="Permalink to this headline">¶</a></h3>
 <p>We just saw that a single discrete sample site can be enumerated via nonstandard interpretation. A model with a single discrete latent variable is a mixture model. Models with multiple discrete latent variables can be more complex, including HMMs, CRFs, DBNs, and other structured models. In models with multiple discrete latent variables, Pyro enumerates each variable in a different tensor dimension (counting from the right; see <a class="reference external" href="http://pyro.ai/examples/tensor_shapes.html">Tensor Shapes
 Tutorial</a>). This allows Pyro to determine the dependency graph among variables and then perform cheap exact inference using variable elimination algorithms.</p>
 <p>To understand enumeration dimension allocation, consider the following model, where here we collapse variables out of the model, rather than enumerate them in the guide.</p>
@@ -669,7 +662,7 @@ model z.shape = torch.Size([3, 1, 1])
 </div>
 </div>
 <div class="section" id="Examining-discrete-latent-states">
-<h4>Examining discrete latent states<a class="headerlink" href="#Examining-discrete-latent-states" title="Permalink to this headline">¶</a></h4>
+<h3>Examining discrete latent states<a class="headerlink" href="#Examining-discrete-latent-states" title="Permalink to this headline">¶</a></h3>
 <p>While enumeration in SVI allows fast learning of parameters like <code class="docutils literal notranslate"><span class="pre">p</span></code> above, it does not give access to predicted values of the discrete latent variables like <code class="docutils literal notranslate"><span class="pre">x,y,z</span></code> above. We can access these using a standalone <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a> handler. In this case the guide was trivial, so we can simply wrap the model in <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>. We need to pass a <code class="docutils literal notranslate"><span class="pre">first_available_dim</span></code> argument to tell <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>
 which dimensions are available for enumeration; this is related to the <code class="docutils literal notranslate"><span class="pre">max_plate_nesting</span></code> arg of <code class="docutils literal notranslate"><span class="pre">TraceEnum_ELBO</span></code> via</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">first_available_dim</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">max_plate_nesting</span>
@@ -707,7 +700,7 @@ z = 1
 <p>Notice that under the hood <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code> runs the model twice: first in forward-filter mode where sites are enumerated, then in replay-backward-sample model where sites are sampled. <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code> can also perform MAP inference by passing <code class="docutils literal notranslate"><span class="pre">temperature=0</span></code>. Note that while <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code> produces correct posterior samples, it does not currently produce correct logprobs, and should not be used in other gradient-based inference algorthms.</p>
 </div>
 <div class="section" id="Indexing-with-enumerated-variables">
-<h4>Indexing with enumerated variables<a class="headerlink" href="#Indexing-with-enumerated-variables" title="Permalink to this headline">¶</a></h4>
+<h3>Indexing with enumerated variables<a class="headerlink" href="#Indexing-with-enumerated-variables" title="Permalink to this headline">¶</a></h3>
 <p>It can be tricky to use <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html">advanced indexing</a> to select an element of a tensor using one or more enumerated variables. For example, suppose a plated random variable <code class="docutils literal notranslate"><span class="pre">z</span></code> depends on two different random variables:</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">(),</span>
                <span class="n">constraint</span><span class="o">=</span><span class="n">constraints</span><span class="o">.</span><span class="n">simplex</span><span class="p">)</span>
@@ -776,7 +769,7 @@ p_xy.shape = torch.Size([3, 4, 5, 2])
 </div>
 </div>
 <div class="section" id="Plates-and-enumeration">
-<h3>Plates and enumeration<a class="headerlink" href="#Plates-and-enumeration" title="Permalink to this headline">¶</a></h3>
+<h2>Plates and enumeration<a class="headerlink" href="#Plates-and-enumeration" title="Permalink to this headline">¶</a></h2>
 <p>Pyro <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">plates</a> express conditional independence among random variables. Pyro’s enumeration strategy can take advantage of plates to reduce the high cost (exponential in the size of the plate) of enumerating a cartesian product down to a low cost (linear in the size of the plate) of enumerating conditionally independent random variables in lock-step. This is especially important for e.g. minibatched data.</p>
 <p>To illustrate, consider a gaussian mixture model with shared variance and different mean.</p>
 <div class="nbinput docutils container">
@@ -825,13 +818,10 @@ dist.Normal(loc[x], scale).batch_shape = torch.Size([3, 1])
 shape <code class="docutils literal notranslate"><span class="pre">(3,1)</span></code>, the data has shape<code class="docutils literal notranslate"><span class="pre">(10,)</span></code>, and the broadcasted log probability tensor has shape <code class="docutils literal notranslate"><span class="pre">(3,10)</span></code>.</p>
 <p>For a more in-depth treatment of enumeration in mixture models, see the <a class="reference external" href="http://pyro.ai/examples/gmm.html">Gaussian Mixture Model Tutorial</a> and the <a class="reference external" href="http://pyro.ai/examples/hmm.html">HMM Example</a>.</p>
 <div class="section" id="Dependencies-among-plates">
-<h4>Dependencies among plates<a class="headerlink" href="#Dependencies-among-plates" title="Permalink to this headline">¶</a></h4>
+<h3>Dependencies among plates<a class="headerlink" href="#Dependencies-among-plates" title="Permalink to this headline">¶</a></h3>
 <p>The computational savings of enumerating in vectorized plates comes with restrictions on the dependency structure of models. These restrictions are in addition to the usual restrictions of conditional independence. The enumeration restrictions are checked by <code class="docutils literal notranslate"><span class="pre">TraceEnum_ELBO</span></code> and will result in an error if violated (however the usual conditional independence restriction cannot be generally verified by Pyro). For completeness we list all three restrictions:</p>
-</div>
-</div>
-</div>
 <div class="section" id="Restriction-1:-conditional-independence">
-<h2>Restriction 1: conditional independence<a class="headerlink" href="#Restriction-1:-conditional-independence" title="Permalink to this headline">¶</a></h2>
+<h4>Restriction 1: conditional independence<a class="headerlink" href="#Restriction-1:-conditional-independence" title="Permalink to this headline">¶</a></h4>
 <p>Variables within a plate may not depend on each other (along the plate dimension). This applies to any variable, whether or not it is enumerated. This applies to both sequential plates and vectorized plates. For example the following model is invalid:</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">invalid_model</span><span class="p">():</span>
     <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
@@ -841,7 +831,7 @@ shape <code class="docutils literal notranslate"><span class="pre">(3,1)</span><
 </div>
 </div>
 <div class="section" id="Restriction-2:-no-downstream-coupling">
-<h2>Restriction 2: no downstream coupling<a class="headerlink" href="#Restriction-2:-no-downstream-coupling" title="Permalink to this headline">¶</a></h2>
+<h4>Restriction 2: no downstream coupling<a class="headerlink" href="#Restriction-2:-no-downstream-coupling" title="Permalink to this headline">¶</a></h4>
 <p>No variable outside of a vectorized plate can depend on an enumerated variable inside of that plate. This would violate Pyro’s exponential speedup assumption. For example the following model is invalid:</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="nd">@config_enumerate</span>
 <span class="k">def</span> <span class="nf">invalid_model</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -863,7 +853,7 @@ shape <code class="docutils literal notranslate"><span class="pre">(3,1)</span><
 </div>
 </div>
 <div class="section" id="Restriction-3:-single-path-leaving-each-plate">
-<h2>Restriction 3: single path leaving each plate<a class="headerlink" href="#Restriction-3:-single-path-leaving-each-plate" title="Permalink to this headline">¶</a></h2>
+<h4>Restriction 3: single path leaving each plate<a class="headerlink" href="#Restriction-3:-single-path-leaving-each-plate" title="Permalink to this headline">¶</a></h4>
 <p>The final restriction is subtle, but is required to enable Pyro’s exponential speedup</p>
 <blockquote>
 <div><p>For any enumerated variable <code class="docutils literal notranslate"><span class="pre">x</span></code>, the set of all enumerated variables on which <code class="docutils literal notranslate"><span class="pre">x</span></code> depends must be linearly orderable in their vectorized plate nesting.</p>
@@ -898,8 +888,11 @@ shape <code class="docutils literal notranslate"><span class="pre">(3,1)</span><
 </pre></div>
 </div>
 <p>but beware that this increases the computational complexity, which may be exponential in the size of the sequential plate.</p>
+</div>
+</div>
+</div>
 <div class="section" id="Time-series-example">
-<h3>Time series example<a class="headerlink" href="#Time-series-example" title="Permalink to this headline">¶</a></h3>
+<h2>Time series example<a class="headerlink" href="#Time-series-example" title="Permalink to this headline">¶</a></h2>
 <p>Consider a discrete HMM with latent states <span class="math notranslate nohighlight">\(x_t\)</span> and observations <span class="math notranslate nohighlight">\(y_t\)</span>. Suppose we want to learn the transition and emission probabilities.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -972,7 +965,7 @@ x_9.shape = torch.Size([10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 <p>Notice that the model was run twice here: first it was run without enumeration by <code class="docutils literal notranslate"><span class="pre">AutoDiagonalNormal</span></code>, so that the autoguide can record all sample sites; then second it is run by <code class="docutils literal notranslate"><span class="pre">TraceEnum_ELBO</span></code> with enumeration enabled. We see in the first run that samples have the standard interpretation, whereas in the second run samples have the enumeration interpretation.</p>
 <p>For more complex examples, including minibatching and multiple plates, see the <a class="reference external" href="https://github.com/pyro-ppl/pyro/blob/dev/examples/hmm.py">HMM tutorial</a>.</p>
 <div class="section" id="How-to-enumerate-more-than-25-variables">
-<h4>How to enumerate more than 25 variables<a class="headerlink" href="#How-to-enumerate-more-than-25-variables" title="Permalink to this headline">¶</a></h4>
+<h3>How to enumerate more than 25 variables<a class="headerlink" href="#How-to-enumerate-more-than-25-variables" title="Permalink to this headline">¶</a></h3>
 <p>PyTorch tensors have a dimension limit of 25 in CUDA and 64 in CPU. By default Pyro enumerates each sample site in a new dimension. If you need more sample sites, you can annotate your model with <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.poutine.markov">pyro.markov</a> to tell Pyro when it is safe to recycle tensor dimensions. Let’s see how that works with the HMM model from above. The only change we need is to annotate the for loop with <code class="docutils literal notranslate"><span class="pre">pyro.markov</span></code>, informing Pyro that the variables in
 each step of the loop depend only on variables outside of the loop and variables at this step and the previous step of the loop:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">- for t, y in enumerate(data):</span>
@@ -1031,7 +1024,6 @@ x_9.shape = torch.Size([10, 1, 1])
 </div>
 </div>
 </div>
-</div>
 
 
            </div>
@@ -1044,7 +1036,7 @@ x_9.shape = torch.Size([10, 1, 1])
         <a href="custom_objectives.html" class="btn btn-neutral float-right" title="自定义 SVI 目标函数" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="tensor_shapes.html" class="btn btn-neutral float-left" title="Tensor shapes in Pyro" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tensor_shapes.html" class="btn btn-neutral float-left" title="Pyro中模型和数据维度" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

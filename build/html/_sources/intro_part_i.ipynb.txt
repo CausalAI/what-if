@@ -4,10 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "<small>\n",
-    "* stochastic function 从数学上来说是随机泛函。\n",
-    "* Pyro 样本相对于 Pytorch 样本最大的不同之处是它们有 names, Pyro 的 backend 使用这些 names to uniquely identify sample statements and change their behavior at runtime depending on how the enclosing stochastic function is being used.\n",
-    "</small>"
+    "**知识点**: Stochastic function 从数学上来说是随机泛函。Pyro 样本相对于 Pytorch 样本最大的不同之处是它们有 names, Pyro 的 backend 使用这些 names to uniquely identify sample statements and change their behavior at runtime depending on how the enclosing stochastic function is being used.\n"
    ]
   },
   {
@@ -30,6 +27,18 @@
    "metadata": {},
    "source": [
     "在整个教程和文档中，由于随机函数可用于表示 simplified or abstract descriptions of 数据生成过程，因此我们通常将其称为 stochastic functions *models*。将 models 表示为 stochastic functions 意味着像常规的 Python 可调用对象一样, models can be composed, reused, imported, and serialized."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Table of Contents\n",
+    "\n",
+    "- [原始随机函数](#原始随机函数)\n",
+    "- [一个简单模型](#一个简单模型)\n",
+    "- [The pyro.sample Primitive](#The-pyro.sample-Primitive)\n",
+    "- [通用概率编程](#通用概率编程)"
    ]
   },
   {

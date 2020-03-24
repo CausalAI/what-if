@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Designing Adaptive Experiments to Study Working Memory &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>设计自适应实验以研究工作记忆 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Predicting the outcome of a US presidential election using Bayesian optimal experimental design" href="elections.html" />
-    <link rel="prev" title="Kalman Filter" href="ekf.html" /> 
+    <link rel="next" title="贝叶斯最优实验设计预测美国总统选举" href="elections.html" />
+    <link rel="prev" title="卡尔曼滤子" href="ekf.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,12 +96,12 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
@@ -110,7 +110,7 @@
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -119,52 +119,49 @@
 </ul>
 <p class="caption"><span class="caption-text">Contributed:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Designing Adaptive Experiments to Study Working Memory</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#The-experiment-set-up">The experiment set-up</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#A-model-of-working-memory">A model of working memory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Inference-in-the-model">Inference in the model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Bayesian-optimal-experimental-design">Bayesian optimal experimental design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">设计自适应实验以研究工作记忆</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#工作记忆模型">工作记忆模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Inference-in-the-model">Inference in the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Bayesian-optimal-experimental-design">Bayesian optimal experimental design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Optimal-experimental-design-in-Pyro">Optimal experimental design in Pyro</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Optimal-experimental-design-in-Pyro">Optimal experimental design in Pyro</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#The-adaptive-experiment">The adaptive experiment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Extensions">Extensions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#References">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-adaptive-experiment">The adaptive experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Extensions">Extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#参考文献">参考文献</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 
             
@@ -210,7 +207,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Designing Adaptive Experiments to Study Working Memory</li>
+      <li>设计自适应实验以研究工作记忆</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -471,9 +468,11 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Designing-Adaptive-Experiments-to-Study-Working-Memory">
-<h1>Designing Adaptive Experiments to Study Working Memory<a class="headerlink" href="#Designing-Adaptive-Experiments-to-Study-Working-Memory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="设计自适应实验以研究工作记忆">
+<h1>设计自适应实验以研究工作记忆<a class="headerlink" href="#设计自适应实验以研究工作记忆" title="Permalink to this headline">¶</a></h1>
+<p>Designing Adaptive Experiments to Study Working Memory</p>
 <p>In most of machine learning, we begin with data and go on to learn a model. In other contexts, we also have a hand in the data generation process. This gives us an exciting opportunity: we can try to obtain data that will help our model learn more effectively. This procedure is called <em>optimal experimental design</em> (OED) and Pyro supports choosing optimal designs through the <code class="docutils literal notranslate"><span class="pre">pyro.contrib.oed</span></code> module.</p>
+<p>在大多数机器学习中，我们从数据开始，然后继续学习模型。在其他情况下，我们也可以参与数据生成过程。这给了我们一个激动人心的机会：我们可以尝试获取有助于模型更有效学习的数据。此过程称为最佳实验设计（OED），Pyro支持通过 <code class="docutils literal notranslate"><span class="pre">pyro.contrib.oed</span></code> 模块选择最佳设计。</p>
 <p>When using OED, the data generation and modelling works as follows:</p>
 <ol class="arabic simple">
 <li><p>Write down a Bayesian model involving a design parameter, an unknown latent variable and an observable.</p></li>
@@ -482,8 +481,7 @@ div.rendered_html tbody tr:hover {
 </ol>
 <p>We can also run multiple ‘rounds’ or iterations of experiments. When doing this, we take the learned model from step 3 and use it as our prior in step 1 for the next round. This approach can be particularly useful because it allows us to design the next experiment based on what has already been learned: the experiments are <em>adaptive</em>.</p>
 <p>In this tutorial, we work through a specific example of this entire OED procedure with multiple rounds. We will show how to design adaptive experiments to learn a participant’s working memory capacity. The design we will be adapting is the <em>length of a sequence of digits that we ask a participant to remember</em>. Let’s dive into the full details.</p>
-<div class="section" id="The-experiment-set-up">
-<h2>The experiment set-up<a class="headerlink" href="#The-experiment-set-up" title="Permalink to this headline">¶</a></h2>
+<p><strong>The experiment set-up</strong></p>
 <p>Suppose you, the participant, are shown a sequence of digits</p>
 <div class="math notranslate nohighlight">
 \[1\ 4\ 7\ 0\ 9\]</div>
@@ -491,8 +489,8 @@ div.rendered_html tbody tr:hover {
 <div class="math notranslate nohighlight">
 \[6\ 5\ 0\ 2\ 8\ 0 .\]</div>
 <p>The longest sequence that you can remember is your working memory capacity. In this tutorial, we build a Bayesian model for working memory, and use it to run an adaptive sequence of experiments that very quickly learn someone’s working memory capacity.</p>
-<div class="section" id="A-model-of-working-memory">
-<h3>A model of working memory<a class="headerlink" href="#A-model-of-working-memory" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="工作记忆模型">
+<h2>工作记忆模型<a class="headerlink" href="#工作记忆模型" title="Permalink to this headline">¶</a></h2>
 <p>Our model for a single round of the digits experiment described above has three components: the length <span class="math notranslate nohighlight">\(l\)</span> of the sequence that the participant has to remember, the participant’s true working memory capacity <span class="math notranslate nohighlight">\(\theta\)</span>, and the outcome of the experiment <span class="math notranslate nohighlight">\(y\)</span> which indicates whether they were able to remember the sequence successfully (<span class="math notranslate nohighlight">\(y=1\)</span>) or not (<span class="math notranslate nohighlight">\(y=0\)</span>). We choose a prior for working memory capacity based on the (in)famous “The magical number seven, plus or minus
 two” [1].</p>
 <p><strong>Note</strong>: <span class="math notranslate nohighlight">\(\theta\)</span> actually represents the point where the participant has a 50/50 chance of remembering the sequence correctly.</p>
@@ -559,12 +557,12 @@ two” [1].</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/working_memory_4_0.png" src="_images/working_memory_4_0.png" />
+<img alt="_images/working_memory_6_0.png" src="_images/working_memory_6_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Inference-in-the-model">
-<h3>Inference in the model<a class="headerlink" href="#Inference-in-the-model" title="Permalink to this headline">¶</a></h3>
+<h2>Inference in the model<a class="headerlink" href="#Inference-in-the-model" title="Permalink to this headline">¶</a></h2>
 <p>With the model in hand, we quickly demonstrate variational inference in Pyro for this model. We define a Normal guide for variational inference.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -656,7 +654,7 @@ Posterior: N(7.749, 1.282)
 <p>Under our posterior, we can see that we have an updated estimate for the participant’s working memory capacity, and our uncertainty has now decreased.</p>
 </div>
 <div class="section" id="Bayesian-optimal-experimental-design">
-<h3>Bayesian optimal experimental design<a class="headerlink" href="#Bayesian-optimal-experimental-design" title="Permalink to this headline">¶</a></h3>
+<h2>Bayesian optimal experimental design<a class="headerlink" href="#Bayesian-optimal-experimental-design" title="Permalink to this headline">¶</a></h2>
 <p>So far so standard. In the previous example, the lengths <code class="docutils literal notranslate"><span class="pre">l_data</span></code> were not chosen with a great deal of forethought. Fortunately, in a setting like this, it is possible to use a more sophisticated strategy to choose the sequence lengths to make the most of every question we ask.</p>
 <p>We do this using Bayesian optimal experimental design (BOED). In BOED, we are interested in designing experiments that maximise the information gain, which is defined formally as</p>
 <div class="math notranslate nohighlight">
@@ -669,10 +667,8 @@ Posterior: N(7.749, 1.282)
 <p>Because it features the posterior density <span class="math notranslate nohighlight">\(p(y|\theta,l)\)</span>, the EIG is not immediately tractable. However, we can make use of the following variational estimator for EIG [3]</p>
 <div class="math notranslate nohighlight">
 \[\text{EIG}(l) = \min_q \mathbb{E}_{\theta,y \sim p(\theta)p(y|\theta,l)} \left[ \log \frac{p(y|\theta,l)}{q(y|l)} \right].\]</div>
-</div>
-</div>
 <div class="section" id="Optimal-experimental-design-in-Pyro">
-<h2>Optimal experimental design in Pyro<a class="headerlink" href="#Optimal-experimental-design-in-Pyro" title="Permalink to this headline">¶</a></h2>
+<h3>Optimal experimental design in Pyro<a class="headerlink" href="#Optimal-experimental-design-in-Pyro" title="Permalink to this headline">¶</a></h3>
 <p>Fortunately, Pyro comes ready with tools to estimate the EIG. All we have to do is define the “marginal guide” <span class="math notranslate nohighlight">\(q(y|l)\)</span> in the formula above.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -736,7 +732,7 @@ Posterior: N(7.749, 1.282)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/working_memory_20_0.png" src="_images/working_memory_20_0.png" />
+<img alt="_images/working_memory_22_0.png" src="_images/working_memory_22_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -794,8 +790,10 @@ Optimal design: 7
 </pre></div></div>
 </div>
 <p>The elements of this fitted tensor represent the marginal over <span class="math notranslate nohighlight">\(y\)</span>, for each possible sequence length <span class="math notranslate nohighlight">\(l\)</span> in <code class="docutils literal notranslate"><span class="pre">candidate_designs</span></code>. We have marginalised out the unknown <span class="math notranslate nohighlight">\(\theta\)</span> so this fitted tensor shows the probabilities for an ‘average’ participant.</p>
+</div>
+</div>
 <div class="section" id="The-adaptive-experiment">
-<h3>The adaptive experiment<a class="headerlink" href="#The-adaptive-experiment" title="Permalink to this headline">¶</a></h3>
+<h2>The adaptive experiment<a class="headerlink" href="#The-adaptive-experiment" title="Permalink to this headline">¶</a></h2>
 <p>We now have the ingredients to build an adaptive experiment to study working memory. We repeat the following steps:</p>
 <ol class="arabic simple">
 <li><p>Use the EIG to find the optimal sequence length <span class="math notranslate nohighlight">\(l\)</span></p></li>
@@ -985,7 +983,7 @@ Estimate of θ: 5.434 ± 0.640
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/working_memory_34_0.png" src="_images/working_memory_34_0.png" />
+<img alt="_images/working_memory_36_0.png" src="_images/working_memory_36_0.png" />
 </div>
 </div>
 <p>(Blue = prior, light green = 10 step posterior)</p>
@@ -1033,13 +1031,13 @@ Estimate of θ: 5.434 ± 0.640
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/working_memory_38_0.png" src="_images/working_memory_38_0.png" />
+<img alt="_images/working_memory_40_0.png" src="_images/working_memory_40_0.png" />
 </div>
 </div>
 <p>Although both design strategies give us data, the optimal strategy ends up with a posterior distribution that is more peaked: that means we have greater confidence in our final answer, or may be able to stop experimenting earlier.</p>
 </div>
 <div class="section" id="Extensions">
-<h3>Extensions<a class="headerlink" href="#Extensions" title="Permalink to this headline">¶</a></h3>
+<h2>Extensions<a class="headerlink" href="#Extensions" title="Permalink to this headline">¶</a></h2>
 <p>In this tutorial we used variational inference to fit an approximate posterior for <span class="math notranslate nohighlight">\(\theta\)</span>. This could be substituted for an alternative posterior inference strategy, such as Hamiltonian Monte Carlo.</p>
 <p>The model in this tutorial is very simple and could be extended in a number of ways. For instance, it’s possible that as well as measuring whether the participant did or did not remember the sequence, we might collect some other information as well. We could build a model for the number of mistakes made (e.g. the edit distance between the correct sequence and the participant’s response) or jointly model the correctness and the time taken to respond. Here is an example model where we model the
 response time using a LogNormal distribution, as suggested by [4].</p>
@@ -1065,13 +1063,12 @@ response time using a LogNormal distribution, as suggested by [4].</p>
 <p>Our model also made a number of assumptions that we may choose to relax. For instance, we assumed that all sequences of the same length are equally easy to remember. We also fixed the <code class="docutils literal notranslate"><span class="pre">sensitivity</span></code> to be a known constant: it’s likely we would need to learn this. We could also think about learning at two levels: learning global variables for population trends as well as local variables for individual level effects. The current model is an individual only model. The EIG could still be used as a
 means to select the optimal design in such scenarios.</p>
 </div>
-<div class="section" id="References">
-<h3>References<a class="headerlink" href="#References" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="参考文献">
+<h2>参考文献<a class="headerlink" href="#参考文献" title="Permalink to this headline">¶</a></h2>
 <p>[1] Miller, G.A., 1956. <strong>The magical number seven, plus or minus two: Some limits on our capacity for processing information.</strong> Psychological review, 63(2), p.81.</p>
 <p>[2] Chaloner, K. and Verdinelli, I., 1995. <strong>Bayesian experimental design: A review.</strong> Statistical Science, pp.273-304.</p>
 <p>[3] Foster, A., Jankowiak, M., Bingham, E., Horsfall, P., Teh, Y.W., Rainforth, T. and Goodman, N., 2019. <strong>Variational Bayesian Optimal Experimental Design.</strong> Advances in Neural Information Processing Systems 2019 (to appear).</p>
 <p>[4] van der Linden, W.J., 2006. <strong>A lognormal model for response times on test items.</strong> Journal of Educational and Behavioral Statistics, 31(2), pp.181-204.</p>
-</div>
 </div>
 </div>
 
@@ -1083,10 +1080,10 @@ means to select the optimal design in such scenarios.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="elections.html" class="btn btn-neutral float-right" title="Predicting the outcome of a US presidential election using Bayesian optimal experimental design" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="elections.html" class="btn btn-neutral float-right" title="贝叶斯最优实验设计预测美国总统选举" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="ekf.html" class="btn btn-neutral float-left" title="Kalman Filter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ekf.html" class="btn btn-neutral float-left" title="卡尔曼滤子" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

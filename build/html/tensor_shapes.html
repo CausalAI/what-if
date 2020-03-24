@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tensor shapes in Pyro &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>Pyro中模型和数据维度 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -38,8 +38,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Inference with Discrete Latent Variables" href="enumeration.html" />
-    <link rel="prev" title="SVI Part III: ELBO Gradient Estimators" href="svi_part_iii.html" /> 
+    <link rel="next" title="Inference with 离散潜变量" href="enumeration.html" />
+    <link rel="prev" title="SVI Part III: ELBO 梯度估计" href="svi_part_iii.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -96,15 +96,15 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tensor shapes in Pyro</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Distributions-shapes:-batch_shape-and-event_shape">Distributions shapes: <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> and <code class="docutils literal notranslate"><span class="pre">event_shape</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Examples">Examples</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Reshaping-distributions">Reshaping distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pyro中模型和数据维度</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#随机函数的维度">随机函数的维度</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#例子">例子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#随机函数reshape">随机函数reshape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#It-is-always-safe-to-assume-dependence">It is always safe to assume dependence</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Declaring-independent-dims-with-plate">Declaring independent dims with <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#独立性声明">独立性声明</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Subsampling-tensors-inside-a-plate">Subsampling tensors inside a <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Broadcasting-to-allow-parallel-enumeration">Broadcasting to allow parallel enumeration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Writing-parallelizable-code">Writing parallelizable code</a></li>
@@ -116,7 +116,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Advanced:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
@@ -125,7 +125,7 @@
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -134,38 +134,38 @@
 </ul>
 <p class="caption"><span class="caption-text">Contributed:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">Gaussian Mixture Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 
             
@@ -211,7 +211,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Tensor shapes in Pyro</li>
+      <li>Pyro中模型和数据维度</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -472,21 +472,23 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Tensor-shapes-in-Pyro">
-<h1>Tensor shapes in Pyro<a class="headerlink" href="#Tensor-shapes-in-Pyro" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial introduces Pyro’s organization of tensor dimensions. Before starting, you should familiarize yourself with <a class="reference external" href="http://pytorch.org/docs/master/notes/broadcasting.html">PyTorch broadcasting semantics</a>.</p>
 <blockquote>
-<div><p>Summary:</p>
+<div><p><strong>Note</strong></p>
+<p>Pyro models 具备维度概念，并且随机函数的维度不是数据的维度！</p>
 </div></blockquote>
+<div class="section" id="Pyro中模型和数据维度">
+<h1>Pyro中模型和数据维度<a class="headerlink" href="#Pyro中模型和数据维度" title="Permalink to this headline">¶</a></h1>
+<p>本教程介绍 Pyro‘s organization of tensor dimensions. 开始之前，您应该熟悉PyTorch 广播语义, see <a class="reference external" href="http://pytorch.org/docs/master/notes/broadcasting.html">PyTorch broadcasting semantics</a>.</p>
+<p><strong>知识点总结</strong></p>
 <ul class="simple">
 <li><p>While you are learning or debugging, set <code class="docutils literal notranslate"><span class="pre">pyro.enable_validation(True)</span></code>.</p></li>
-<li><p>Tensors broadcast by aligning on the right: <code class="docutils literal notranslate"><span class="pre">torch.ones(3,4,5)</span> <span class="pre">+</span> <span class="pre">torch.ones(5)</span></code>.</p></li>
-<li><p>Distribution <code class="docutils literal notranslate"><span class="pre">.sample().shape</span> <span class="pre">==</span> <span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">event_shape</span></code>.</p></li>
-<li><p>Distribution <code class="docutils literal notranslate"><span class="pre">.log_prob(x).shape</span> <span class="pre">==</span> <span class="pre">batch_shape</span></code> (but not <code class="docutils literal notranslate"><span class="pre">event_shape</span></code>!).</p></li>
+<li><p>张量按照最右边的维度进行 Broadcasting: <code class="docutils literal notranslate"><span class="pre">torch.ones(3,4,5)</span> <span class="pre">+</span> <span class="pre">torch.ones(5)</span></code>.</p></li>
+<li><p>样本维度 = <code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">event_shape</span></code>.</p></li>
+<li><p>对于样本 <span class="math notranslate nohighlight">\(x\)</span> <code class="docutils literal notranslate"><span class="pre">model.log_prob(x).shape</span> <span class="pre">==</span> <span class="pre">batch_shape</span></code></p></li>
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">.expand()</span></code> to draw a batch of samples, or rely on <code class="docutils literal notranslate"><span class="pre">plate</span></code> to expand automatically.</p></li>
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">my_dist.to_event(1)</span></code> to declare a dimension as dependent.</p></li>
+<li><p>使用 <code class="docutils literal notranslate"><span class="pre">my_dist.to_event(1)</span></code> 将维度声明为 dependent，从而是实现随机函数 reshape.</p></li>
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">pyro.plate('name',</span> <span class="pre">size):</span></code> to declare a dimension as conditionally independent.</p></li>
-<li><p>All dimensions must be declared either dependent or conditionally independent.</p></li>
+<li><p>所有的维度必须被申明为 dependent 或者条件独立.</p></li>
 <li><p>Try to support batching on the left. This lets Pyro auto-parallelize.</p>
 <ul>
 <li><p>use negative indices like <code class="docutils literal notranslate"><span class="pre">x.sum(-1)</span></code> rather than <code class="docutils literal notranslate"><span class="pre">x.sum(2)</span></code></p></li>
@@ -496,18 +498,16 @@ div.rendered_html tbody tr:hover {
 </li>
 <li><p>When debugging, examine all shapes in a trace using <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.poutine.Trace.format_shapes">Trace.format_shapes()</a>.</p></li>
 </ul>
-<blockquote>
-<div><p>Table of Contents</p>
-</div></blockquote>
+<p><strong>Table of Contents</strong></p>
 <ul class="simple">
-<li><p><a class="reference external" href="#Distributions-shapes:-batch_shape-and-event_shape">Distribution shapes</a></p>
+<li><p><a class="reference external" href="#随机函数的维度">随机函数的维度</a></p>
 <ul>
-<li><p><a class="reference external" href="#Examples">Examples</a></p></li>
-<li><p><a class="reference external" href="#Reshaping-distributions">Reshaping distributions</a></p></li>
+<li><p><a class="reference external" href="#例子">例子</a></p></li>
+<li><p><a class="reference external" href="#随机函数reshape">随机函数reshape</a></p></li>
 <li><p><a class="reference external" href="#It-is-always-safe-to-assume-dependence">It is always safe to assume dependence</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference external" href="#Declaring-independent-dims-with-plate">Declaring independence with plate</a></p></li>
+<li><p><cite>独立性声明 with ``plate`</cite> &lt;#独立性声明&gt;`__</p></li>
 <li><p><a class="reference external" href="#Subsampling-tensors-inside-a-plate">Subsampling inside plate</a></p></li>
 <li><p><a class="reference external" href="#Broadcasting-to-allow-parallel-enumeration">Broadcasting to allow Parallel Enumeration</a></p>
 <ul>
@@ -517,7 +517,7 @@ div.rendered_html tbody tr:hover {
 </li>
 </ul>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -542,15 +542,18 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="Distributions-shapes:-batch_shape-and-event_shape">
-<h2>Distributions shapes: <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> and <code class="docutils literal notranslate"><span class="pre">event_shape</span></code><a class="headerlink" href="#Distributions-shapes:-batch_shape-and-event_shape" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="随机函数的维度">
+<h2>随机函数的维度<a class="headerlink" href="#随机函数的维度" title="Permalink to this headline">¶</a></h2>
 <p>PyTorch <code class="docutils literal notranslate"><span class="pre">Tensor</span></code>s have a single <code class="docutils literal notranslate"><span class="pre">.shape</span></code> attribute, but <code class="docutils literal notranslate"><span class="pre">Distribution</span></code>s have two shape attributions with special meaning: <code class="docutils literal notranslate"><span class="pre">.batch_shape</span></code> and <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code>. These two combine to define the total shape of a sample</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_shape</span> <span class="o">+</span> <span class="n">d</span><span class="o">.</span><span class="n">event_shape</span>
+<span class="c1"># 两个元组的并，不要误解成对应每个维度相加</span>
 </pre></div>
 </div>
-<p>Indices over <code class="docutils literal notranslate"><span class="pre">.batch_shape</span></code> denote conditionally independent random variables, whereas indices over <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code> denote dependent random variables (ie one draw from a distribution). Because the dependent random variables define probability together, the <code class="docutils literal notranslate"><span class="pre">.log_prob()</span></code> method only produces a single number for each event of shape <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code>. Thus the total shape of <code class="docutils literal notranslate"><span class="pre">.log_prob()</span></code> is <code class="docutils literal notranslate"><span class="pre">.batch_shape</span></code>:</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_shape</span>
+<p>数学上来说，随机变量 <span class="math notranslate nohighlight">\(X \sim p(x; \theta)\)</span> 的某个事件是 <span class="math notranslate nohighlight">\(X=x\)</span>，因此维度就是 <code class="docutils literal notranslate"><span class="pre">event_shape</span></code>。而我们需要一个 batch 不同参数 <span class="math notranslate nohighlight">\(\theta\)</span> 的 r.v. <span class="math notranslate nohighlight">\(X\)</span> (称之为 batch r.v.)，所以 <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> 就是不同参数随机变量数量的维度。于是最后的一个 batch r.v. 样本的维度就是 <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> 并上 <code class="docutils literal notranslate"><span class="pre">event_shape</span></code>.</p>
+<p>Indices over <code class="docutils literal notranslate"><span class="pre">.batch_shape</span></code> denote conditionally independent random variables, whereas indices over <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code> denote dependent random variables (即从分布中抽出一个样本). 因为一个随机向量样本对应这一个概率值, the <code class="docutils literal notranslate"><span class="pre">.log_prob()</span></code> method only produces a single number for each event of shape <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code>. Thus the total shape of <code class="docutils literal notranslate"><span class="pre">.log_prob()</span></code> is <code class="docutils literal notranslate"><span class="pre">.batch_shape</span></code>:</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 每个样本对应一个概率值，batch_shape 就是 batch r.v. 的维度。</span>
+<span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">d</span><span class="o">.</span><span class="n">batch_shape</span>
 </pre></div>
 </div>
 <p>Note that the <code class="docutils literal notranslate"><span class="pre">Distribution.sample()</span></code> method also takes a <code class="docutils literal notranslate"><span class="pre">sample_shape</span></code> parameter that indexes over independent identically distributed (iid) random varables, so that</p>
@@ -558,18 +561,19 @@ div.rendered_html tbody tr:hover {
 <span class="k">assert</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">sample_shape</span> <span class="o">+</span> <span class="n">batch_shape</span> <span class="o">+</span> <span class="n">event_shape</span>
 </pre></div>
 </div>
+<p>也就是说每个 Pyro model(也就是随机函数)都具备两个维度 batch_shape 和 event_shape，抽样之后我们还可以得到一个 <code class="docutils literal notranslate"><span class="pre">sample_shape</span></code>。</p>
+<p>我们来举个例子，某个班级每个学生身高和体重组成一个随机向量，那么 <code class="docutils literal notranslate"><span class="pre">event_shape</span> <span class="pre">=</span> <span class="pre">(2,</span> <span class="pre">)</span></code>；而一个学校有多个不同的班级，其中每个班级具备不同的身高体重分布参数，那么 <code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">=</span> <span class="pre">班级数量</span></code>；最后这个学校全体学生来自于某个总体，那么此时从该总体中可以抽样得到 <code class="docutils literal notranslate"><span class="pre">sample_shape</span></code> 个样本。</p>
 <p>In summary</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="o">|</span>      <span class="n">iid</span>     <span class="o">|</span> <span class="n">independent</span> <span class="o">|</span> <span class="n">dependent</span>
 <span class="o">------+--------------+-------------+------------</span>
 <span class="n">shape</span> <span class="o">=</span> <span class="n">sample_shape</span> <span class="o">+</span> <span class="n">batch_shape</span> <span class="o">+</span> <span class="n">event_shape</span>
 </pre></div>
 </div>
-<p>For example univariate distributions have empty event shape (because each number is an independent event). Distributions over vectors like <code class="docutils literal notranslate"><span class="pre">MultivariateNormal</span></code> have <code class="docutils literal notranslate"><span class="pre">len(event_shape)</span> <span class="pre">==</span> <span class="pre">1</span></code>. Distributions over matrices like <code class="docutils literal notranslate"><span class="pre">InverseWishart</span></code> have <code class="docutils literal notranslate"><span class="pre">len(event_shape)</span> <span class="pre">==</span> <span class="pre">2</span></code>.</p>
-<div class="section" id="Examples">
-<h3>Examples<a class="headerlink" href="#Examples" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="例子">
+<h3>例子<a class="headerlink" href="#例子" title="Permalink to this headline">¶</a></h3>
 <p>The simplest distribution shape is a single univariate distribution.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -584,7 +588,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>Distributions can be batched by passing in batched parameters.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -599,7 +603,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>Another way to batch distributions is via the <code class="docutils literal notranslate"><span class="pre">.expand()</span></code> method. This only works if parameters are identical along the leftmost dimensions.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -614,7 +618,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <p>Multivariate distributions have nonempty <code class="docutils literal notranslate"><span class="pre">.event_shape</span></code>. For these distributions, the shapes of <code class="docutils literal notranslate"><span class="pre">.sample()</span></code> and <code class="docutils literal notranslate"><span class="pre">.log_prob(x)</span></code> differ:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -628,11 +632,11 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 </div>
-<div class="section" id="Reshaping-distributions">
-<h3>Reshaping distributions<a class="headerlink" href="#Reshaping-distributions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="随机函数reshape">
+<h3>随机函数reshape<a class="headerlink" href="#随机函数reshape" title="Permalink to this headline">¶</a></h3>
 <p>In Pyro you can treat a univariate distribution as multivariate by calling the <a class="reference external" href="http://docs.pyro.ai/en/dev/distributions.html#pyro.distributions.torch_distribution.TorchDistributionMixin.to_event">.to_event(n)</a> property where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of batch dimensions (from the right) to declare as <em>dependent</em>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -642,37 +646,57 @@ div.rendered_html tbody tr:hover {
 <span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)</span>
+<span class="c1"># 实现了把一维 r.v. 变成了 event_shape 维度是 (3, 4)[0]=4 的 r.v.</span>
+<span class="c1"># 该 r.v. 的 batch_shape 是 3.</span>
+<span class="n">d</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+tensor([[1., 0., 0., 1.],
+        [0., 0., 0., 1.],
+        [0., 0., 1., 0.]])
+</pre></div></div>
 </div>
 <p>While you work with Pyro programs, keep in mind that samples have shape <code class="docutils literal notranslate"><span class="pre">batch_shape</span> <span class="pre">+</span> <span class="pre">event_shape</span></code>, whereas <code class="docutils literal notranslate"><span class="pre">.log_prob(x)</span></code> values have shape <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code>. You’ll need to ensure that <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> is carefully controlled by either trimming it down with <code class="docutils literal notranslate"><span class="pre">.to_event(n)</span></code> or by declaring dimensions as independent via <code class="docutils literal notranslate"><span class="pre">pyro.plate</span></code>.</p>
 </div>
 <div class="section" id="It-is-always-safe-to-assume-dependence">
 <h3>It is always safe to assume dependence<a class="headerlink" href="#It-is-always-safe-to-assume-dependence" title="Permalink to this headline">¶</a></h3>
-<p>Often in Pyro we’ll declare some dimensions as dependent even though they are in fact independent, e.g.</p>
+<p>Often in Pyro 我们将某些维度声明为 dependent，即使他们实际上是独立的, e.g.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">([</span><span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">to_event</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">10</span><span class="p">,)</span>
 </pre></div>
 </div>
-<p>This is useful for two reasons: First it allows us to easily swap in a <code class="docutils literal notranslate"><span class="pre">MultivariateNormal</span></code> distribution later. Second it simplifies the code a bit since we don’t need a <code class="docutils literal notranslate"><span class="pre">plate</span></code> (see below) as in</p>
+<p>这很有用，原因有两个：</p>
+<ul class="simple">
+<li><p>(容易构造多元分布) it allows us to easily swap in a <code class="docutils literal notranslate"><span class="pre">MultivariateNormal</span></code> distribution later.</p></li>
+<li><p>(简化代码，避免使用 <code class="docutils literal notranslate"><span class="pre">plate</span></code>) it simplifies the code a bit since we don’t need a <code class="docutils literal notranslate"><span class="pre">plate</span></code> (see below) as in</p></li>
+</ul>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;x_plate&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">pyro</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># .expand([10]) is automatic</span>
     <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">10</span><span class="p">,)</span>
 </pre></div>
 </div>
-<p>The difference between these two versions is that the second version with <code class="docutils literal notranslate"><span class="pre">plate</span></code> informs Pyro that it can make use of conditional independence information when estimating gradients, whereas in the first version Pyro must assume they are dependent (even though the normals are in fact conditionally independent). This is analogous to d-separation in graphical models: it is always safe to add edges and assume variables <em>may</em> be dependent (i.e. to widen the model class), but it is unsafe to assume
-independence when variables are actually dependent (i.e. narrowing the model class so the true model lies outside of the class, as in mean field). In practice Pyro’s SVI inference algorithm uses reparameterized gradient estimators for <code class="docutils literal notranslate"><span class="pre">Normal</span></code> distributions so both gradient estimators have the same performance.</p>
+<p>这两个版本之间的区别是： the second version with <code class="docutils literal notranslate"><span class="pre">plate</span></code> informs Pyro that it can make use of conditional independence information when estimating gradients, whereas in the first version Pyro must assume they are dependent (even though the normals are in fact conditionally independent). This is analogous to d-separation in graphical models: it is always safe to add edges and assume variables <em>may</em> be dependent (i.e. to widen the model class), but it is unsafe to assume independence when
+variables are actually dependent (i.e. narrowing the model class so the true model lies outside of the class, as in mean field).</p>
+<p>实际上，Pyro的SVI推理算法 uses reparameterized gradient estimators for <code class="docutils literal notranslate"><span class="pre">Normal</span></code> distributions 因此两个梯度估计量具有相同的性能。</p>
 </div>
 </div>
-<div class="section" id="Declaring-independent-dims-with-plate">
-<h2>Declaring independent dims with <code class="docutils literal notranslate"><span class="pre">plate</span></code><a class="headerlink" href="#Declaring-independent-dims-with-plate" title="Permalink to this headline">¶</a></h2>
-<p>Pyro models can use the context manager <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">pyro.plate</a> to declare that certain batch dimensions are independent. Inference algorithms can then take advantage of this independence to e.g. construct lower variance gradient estimators or to enumerate in linear space rather than exponential space. An example of an independent dimension is the index over data in a minibatch: each datum should be independent of all others.</p>
-<p>The simplest way to declare a dimension as independent is to declare the rightmost batch dimension as independent via a simple</p>
+<div class="section" id="独立性声明">
+<h2>独立性声明<a class="headerlink" href="#独立性声明" title="Permalink to this headline">¶</a></h2>
+<p>Declaring independent dims with <code class="docutils literal notranslate"><span class="pre">plate</span></code></p>
+<p>Pyro模型可以使用上下文管理器 <a class="reference external" href="http://docs.pyro.ai/en/dev/primitives.html#pyro.plate">pyro.plate</a> to declare that certain batch dimensions are independent. 然后，推理算法可以利用这种独立性，e.g. construct lower variance gradient estimators or to enumerate in linear space rather than exponential space. An example of an independent dimension is the index over data in a minibatch: each datum should be independent of all others.</p>
+<p>最简单的方式 to declare a dimension as independent is to declare the rightmost batch dimension as independent via a simple</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;my_plate&quot;</span><span class="p">):</span>
     <span class="c1"># within this context, batch dimension -1 is independent</span>
 </pre></div>
 </div>
-<p>We recommend always providing an optional size argument to aid in debugging shapes</p>
+<p>我们推荐 always providing an optional size argument to aid in debugging shapes</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pyro</span><span class="o">.</span><span class="n">plate</span><span class="p">(</span><span class="s2">&quot;my_plate&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_data</span><span class="p">)):</span>
     <span class="c1"># within this context, batch dimension -1 is independent</span>
 </pre></div>
@@ -1128,15 +1152,6 @@ Sample Sites:
 <li><p>The existing <code class="docutils literal notranslate"><span class="pre">batch_shape</span></code> of the sample site must be broadcastable with the size of the <code class="docutils literal notranslate"><span class="pre">pyro.plate</span></code> contexts. In our particular example, <code class="docutils literal notranslate"><span class="pre">Bernoulli(p_x)</span></code> has an empty batch shape which is universally broadcastable.</p></li>
 </ul>
 <p>Note how simple it is to achieve parallelization via tensorized operations using <code class="docutils literal notranslate"><span class="pre">pyro.plate</span></code>! <code class="docutils literal notranslate"><span class="pre">pyro.plate</span></code> also helps in code modularization because model components can be written agnostic of the <code class="docutils literal notranslate"><span class="pre">plate</span></code> contexts in which they may subsequently get embedded in.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -1149,10 +1164,10 @@ Sample Sites:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="enumeration.html" class="btn btn-neutral float-right" title="Inference with Discrete Latent Variables" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="enumeration.html" class="btn btn-neutral float-right" title="Inference with 离散潜变量" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="svi_part_iii.html" class="btn btn-neutral float-left" title="SVI Part III: ELBO Gradient Estimators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="svi_part_iii.html" class="btn btn-neutral float-left" title="SVI Part III: ELBO 梯度估计" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

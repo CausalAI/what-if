@@ -1,5 +1,7 @@
-Gaussian Process Time Series Models
+高斯过程时间序列模型
 ===================================
+
+Gaussian Process Time Series Models
 
 `View gp_models.py on github`__
 

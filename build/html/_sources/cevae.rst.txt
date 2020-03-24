@@ -1,5 +1,7 @@
-Causal Effect VAE
+因果VAE
 =================
+
+Causal Effect VAE
 
 `View cevae.py on github`__
 

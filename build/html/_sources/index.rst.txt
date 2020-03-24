@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Pyro Examples and Tutorials!
-==========================================
+=======================================
 
 .. toctree::
    :maxdepth: 2
