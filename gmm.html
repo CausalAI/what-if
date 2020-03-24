@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Gaussian Mixture Model &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>高斯混合模型 &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Gaussian Processes" href="gp.html" />
+    <link rel="next" title="高斯过程" href="gp.html" />
     <link rel="prev" title="随机波动率的 Levy 稳定分布模型" href="stable.html" /> 
 </head>
 
@@ -96,12 +96,12 @@
 <li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
 <li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO Gradient Estimators</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Tensor shapes in Pyro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Advanced:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with Discrete Latent Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
@@ -110,7 +110,7 @@
 <p class="caption"><span class="caption-text">Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归- Introduction (Part 1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
@@ -119,51 +119,48 @@
 </ul>
 <p class="caption"><span class="caption-text">Contributed:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Gaussian Mixture Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Table-of-contents">Table of contents</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Overview">Overview</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Training-a-MAP-estimator">Training a MAP estimator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Serving-the-model:-predicting-membership">Serving the model: predicting membership</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Predicting-membership-using-discrete-inference">Predicting membership using discrete inference</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#Predicting-membership-by-enumerating-in-the-guide">Predicting membership by enumerating in the guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">高斯混合模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Training-a-MAP-estimator">Training a MAP estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Serving-the-model:-predicting-membership">Serving the model: predicting membership</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Predicting-membership-using-discrete-inference">Predicting membership using discrete inference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Predicting-membership-by-enumerating-in-the-guide">Predicting membership by enumerating in the guide</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#MCMC">MCMC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#MCMC">MCMC</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">Gaussian Processes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">Gaussian Process Latent Variable Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">Bayesian Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">Writing guides using EasyGuide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: state space models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: hierarchical models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">Tracking an Unknown Number of Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential Importance Sampling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">The Rational Speech Act framework</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">Understanding Hyperbole using RSA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">Kalman Filter</a></li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">Designing Adaptive Experiments to Study Working Memory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">Predicting the outcome of a US presidential election using Bayesian optimal experimental design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet Process Mixture Models in Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting Black Box Variational Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
+<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code Examples:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">Causal Effect VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">Hidden Markov Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">Latent Dirichlet Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">Sparse Gamma Deep Exponential Family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">Multivariate Forecasting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">Gaussian Process Time Series Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">Sequential Monte Carlo Filtering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 
             
@@ -209,7 +206,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Gaussian Mixture Model</li>
+      <li>高斯混合模型</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -470,11 +467,10 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Gaussian-Mixture-Model">
-<h1>Gaussian Mixture Model<a class="headerlink" href="#Gaussian-Mixture-Model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="高斯混合模型">
+<h1>高斯混合模型<a class="headerlink" href="#高斯混合模型" title="Permalink to this headline">¶</a></h1>
 <p>This is tutorial demonstrates how to marginalize out discrete latent variables in Pyro through the motivating example of a mixture model. We’ll focus on the mechanics of parallel enumeration, keeping the model simple by training a trivial 1-D Gaussian model on a tiny 5-point dataset. See also the <a class="reference external" href="http://pyro.ai/examples/enumeration.html">enumeration tutorial</a> for a broader introduction to parallel enumeration.</p>
-<div class="section" id="Table-of-contents">
-<h2>Table of contents<a class="headerlink" href="#Table-of-contents" title="Permalink to this headline">¶</a></h2>
+<p><strong>Table of contents</strong></p>
 <ul class="simple">
 <li><p><a class="reference external" href="#Overview">Overview</a></p></li>
 <li><p><a class="reference external" href="#Training-a-MAP-estimator">Training a MAP estimator</a></p></li>
@@ -514,7 +510,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="section" id="Overview">
-<h3>Overview<a class="headerlink" href="#Overview" title="Permalink to this headline">¶</a></h3>
+<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this headline">¶</a></h2>
 <p>Pyro’s <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.traceenum_elbo.TraceEnum_ELBO">TraceEnum_ELBO</a> can automatically marginalize out variables in both the guide and the model. When enumerating guide variables, Pyro can either enumerate sequentially (which is useful if the variables determine downstream control flow), or enumerate in parallel by allocating a new tensor dimension and using nonstandard evaluation to create a tensor of possible values at the variable’s sample site.
 These nonstandard values are then replayed in the model. When enumerating variables in the model, the variables must be enumerated in parallel and must not appear in the guide. Mathematically, guide-side enumeration simply reduces variance in a stochastic ELBO by enumerating all values, whereas model-side enumeration avoids an application of Jensen’s inequality by exactly marginalizing out a variable.</p>
 <p>Here is our tiny dataset. It has five points.</p>
@@ -529,7 +525,7 @@ These nonstandard values are then replayed in the model. When enumerating variab
 </div>
 </div>
 <div class="section" id="Training-a-MAP-estimator">
-<h3>Training a MAP estimator<a class="headerlink" href="#Training-a-MAP-estimator" title="Permalink to this headline">¶</a></h3>
+<h2>Training a MAP estimator<a class="headerlink" href="#Training-a-MAP-estimator" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start by learning model parameters <code class="docutils literal notranslate"><span class="pre">weights</span></code>, <code class="docutils literal notranslate"><span class="pre">locs</span></code>, and <code class="docutils literal notranslate"><span class="pre">scale</span></code> given priors and data. We will learn point estimates of these using an <a class="reference external" href="http://docs.pyro.ai/en/dev/infer.autoguide.html#autodelta">AutoDelta</a> guide (named after its delta distributions). Our model will learn global mixture weights, the location of each mixture component, and a shared scale that is common to both components. During inference,
 <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.traceenum_elbo.TraceEnum_ELBO">TraceEnum_ELBO</a> will marginalize out the assignments of datapoints to clusters.</p>
 <div class="nbinput nblast docutils container">
@@ -653,7 +649,7 @@ seed = 7, initial_loss = 25.665584564208984
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_12_0.png" src="_images/gmm_12_0.png" />
+<img alt="_images/gmm_13_0.png" src="_images/gmm_13_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -676,7 +672,7 @@ seed = 7, initial_loss = 25.665584564208984
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_13_0.png" src="_images/gmm_13_0.png" />
+<img alt="_images/gmm_14_0.png" src="_images/gmm_14_0.png" />
 </div>
 </div>
 <p>Here are the learned parameters:</p>
@@ -729,17 +725,17 @@ scale = 0.6514337062835693
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_17_0.png" src="_images/gmm_17_0.png" />
+<img alt="_images/gmm_18_0.png" src="_images/gmm_18_0.png" />
 </div>
 </div>
 <p>Finally note that optimization with mixture models is non-convex and can often get stuck in local optima. For example in this tutorial, we observed that the mixture model gets stuck in an everthing-in-one-cluster hypothesis if <code class="docutils literal notranslate"><span class="pre">scale</span></code> is initialized to be too large.</p>
 </div>
 <div class="section" id="Serving-the-model:-predicting-membership">
-<h3>Serving the model: predicting membership<a class="headerlink" href="#Serving-the-model:-predicting-membership" title="Permalink to this headline">¶</a></h3>
+<h2>Serving the model: predicting membership<a class="headerlink" href="#Serving-the-model:-predicting-membership" title="Permalink to this headline">¶</a></h2>
 <p>Now that we’ve trained a mixture model, we might want to use the model as a classifier. During training we marginalized out the assignment variables in the model. While this provides fast convergence, it prevents us from reading the cluster assignments from the guide. We’ll discuss two options for treating the model as a classifier: first using <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a> (much faster) and second by training a secondary
 guide using enumeration inside SVI (slower but more general).</p>
 <div class="section" id="Predicting-membership-using-discrete-inference">
-<h4>Predicting membership using discrete inference<a class="headerlink" href="#Predicting-membership-using-discrete-inference" title="Permalink to this headline">¶</a></h4>
+<h3>Predicting membership using discrete inference<a class="headerlink" href="#Predicting-membership-using-discrete-inference" title="Permalink to this headline">¶</a></h3>
 <p>The fastest way to predict membership is to use the <a class="reference external" href="http://docs.pyro.ai/en/dev/inference_algos.html#pyro.infer.discrete.infer_discrete">infer_discrete</a> handler, together with <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">replay</span></code>. Let’s start out with a MAP classifier, setting <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>’s temperature parameter to zero. For a deeper look at effect handlers like <code class="docutils literal notranslate"><span class="pre">trace</span></code>, <code class="docutils literal notranslate"><span class="pre">replay</span></code>, and <code class="docutils literal notranslate"><span class="pre">infer_discrete</span></code>, see the <a class="reference external" href="http://pyro.ai/examples/effect_handlers.html">effect handler tutorial</a>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -787,7 +783,7 @@ tensor([0, 0, 1, 1, 1])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_21_0.png" src="_images/gmm_21_0.png" />
+<img alt="_images/gmm_22_0.png" src="_images/gmm_22_0.png" />
 </div>
 </div>
 <p>To generate random posterior assignments rather than MAP assignments, we could set <code class="docutils literal notranslate"><span class="pre">temperature=1</span></code>.</p>
@@ -828,12 +824,12 @@ tensor([0, 0, 1, 1, 1])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_25_0.png" src="_images/gmm_25_0.png" />
+<img alt="_images/gmm_26_0.png" src="_images/gmm_26_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Predicting-membership-by-enumerating-in-the-guide">
-<h4>Predicting membership by enumerating in the guide<a class="headerlink" href="#Predicting-membership-by-enumerating-in-the-guide" title="Permalink to this headline">¶</a></h4>
+<h3>Predicting membership by enumerating in the guide<a class="headerlink" href="#Predicting-membership-by-enumerating-in-the-guide" title="Permalink to this headline">¶</a></h3>
 <p>A second way to predict class membership is to enumerate in the guide. This doesn’t work well for serving classifier models, since we need to run stochastic optimization for each new input data batch, but it is more general in that it can be embedded in larger variational models.</p>
 <p>To read cluster assignments from the guide, we’ll define a new <code class="docutils literal notranslate"><span class="pre">full_guide</span></code> that fits both global parameters (as above) and local parameters (which were previously marginalized out). Since we’ve already learned good values for the global variables, we will block SVI from updating those by using <a class="reference external" href="http://docs.pyro.ai/en/dev/poutine.html#pyro.poutine.block">poutine.block</a>.</p>
 <div class="nbinput nblast docutils container">
@@ -906,7 +902,7 @@ tensor([0, 0, 1, 1, 1])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_29_0.png" src="_images/gmm_29_0.png" />
+<img alt="_images/gmm_30_0.png" src="_images/gmm_30_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -929,7 +925,7 @@ tensor([0, 0, 1, 1, 1])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_30_0.png" src="_images/gmm_30_0.png" />
+<img alt="_images/gmm_31_0.png" src="_images/gmm_31_0.png" />
 </div>
 </div>
 <p>We can now examine the guide’s local <code class="docutils literal notranslate"><span class="pre">assignment_probs</span></code> variable.</p>
@@ -955,13 +951,13 @@ tensor([0, 0, 1, 1, 1])
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_32_0.png" src="_images/gmm_32_0.png" />
+<img alt="_images/gmm_33_0.png" src="_images/gmm_33_0.png" />
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="MCMC">
-<h3>MCMC<a class="headerlink" href="#MCMC" title="Permalink to this headline">¶</a></h3>
+<h2>MCMC<a class="headerlink" href="#MCMC" title="Permalink to this headline">¶</a></h2>
 <p>Next we’ll explore the full posterior over component parameters using collapsed NUTS, i.e. we’ll use NUTS and marginalize out all discrete latent variables.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
@@ -1015,7 +1011,7 @@ Sample: 100%|██████████| 300/300 [00:30&lt;00:00,  9.99it/s,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_36_0.png" src="_images/gmm_36_0.png" />
+<img alt="_images/gmm_37_0.png" src="_images/gmm_37_0.png" />
 </div>
 </div>
 <p>Note that due to nonidentifiability of the mixture components the likelihood landscape has two equally likely modes, near <code class="docutils literal notranslate"><span class="pre">(11,0.5)</span></code> and <code class="docutils literal notranslate"><span class="pre">(0.5,11)</span></code>. NUTS has difficulty switching between the two modes.</p>
@@ -1038,7 +1034,7 @@ Sample: 100%|██████████| 300/300 [00:30&lt;00:00,  9.99it/s,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/gmm_38_0.png" src="_images/gmm_38_0.png" />
+<img alt="_images/gmm_39_0.png" src="_images/gmm_39_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1052,7 +1048,6 @@ Sample: 100%|██████████| 300/300 [00:30&lt;00:00,  9.99it/s,
 </div>
 </div>
 </div>
-</div>
 
 
            </div>
@@ -1062,7 +1057,7 @@ Sample: 100%|██████████| 300/300 [00:30&lt;00:00,  9.99it/s,
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="gp.html" class="btn btn-neutral float-right" title="Gaussian Processes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="gp.html" class="btn btn-neutral float-right" title="高斯过程" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="stable.html" class="btn btn-neutral float-left" title="随机波动率的 Levy 稳定分布模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

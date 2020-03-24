@@ -4,16 +4,21 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Forecasting II: state space models\n",
+    "# Forecasting II: 状态空间模型\n",
     "\n",
     "This tutorial covers state space modeling with the [pyro.contrib.forecast](http://docs.pyro.ai/en/latest/contrib.forecast.html) module. This tutorial assumes the reader is already familiar with [SVI](http://pyro.ai/examples/svi_part_ii.html), [tensor shapes](http://pyro.ai/examples/tensor_shapes.html), and [univariate forecasting](http://pyro.ai/examples/forecasting_i.html).\n",
     "\n",
     "See also:\n",
     "\n",
     "- [Forecasting I: univariate, heavy tailed](http://pyro.ai/examples/forecasting_i.html)\n",
-    "- [Forecasting III: hierarchical models](http://pyro.ai/examples/forecasting_iii.html)\n",
-    "\n",
-    "#### Summary\n",
+    "- [Forecasting III: hierarchical models](http://pyro.ai/examples/forecasting_iii.html)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Summary**\n",
     "\n",
     "- Pyro's [ForecastingModel](http://docs.pyro.ai/en/latest/contrib.forecast.html#pyro.contrib.forecast.forecaster.ForecastingModel) can combine regression, variational inference, and exact inference.\n",
     "- To model a linear-Gaussian dynamical system, use a [GaussianHMM](http://docs.pyro.ai/en/latest/distributions.html#gaussianhmm) `noise_dist`.\n",
@@ -145,7 +150,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## GaussianHMM\n",
+    "## Gaussian HMM\n",
     "\n",
     "Let's start by modeling hourly seasonality together with a local linear trend, where we model seasonality via regression and local linear trend via a [GaussianHMM](http://docs.pyro.ai/en/latest/distributions.html#gaussianhmm). This noise model includes a mean-reverting hidden state (an [Ornstein-Uhlenbeck process](https://en.wikipedia.org/wiki/Ornstein%E2%80%93Uhlenbeck_process)) plus Gaussian observation noise."
    ]
@@ -440,7 +445,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Heavy-tailed modeling with LinearHMM\n",
+    "## Heavy-tailed modeling with Linear HMM\n",
     "\n",
     "Next let's change our model to a linear-[Stable](http://docs.pyro.ai/en/latest/distributions.html#pyro.distributions.Stable) dynamical system, exhibiting learnable heavy tailed behavior in both the process noise and observation noise. As we've already seen in the [univariate tutorial](http://pyro.ai/examples/forecasting_i.html), this will require special handling of stable distributions by [poutine.reparam()](http://docs.pyro.ai/en/latest/poutine.html#pyro.poutine.handlers.reparam). For state space models, we combine [LinearHMMReparam](http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.hmm.LinearHMMReparam) with other reparameterizers like [StableReparam](http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.StableReparam) and [SymmetricStableReparam](http://docs.pyro.ai/en/latest/infer.reparam.html#pyro.infer.reparam.stable.SymmetricStableReparam). All reparameterizers preserve behavior of the generative model, and only serve to enable inference via auxiliary variable methods."
    ]
@@ -626,7 +631,20 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.7.2"
+   "version": "3.7.4"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
   }
  },
  "nbformat": 4,

@@ -4,11 +4,18 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Boosting Black Box Variational Inference\n",
-    "## Introduction\n",
-    "This tutorial demonstrates how to implement boosting black box Variational Inference [1] in Pyro. In boosting Variational Inference [2], we approximate a target distribution with an iteratively selected mixture of densities. In cases where a single denisity provided by regular Variational Inference doesn't adequately approximate a target density, boosting VI thus offers a simple way of getting more complex approximations. We show how this can be implemented as a relatively straightforward extension of Pyro's SVI.\n",
+    "# Boosting 黑盒变分推断\n",
     "\n",
-    "## Contents\n",
+    "\n",
+    "This tutorial demonstrates how to implement boosting black box Variational Inference [1] in Pyro. In boosting Variational Inference [2], we approximate a target distribution with an iteratively selected mixture of densities. In cases where a single denisity provided by regular Variational Inference doesn't adequately approximate a target density, boosting VI thus offers a simple way of getting more complex approximations. We show how this can be implemented as a relatively straightforward extension of Pyro's SVI."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Contents**\n",
+    "\n",
     "* [Theoretical Background](#theoretical-background)\n",
     "    - [Variational Inference](#variational-inference)\n",
     "    - [Boosting Black Box Variational Inference](#bbbvi)\n",
@@ -568,7 +575,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### References\n",
+    "### 参考文献\n",
     "\n",
     "[1] Locatello, Francesco, et al. \"Boosting black box variational inference.\" Advances in Neural Information Processing Systems. 2018.\n",
     "\n",
@@ -595,12 +602,25 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.2"
+   "version": "3.7.4"
   },
   "mimetype": "text/x-python",
   "name": "python",
   "npconvert_exporter": "python",
   "pygments_lexer": "ipython3",
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  },
   "version": 3
  },
  "nbformat": 4,

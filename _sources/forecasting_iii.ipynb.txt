@@ -4,16 +4,21 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# Forecasting III: hierarchical models\n",
+    "# Forecasting III: 层级模型\n",
     "\n",
     "This tutorial covers hierarchical multivariate time series modeling with the [pyro.contrib.forecast](http://docs.pyro.ai/en/latest/contrib.forecast.html) module. This tutorial assumes the reader is already familiar with [SVI](http://pyro.ai/examples/svi_part_ii.html), [tensor shapes](http://pyro.ai/examples/tensor_shapes.html), and [univariate forecasting](http://pyro.ai/examples/forecasting_i.html).\n",
     "\n",
     "See also:\n",
     "\n",
     "- [Forecasting I: univariate, heavy tailed](http://pyro.ai/examples/forecasting_i.html)\n",
-    "- [Forecasting II: state space models](http://pyro.ai/examples/forecasting_ii.html)\n",
-    "\n",
-    "#### Summary\n",
+    "- [Forecasting II: state space models](http://pyro.ai/examples/forecasting_ii.html)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Summary**\n",
     "\n",
     "- Hierarchial forecasting works like any other hierarchial modeling in Pyro.\n",
     "- To create hierarchical models in Pyro, use the [plate](http://docs.pyro.ai/en/latest/primitives.html#pyro.plate) context manager.\n",
@@ -664,7 +669,20 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.7.2"
+   "version": "3.7.4"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
   }
  },
  "nbformat": 4,

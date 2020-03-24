@@ -1,5 +1,8 @@
-Sparse Gamma Deep Exponential Family
+稀疏 Gamma 深度指数族分布
 ====================================
+
+Sparse Gamma Deep Exponential Family
+
 
 `View sparse_gamma_def.py on github`__
 

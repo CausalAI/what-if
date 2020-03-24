@@ -13,13 +13,23 @@
    "source": [
     "> **The Goal: Scaling SVI to Large Datasets**\n",
     "\n",
-    "一般情况下 SVI 过程中每次更新的计算复杂度是正比于样本数，所以我们需要是用 mini-batch 的办法减少复杂度。For a model with $N$ observations, running the `model` and `guide` and constructing the ELBO involves evaluating log pdf's whose 计算复杂度随着样本数 $N$ 比例增长. This is a problem if we want to scale to large datasets. 幸运的是，ELBO 目标自然的支持子采样 provided that 我们的 model/guide 具有一些条件独立性结构 that we can take advantage of. 例如, in the case that the observations are conditionally independent given the latents, the log likelihood term in the ELBO can be approximated with\n",
+    "一般情况下 SVI 过程中每次更新的计算复杂度是正比于样本数，所以我们需要是用 mini-batch 的办法减少复杂度。For a model with $N$ observations, running the `model` and `guide` and constructing the ELBO involves evaluating log pdf's whose 计算复杂度随着样本数 $N$ 比例增长. This is a problem if we want to scale to large datasets. 幸运的是，目标函数 ELBO naturally 支持子采样 provided that 我们的 model/guide 具有一些条件独立性结构 that we can take advantage of. 例如, in the case that the observations are conditionally independent given the latents, the log likelihood term in the ELBO can be approximated with\n",
     "\n",
     "$$ E[\\log p({\\bf x}| {\\bf z})] \\approx \\frac{1}{N}\\sum_{i=1}^N \\log p({\\bf x}_i | {\\bf z}) \\approx  \\frac{1}{M}\n",
     "\\sum_{i\\in{\\mathcal{I}_M}} \\log p({\\bf x}_i | {\\bf z})  $$\n",
     "\n",
     "where $\\mathcal{I}_M$ is a mini-batch of indices of size $M$ with $M<N$ (for a discussion please see references [1,2]). \n",
     "很好，问题解决了！但是我们如何在Pyro中实现这一点？"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "回顾：\n",
+    "\n",
+    "- 因为 `model = primitive r.v. + deterministic function`, 那么 `guide` 就应该对应的是此公式中 `latent r.v.` 给定部分 `observed r.v.` 的后验分布。\n",
+    "- 在变分自编码器中，用来近似后验分布的 `guide` $q_\\phi(z)$ 是局部的，意味着对一个每个样本 $x_i$, `latent r.v.` 的后验分布 $q_\\phi(z|x_i)$ 都不相同，我们需要学习与样本个数相同数量的后验分布。"
    ]
   },
   {
@@ -55,7 +65,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "For this model the observations are conditionally independent given the latent random variable `latent_fairness`. To explicitly mark this in Pyro we basically just need to replace the Python builtin `range` with the Pyro construct `plate`:\n",
+    "\n",
+    "对于该模型，给定潜变量 `latent_fairness` ，观测样本是条件独立的. To explicitly mark this in Pyro we basically just need to replace the Python builtin `range` with the Pyro construct `plate`:\n",
     "\n",
     "```python\n",
     "# 我们通过 plate 来声明给定潜变量，观测样本之间的条件独立性。\n",
@@ -88,13 +99,13 @@
     "在继续之前，让我们提一下使用 sequential `plate` 时要避免的一些陷阱。考虑上述代码片段的以下变体：\n",
     "\n",
     "```python\n",
-    "# WARNING do not do this!\n",
+    "# WARNING 不要这样做!\n",
     "my_reified_list = list(pyro.plate(\"data_loop\", len(data)))\n",
     "for i in my_reified_list:  \n",
     "    pyro.sample(\"obs_{}\".format(i), dist.Bernoulli(f), obs=data[i])\n",
     "```\n",
     "\n",
-    "这将无法得到想要的效果, since `list()` will enter and exit the `data_loop` context completely before a single `pyro.sample` statement is called. Similarly, the user needs to take care not to leak mutable computations across the boundary of the context manager, as this may lead to subtle bugs. For example, `pyro.plate`  不适用于时序模型，在该模型中循环的 each iteration 都依赖于 previous iteration; in this case a `range` or `pyro.markov` should be used instead."
+    "这将无法得到想要的效果, since `list()` will enter and exit the `data_loop` context completely before a single `pyro.sample` statement is called. Similarly, the user needs to take care not to leak mutable computations across the boundary of the context manager, as this may lead to subtle bugs. For example, `pyro.plate`  不适用于时序模型，在该模型中循环的 each iteration 都依赖于 previous iteration; 所以时序模型中应该使用  `range` 或者 `pyro.markov` ."
    ]
   },
   {
@@ -123,11 +134,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Let's compare this to the analogous sequential `plate` usage point-by-point:\n",
-    "\n",
     "让我们将其与 sequential `plate` 用法进行 point-by-point 比较：\n",
     "- 这两种模式都要求用户指定一个唯一的 name。\n",
-    "- note that this code snippet 只引入一个(observed)随机变量(namely `obs`), since the entire tensor is considered at once. \n",
+    "- 注意这个代码块只引入一个观测随机变量(namely `obs`), since the entire tensor is considered at once. \n",
     "- since there is no need for an iterator in this case, 无需指定 `plate` context 所涉及的张量的长度。\n",
     "\n"
    ]
@@ -140,14 +149,14 @@
     "\n",
     "<big> 对于大数据集，每次训练只能用小部分样本进行训练，也就是 subsampling. </big> \n",
     "\n",
-    "现在，我们知道了如何在Pyro中标记条件独立性。这本身就很有用（请参见SVI第III部分中的 [dependency tracking section](svi_part_iii.ipynb)），但是我们也想进行子采样，以便可以对大型数据集进行 SVI 。根据 model and guide 的结构，Pyro支持几种进行子采样的方法。让我们一一讲解。"
+    "现在，我们知道了如何在Pyro中标记条件独立性。这本身就很有用（请参见SVI第III部分中的 [dependency tracking section](svi_part_iii.ipynb)），但是我们也想进行子采样，以便可以对大型数据集进行 SVI 。根据 `model` 和 `guide` 的结构，Pyro支持几种进行子采样的方法。让我们一一讲解。"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Automatic subsampling with `plate`\n",
+    "### 自动子采样 with `plate`\n",
     "\n",
     "Let's look at the simplest case first, in which we get subsampling for free with one or two additional arguments to `plate`:\n",
     "\n",
@@ -163,7 +172,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "That's all there is to it: we just use the argument `subsample_size`. Whenever we run `model()` we now only evaluate the log likelihood for `data` 5个随机抽取的样本; in addition, the log likelihood will be automatically scaled by the appropriate factor of $\\tfrac{10}{5} = 2$. 对于向量化 `plate`? 使用方法也完全类似:\n",
+    "That's all there is to it: we just use the argument `subsample_size`. Whenever we run `model()` we now only evaluate the log likelihood for `data` 5个随机抽取的样本; 此外，对数似然将自动缩放 by the appropriate factor of $\\tfrac{10}{5} = 2$. 对于向量化 `plate` 如何子采样? 使用方法也完全类似:\n",
     "\n",
     "```python\n",
     "with plate('observe_data', size=10, subsample_size=5) as ind:\n",
@@ -176,31 +185,30 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "重要的是，`plate`现在返回一个索引`ind`的张量，在这种情况下，它的长度为5。请注意，除了参数`subsample_size`外，我们还传递了参数`size`，以便`plate`为注意张量 `data` 的完整大小，以便它可以计算正确的缩放因子。就像sequential `plate` 一样，the user is responsible for selecting the correct datapoints using the indices provided by `plate`. \n",
+    "重要的是，`plate`现在返回一个索引`ind`的张量，在这种情况下，它的长度为5。请注意，除了参数`subsample_size`外，我们还传递了参数`size`，以便`plate`为获得张量 `data` 的完整大小，以便它可以计算正确的缩放因子。就像sequential `plate` 一样，the user is responsible for selecting the correct datapoints using the indices provided by `plate`. \n",
     "\n",
-    "最后, note that the user must pass a `device` argument to `plate` if `data` is on the GPU."
+    "最后, 请注意，如果数据在GPU上，则用户必须将 `device` 参数传递给 `plate`。"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Custom subsampling strategies with `plate`\n",
+    "### 自定义子采样 with `plate`\n",
     "\n",
-    "Every time the above `model()` is run `plate` will sample new subsample indices. Since this subsampling is stateless, this can lead to some problems: basically for a sufficiently large dataset even after a large number of iterations there's a nonnegligible  probability that some of the datapoints will have never been selected. To avoid this the user can take control of subsampling by making use of the `subsample` argument to  `plate`. See [the docs](http://docs.pyro.ai/en/dev/primitives.html#pyro.plate) for details.\n",
-    "\n",
-    "Every time the above `model()` is run `plate` will sample new subsample indices. 由于这种子采样是 stateless，因此可能会导致一些问题：对于足够大的数据集，即使经过大量的迭代，也存在不可忽略的可能性，即从未选择某些数据点。为了避免这种情况，the user can take control of subsampling by making use of the `subsample` argument to  `plate`. See [the docs](http://docs.pyro.ai/en/dev/primitives.html#pyro.plate) for details."
+    "Every time the above `model()` is run `plate` will sample new subsample indices. 由于这种子采样是 stateless，因此可能会导致一些问题：对于足够大的数据集，即使经过大量的迭代，也存在不可忽略的可能性，即从未选择某些数据点。为了避免这种情况，the user can take control of subsampling by making use of the `subsample` argument to  `plate`. See [the docs](http://docs.pyro.ai/en/dev/primitives.html#pyro.plate) for details.\n",
+    "\n"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Subsampling when there are only local random variables \n",
+    "<big> **Subsampling when there are only local random variables**</big>\n",
     "\n",
-    "仅存在局部随机变量时进行子采样有所不同。\n",
     "\n",
-    "We have in mind a model with a joint probability density given by\n",
+    "\n",
+    "我们考虑具备如下联合概率密度，也就是只有局部随机变量的 `model`:\n",
     "\n",
     "$$ p({\\bf x}, {\\bf z}) = \\prod_{i=1}^N p({\\bf x}_i | {\\bf z}_i) p({\\bf z}_i)  $$\n",
     "\n",
@@ -211,22 +219,22 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Subsampling when there are both global and local random variables\n",
+    "<big> **Subsampling when there are both global and local random variables**</big>\n",
     "\n",
-    "In the coin flip examples above `plate` appeared in the model but not in the guide, since the only thing being subsampled was the observations. 让我们看一个更复杂的例子 where subsampling appears in both the model and guide. To make things simple let's keep the discussion somewhat abstract and avoid writing a complete model and guide. "
+    "在掷硬币的例子中 `plate` 只出现在 `model` 而没有出现在 `guide` 中, since the only thing being subsampled was the observations. 让我们看一个更复杂的例子，也就是  `plate` 同时出现在 `model` 而没有出现在 `guide`中. To make things simple let's keep the discussion somewhat abstract and avoid writing a complete model and guide. "
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Consider the model specified by the following joint distribution:\n",
+    "考虑一个具备如下分布的 `model`:\n",
     "\n",
     "$$ p({\\bf x}, {\\bf z}, \\beta) = p(\\beta) \n",
     "\\prod_{i=1}^N p({\\bf x}_i | {\\bf z}_i) p({\\bf z}_i | \\beta)  $$\n",
     "\n",
     "There are $N$ observations $\\{ {\\bf x}_i \\}$ and $N$ local latent random variables \n",
-    "$\\{ {\\bf z}_i \\}$. There is also a global latent random variable $\\beta$. Our guide will be factorized as\n",
+    "$\\{ {\\bf z}_i \\}$. There is also a global latent random variable $\\beta$. 我们的 `gude` 将被分解为\n",
     "\n",
     "$$ q({\\bf z}, \\beta) = q(\\beta) \\prod_{i=1}^N q({\\bf z}_i | \\beta, \\lambda_i)  $$"
    ]
@@ -235,8 +243,16 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Here we've been explicit about introducing $N$ local variational parameters \n",
-    "$\\{\\lambda_i \\}$, while the other variational parameters are left implicit. Both the model and guide have conditional independencies. In particular, on the model side, given the $\\{ {\\bf z}_i \\}$ the observations $\\{ {\\bf x}_i \\}$ are independent. In addition, given $\\beta$ the latent random variables  $\\{\\bf {z}_i \\}$ are independent. On the guide side, given the variational parameters $\\{\\lambda_i \\}$ and $\\beta$ the latent random variables  $\\{\\bf {z}_i \\}$ are independent. To mark these conditional independencies in Pyro and do subsampling we need to make use of `plate` in _both_ the model _and_ the guide. Let's sketch out the basic logic using sequential `plate` (a more complete piece of code would include `pyro.param` statements, etc.). First, the model:\n",
+    "Here we've been explicit about introducing $N$ local variational parameters $\\{\\lambda_i \\}$, while the other variational parameters are left implicit. Both the model and guide have conditional independencies. In particular, \n",
+    "- on the model side, given the $\\{ {\\bf z}_i \\}$ the observations $\\{ {\\bf x}_i \\}$ are independent. In addition, given $\\beta$ the latent random variables  $\\{\\bf {z}_i \\}$ are independent. \n",
+    "- On the guide side, given the variational parameters $\\{\\lambda_i \\}$ and $\\beta$ the latent random variables  $\\{\\bf {z}_i \\}$ are independent. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "为了在 Pyro 中标记这些条件独立性和进行子采样, 我们需要在 model and guide 中都使用  `plate`. Let's sketch out the basic logic using sequential `plate` (a more complete piece of code would include `pyro.param` statements, etc.). First, the model:\n",
     "\n",
     "```python\n",
     "def model(data):\n",
@@ -290,8 +306,13 @@
     "\n",
     "This works as follows. Instead of introducing local variational parameters, we're going to learn a single parametric function $f(\\cdot)$ and work with a variational distribution that has the form \n",
     "\n",
-    "$$q(\\beta) \\prod_{n=1}^N q({\\bf z}_i | f({\\bf x}_i))$$\n",
-    "\n",
+    "$$q(\\beta) \\prod_{n=1}^N q({\\bf z}_i | f({\\bf x}_i))$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "The function $f(\\cdot)$&mdash;which basically maps a given observation to a set of variational parameters tailored to that datapoint&mdash;will need to be sufficiently rich to capture the posterior accurately, but now we can handle large datasets without having to introduce an obscene number of variational parameters. \n",
     "This approach has other benefits too: for example, during learning $f(\\cdot)$ effectively allows us to share statistical power among different datapoints. Note that this is precisely the approach used in the [VAE](vae.ipynb)."
    ]

@@ -1,5 +1,7 @@
-Hidden Markov Model
+隐马尔可夫模型
 ===================
+
+Hidden Markov Model
 
 `View hmm.py on github`__
 
