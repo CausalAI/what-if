@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Ch 12 逆概率加权和边际结构模型 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  <title>Ch12 逆概率加权和边际结构模型 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Ch13: 标准化和参数 G-公式" href="chapter13-Standardization_g-formula.html" />
+    <link rel="next" title="Ch13 标准化和参数 G-公式" href="chapter13-Standardization_g-formula.html" />
     <link rel="prev" title="Ch11 Why Model?" href="chapter11-Why_models.html" /> 
 </head>
 
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -100,14 +100,14 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch 12 逆概率加权和边际结构模型</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch12 逆概率加权和边际结构模型</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#The-causal-question">The causal question</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.1">Program 12.1</a></li>
 </ul>
@@ -141,7 +141,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
@@ -152,7 +152,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for Time-varing Treatments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
 </ul>
 
@@ -199,7 +199,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Ch 12 逆概率加权和边际结构模型</li>
+      <li>Ch12 逆概率加权和边际结构模型</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -460,8 +460,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Ch-12-逆概率加权和边际结构模型">
-<h1>Ch 12 逆概率加权和边际结构模型<a class="headerlink" href="#Ch-12-逆概率加权和边际结构模型" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Ch12-逆概率加权和边际结构模型">
+<h1>Ch12 逆概率加权和边际结构模型<a class="headerlink" href="#Ch12-逆概率加权和边际结构模型" title="Permalink to this headline">¶</a></h1>
 <p>IP Weighting and Marginal Structural Models</p>
 <p>本书第二部分围绕因果问题“戒烟对体重增加的平均因果效应是什么？”进行组织。在本章中，我们描述如何使用IP加权从观测数据中估计这种效应。尽管在第二章中介绍了IP加权，但我们仅将其描述为非参数方法。We now describe the use of models together with IP weighting，在额外的假设下，这些模型将使我们能够处理高维问题 with many covariates and nondichotomous treatments.</p>
 <p>为了估计戒烟对体重增加的影响，我们将使用NHEFS的真实数据，该缩写词代表国家卫生和营养检查调查数据I流行病学随访研究。NHEFS是由国家卫生统计中心和国家老龄研究所与美国公共卫生局其他机构共同发起的。 可以在 www.cdc.gov/nchs/nhanes/nhefs/ 上找到NHEFS的详细说明以及可公开获得的数据集和文档。 在本章及以后的章节中，我们将使用NHEFS数据的一部分，该数据可从本书的网站上获得。</p>
@@ -2913,7 +2913,7 @@ Marignal Structural Models 的有关变量:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="chapter13-Standardization_g-formula.html" class="btn btn-neutral float-right" title="Ch13: 标准化和参数 G-公式" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="chapter13-Standardization_g-formula.html" class="btn btn-neutral float-right" title="Ch13 标准化和参数 G-公式" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="chapter11-Why_models.html" class="btn btn-neutral float-left" title="Ch11 Why Model?" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

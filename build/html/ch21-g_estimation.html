@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Ch21 G-estimation for time-varing treatments &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  <title>Ch21 G-estimation for Time-varing Treatments &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
   
 
   
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -100,15 +100,15 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
@@ -119,7 +119,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch21 G-estimation for Time-varing Treatments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
 </ul>
 
@@ -166,7 +166,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Ch21 G-estimation for time-varing treatments</li>
+      <li>Ch21 G-estimation for Time-varing Treatments</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -209,8 +209,8 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="Ch21-G-estimation-for-time-varing-treatments">
-<h1>Ch21 G-estimation for time-varing treatments<a class="headerlink" href="#Ch21-G-estimation-for-time-varing-treatments" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Ch21-G-estimation-for-Time-varing-Treatments">
+<h1>Ch21 G-estimation for Time-varing Treatments<a class="headerlink" href="#Ch21-G-estimation-for-Time-varing-Treatments" title="Permalink to this headline">¶</a></h1>
 <p>第21章随时间变化的处理方法在上一章中，我们描述了一个具有时变处理和处理混杂反馈的数据集，我们发现当将其应用于该数据集时，传统的混杂调整方法无法正确地进行混杂调整。即使时变处理对结局有零因果影响，传统的调整方法所产生的影响估计也不同于零值。</p>
 <p>本章介绍了在存在处理混杂反馈的情况下解决传统方法偏差的方法：使用g方法-g公式，IP权重，g估计以及它们的双重鲁棒性推广。在上一章中，我们展示了这三个g方法产生正确的（无效）效果估计。对于固定时间的处理，我们在第13章中描述了g公式，在第12章中描述了边际结构模型的IP权重，并在第15章中描述了结构嵌套模型的g估计。在这里，我们介绍了三种g方法，分别用于比较第19章描述的可识别性条件下的静态治疗策略：顺序可交换性，阳性和一致性。</p>
 <p>Table of Contents</p>

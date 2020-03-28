@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Ch13: 标准化和参数 G-公式 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  <title>Ch13 标准化和参数 G-公式 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Ch14 结构嵌套模型的G估计" href="chapter14-G估计_of_SNMs.html" />
-    <link rel="prev" title="Ch 12 逆概率加权和边际结构模型" href="chapter12-IPW.html" /> 
+    <link rel="prev" title="Ch12 逆概率加权和边际结构模型" href="chapter12-IPW.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -100,15 +100,15 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch13: 标准化和参数 G-公式</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch13 标准化和参数 G-公式</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#13.1-Standardization-as-an-alternative-to-IP-weighting">13.1 Standardization as an alternative to IP weighting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#13.2-Estimating-the-mean-outcome-via-modeling">13.2 Estimating the mean outcome via modeling</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-13.1">Program 13.1</a></li>
@@ -139,7 +139,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for Time-varing Treatments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
 </ul>
 
@@ -186,7 +186,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Ch13: 标准化和参数 G-公式</li>
+      <li>Ch13 标准化和参数 G-公式</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -447,8 +447,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Ch13:-标准化和参数-G-公式">
-<h1>Ch13: 标准化和参数 G-公式<a class="headerlink" href="#Ch13:-标准化和参数-G-公式" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Ch13-标准化和参数-G-公式">
+<h1>Ch13 标准化和参数 G-公式<a class="headerlink" href="#Ch13-标准化和参数-G-公式" title="Permalink to this headline">¶</a></h1>
 <p>在这一章当中 we describe how to use standardization to estimate the average causal effect of smoking cessation on body weight gain. 我们使用与上一章相同的观测数据集。尽管在第2章介绍了标准化，但我们仅将其描述为非参数方法。现在，我们将模型与标准化的结合使用，这将使我们能够 tackle high-dimensional problems with many covariates and nondichotomous treatments. 与上一章一样，我们提供计算机代码来进行分析。</p>
 <p>在实践中，研究人员通常会在IP权重和标准化之间做出选择，作为从观测数据中获得因果效应估计的分析方法。两种方法均基于相同的可识别性条件，但基于不同的建模假设。</p>
 <p><strong>Setup and Imports</strong></p>
@@ -1831,7 +1831,7 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
         <a href="chapter14-G估计_of_SNMs.html" class="btn btn-neutral float-right" title="Ch14 结构嵌套模型的G估计" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="chapter12-IPW.html" class="btn btn-neutral float-left" title="Ch 12 逆概率加权和边际结构模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="chapter12-IPW.html" class="btn btn-neutral float-left" title="Ch12 逆概率加权和边际结构模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
