@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch1 因果理论相关概念 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch2 随机试验" href="chapter2_gong.html" />
+    <link rel="prev" title="README" href="README.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch1 因果理论相关概念</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#知识要点">知识要点</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch1 因果理论相关概念</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter1_gong.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch1-因果理论相关概念">
+<h1>Ch1 因果理论相关概念<a class="headerlink" href="#Ch1-因果理论相关概念" title="Permalink to this headline">¶</a></h1>
+<p>By reading this book you are expressing an interest in learning about causal inference. 但是，作为一个人，您早就已经掌握了因果推理的基本概念。 您当然知道什么是因果关系；您清楚了解关联和因果关系之间的区别；并且您一生中都在不断使用这些知识。实际上，如果您不理解这些因果概念，那么您将无法生存足够长的时间来阅读本章，甚至无法学会阅读。 As a toddler you would have jumped right into the swimming pool after observing that those who did so were later able to reach the jam jar. As a teenager, you would
+have skied down the most dangerous slopes after observing that those who did so were more likely to win the next ski race. As a parent, you would have refused to give antibiotics to your sick child after observing that those children who took their medicines were less likely to be playing in the park the next day.</p>
+<p>Since you already understand the definition of causal effect and the difference between association and causation, 因此不要期望从本章获得深入的概念见解。相反，本章的目的是介绍数学符号，以形式化您已经拥有的因果直觉。 确保您可以将因果直觉与此处介绍的数学符号匹配。该符号对于精确定义因果概念是必要的，我们将在整本书中使用它。</p>
+<div class="section" id="知识要点">
+<h2>知识要点<a class="headerlink" href="#知识要点" title="Permalink to this headline">¶</a></h2>
+<p>本章是关于因果效应的基本概念的定义。</p>
+<ul class="simple">
+<li><p>Individual causal effects cannot be identified, that is, cannot be expressed as a function of the observed data, because of missing data. So we want to estimate the average cause effects of the population.</p></li>
+<li><p>There are 3 ways of measuring causal effect, which is the causal risk difference, risk ratio, and odds ratio.</p></li>
+<li><p>Sampling variability as a source of random error.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter2_gong.html" class="btn btn-neutral float-right" title="Ch2 随机试验" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="README.html" class="btn btn-neutral float-left" title="README" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

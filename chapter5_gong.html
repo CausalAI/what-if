@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch5-Interaction &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch6 因果图模型" href="chapter6_gong.html" />
+    <link rel="prev" title="Ch4 Effect Modification" href="chapter4_gong.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5-Interaction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#从仰望天空开始">从仰望天空开始</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#More-to-read">More to read</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch5-Interaction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter5_gong.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch5-Interaction">
+<h1>Ch5-Interaction<a class="headerlink" href="#Ch5-Interaction" title="Permalink to this headline">¶</a></h1>
+<p>When joint interventions on two or more treatments are feasible, the identification of interaction allows one to implement the most effective interventions. Thus understanding the concept of interaction is key for causal inference.</p>
+<ul class="simple">
+<li><p>Interaction requires a joint intervention, We refer to interventions on two or more treatments as <strong>joint interventions</strong>.</p></li>
+<li><p>Identifying interaction. The three key identifying conditions were exchangeability, positivity, and consistency. we say that there is no interaction between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(E\)</span> on the additive scale when some conditions hold.</p></li>
+<li><p>Counterfactual response types and interaction. Individuals in the population have different response types. The meaning of the term “interaction” is clarified by the classification of individuals according to their counterfactual response types.</p></li>
+<li><p>Sufficient causes, a tool to conceptualize the causal mechanisms involved in the interaction between two treatments. This graphical representation of treatments exist in all settings. The graphical representation of sufficient-component causes is often referred to as “the causal pies.”</p></li>
+<li><p>Sifficient causes interaction. Sufficient cause interactions can be synergistic or antagonistic. 两种同时的治疗才能有疗效。</p></li>
+<li><p>Counterfactuals or sufficient-component causes? 我们选择 counterfactual framework.</p></li>
+</ul>
+<div class="section" id="从仰望天空开始">
+<h2>从仰望天空开始<a class="headerlink" href="#从仰望天空开始" title="Permalink to this headline">¶</a></h2>
+<p>再次考虑一项随机实验，以回答因果问题“抬头仰望天空是否也会使其他行人抬头吗？”到目前为止，我们的兴趣仅限于单一治疗（looking up）对整个人群或其中一部分的因果作用。但是，许多因果问题实际上是关于两种或多种同时治疗的效果。例如，假设除了随机分配您的 looking up 之外，我们还随机分配您是穿着衣服还是赤身裸体站在街道上。现在，我们可以提出类似的问题：what is the causal effect of your looking up if you are dressed？And if you are naked？ 如果这两种因果效应不同，我们就说正在考虑的两种治疗方法（look up 和
+dressed）在交互的产生结果。</p>
+</div>
+<div class="section" id="More-to-read">
+<h2>More to read<a class="headerlink" href="#More-to-read" title="Permalink to this headline">¶</a></h2>
+<p>更多可以参考的内容。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter6_gong.html" class="btn btn-neutral float-right" title="Ch6 因果图模型" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter4_gong.html" class="btn btn-neutral float-left" title="Ch4 Effect Modification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

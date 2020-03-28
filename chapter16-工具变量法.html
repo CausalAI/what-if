@@ -1,0 +1,1085 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch16 工具变量法 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch17 因果生存分析" href="chapter17-因果生存分析.html" />
+    <link rel="prev" title="Ch15 结果回归模型和倾向得分" href="chapter15-Outcome_regression_PS.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch16 工具变量法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-16.1">Section 16.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-16.2">Section 16.2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-16.1">Program 16.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Program-16.2">Program 16.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Program-16.3">Program 16.3</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-16.5">Section 16.5</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-16.4">Program 16.4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Program-16.5">Program 16.5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch16 工具变量法</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter16-工具变量法.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch16-工具变量法">
+<h1>Ch16 工具变量法<a class="headerlink" href="#Ch16-工具变量法" title="Permalink to this headline">¶</a></h1>
+<p>到目前为止，本书中描述的因果推论方法都基于一个不可检验的关键假设：all variables needed to adjust for confounding and selection bias have been identified and correctly measured. 如果这个假设是错误的，并且在一定程度上一直是这样，那么我们的因果估计中就会有剩余偏差。</p>
+<p>It turns out that there exist other methods Instrumental variable estimation is one of those methods. Economists and other social scientists reading this book can breathe now. We are finally going to describe a very common method in their fields, a method that is unlike any other we have discussed so far.</p>
+<p>事实证明，存在其他方法可以that can validly estimate causal effects under an alternative set of assumptions that do not require measuring all adjustment factors. 工具变量估计是这些方法之一。读这本书的经济学家和其他社会科学家 can breathe now. 我们最终将在他们的领域中描述一种非常通用的方法，该方法与我们迄今为止讨论的任何其他方法都不相同。</p>
+<div class="section" id="Setup-and-imports">
+<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span>
+
+<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Section-16.1">
+<h2>Section 16.1<a class="headerlink" href="#Section-16.1" title="Permalink to this headline">¶</a></h2>
+<p>Create the instrument, <span class="math notranslate nohighlight">\(Z\)</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;highprice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">price82</span> <span class="o">&gt;=</span> <span class="mf">1.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We’ll use a different subset of the data than used previously</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">restriction_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;wt82&#39;</span><span class="p">,</span> <span class="s1">&#39;education&#39;</span><span class="p">,</span> <span class="s1">&#39;price82&#39;</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">restriction_cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">nhefs</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">missing</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1476, 65)
+</pre></div></div>
+</div>
+<p>We’ll check whether <span class="math notranslate nohighlight">\(Z\)</span> (<code class="docutils literal notranslate"><span class="pre">highprice</span></code>) and <span class="math notranslate nohighlight">\(A\)</span> (<code class="docutils literal notranslate"><span class="pre">qsmk</span></code>) are associated, that <span class="math notranslate nohighlight">\(\Pr[A=1|Z=1] - \Pr[A=1|Z=0] \not = 0\)</span></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">a_given_z1</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">a_given_z0</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">pr_a1_z1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a_given_z1</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a_given_z1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">pr_a1_z0</span> <span class="o">=</span> <span class="p">(</span><span class="n">a_given_z0</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a_given_z0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;              Pr[A=1|Z=1] = </span><span class="si">{:&gt;4.1f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr_a1_z1</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;              Pr[A=1|Z=0] = </span><span class="si">{:&gt;4.1f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pr_a1_z0</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pr[A=1|Z=1] − Pr[A=1|Z=0] = </span><span class="si">{:&gt;4.1f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">pr_a1_z1</span> <span class="o">-</span> <span class="n">pr_a1_z0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+              Pr[A=1|Z=1] = 25.8%
+              Pr[A=1|Z=0] = 19.5%
+Pr[A=1|Z=1] − Pr[A=1|Z=0] =  6.3%
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Section-16.2">
+<h2>Section 16.2<a class="headerlink" href="#Section-16.2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-16.1">
+<h3>Program 16.1<a class="headerlink" href="#Program-16.1" title="Permalink to this headline">¶</a></h3>
+<p>Pg 196: For a dichotomous instrument <span class="math notranslate nohighlight">\(Z\)</span> that also meets condition (iv) from section 16.3,</p>
+<div class="math notranslate nohighlight">
+\[\text{E}[Y^{a=1}] - \text{E}[Y^{a=0}] = \frac{\text{E}[Y|Z=1] - \text{E}[Y|Z=0]}{\text{E}[A|Z=1] - \text{E}[A|Z=0]}\]</div>
+<p>“We estimated the numerator and denominator of the IV estimand by simply calculating the four sample averages …”, pg 197</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">est_y_given_z1</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">est_y_given_z0</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">est_a_given_z1</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">est_a_given_z0</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">highprice</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;estimated E[Y|Z=1] = </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_y_given_z1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;estimated E[Y|Z=0] = </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_y_given_z0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;estimated E[A|Z=1] = </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_a_given_z1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;estimated E[A|Z=0] = </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_a_given_z0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+estimated E[Y|Z=1] = 2.686
+estimated E[Y|Z=0] = 2.536
+estimated E[A|Z=1] = 0.258
+estimated E[A|Z=0] = 0.195
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">est_y_given_z1</span> <span class="o">-</span> <span class="n">est_y_given_z0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">est_a_given_z1</span> <span class="o">-</span> <span class="n">est_a_given_z0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;the usual IV estimate: </span><span class="si">{:&gt;0.2f}</span><span class="s1">kg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">estimate</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+the usual IV estimate: 2.40kg
+</pre></div></div>
+</div>
+<p>“Equivalently, we could have fit two (saturated) linear models to estimate the differences in the denominator and the numerator…”</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s1">&#39;wt82_71 ~ highprice&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span><span class="p">)</span>
+<span class="n">numer</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s1">&#39;qsmk ~ highprice&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span><span class="p">)</span>
+<span class="n">denom</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span> <span class="o">=</span> <span class="n">numer</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;highprice&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">denom</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;highprice&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;the usual IV estimate: </span><span class="si">{:&gt;0.2f}</span><span class="s1">kg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">estimate</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+the usual IV estimate: 2.40kg
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Program-16.2">
+<h3>Program 16.2<a class="headerlink" href="#Program-16.2" title="Permalink to this headline">¶</a></h3>
+<p>Two stage least squares estimator</p>
+<p>First, we’ll manually use two models, but this will give the wrong confidence interval</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s1">&#39;qsmk ~ highprice&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span><span class="p">)</span>
+<span class="n">stg_1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;A_pred&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stg_1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">nhefs</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span><span class="s1">&#39;wt82_71 ~ A_pred&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span><span class="p">)</span>
+<span class="n">stg_2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">stg_2</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+      <td></td>         <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>Intercept</th> <td>    2.0682</td> <td>    5.140</td> <td>    0.402</td> <td> 0.687</td> <td>   -8.014</td> <td>   12.151</td>
+</tr>
+<tr>
+  <th>A_pred</th>    <td>    2.3963</td> <td>   20.055</td> <td>    0.119</td> <td> 0.905</td> <td>  -36.942</td> <td>   41.735</td>
+</tr>
+</table></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span> <span class="o">=</span> <span class="n">stg_2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;A_pred&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;the 2-stage estimate: </span><span class="si">{:&gt;0.2f}</span><span class="s1">kg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">estimate</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+the 2-stage estimate: 2.40kg
+</pre></div></div>
+</div>
+<p>“A commonly used rule of thumb is to declare an instrument as weak if the F-statistic from the first-stage model is less than 10”</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1st-stage F-statistic: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stg_1</span><span class="o">.</span><span class="n">fvalue</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1st-stage F-statistic: 0.82
+</pre></div></div>
+</div>
+<p>The confidence intervals in the second-stage model aren’t quite right</p>
+<p>We’ll do the two-stage model again, using <code class="docutils literal notranslate"><span class="pre">IV2SLS</span></code> from the <code class="docutils literal notranslate"><span class="pre">linearmodels</span></code> package</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">linearmodels.iv</span> <span class="k">import</span> <span class="n">IV2SLS</span> <span class="k">as</span> <span class="n">lm_IV2SLS</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">lm_IV2SLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+    <span class="s1">&#39;wt82_71 ~ 1 + [qsmk ~ highprice]&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span>
+<span class="p">)</span>
+
+<span class="n">two_stage</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;homoskedastic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">two_stage</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<caption>Parameter Estimates</caption>
+<tr>
+      <td></td>      <th>Parameter</th> <th>Std. Err.</th> <th>T-stat</th> <th>P-value</th> <th>Lower CI</th> <th>Upper CI</th>
+</tr>
+<tr>
+  <th>Intercept</th>  <td>2.0682</td>    <td>5.0817</td>   <td>0.4070</td> <td>0.6840</td>   <td>-7.8917</td>  <td>12.028</td>
+</tr>
+<tr>
+  <th>qsmk</th>       <td>2.3963</td>    <td>19.827</td>   <td>0.1209</td> <td>0.9038</td>   <td>-36.463</td>  <td>41.256</td>
+</tr>
+</table></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># `conf_ints` is slightly different between linearmodels and statsmodels</span>
+
+<span class="n">est</span> <span class="o">=</span> <span class="n">two_stage</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">qsmk</span>
+<span class="n">conf_ints</span> <span class="o">=</span> <span class="n">two_stage</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">conf_ints</span><span class="p">[</span><span class="s1">&#39;lower&#39;</span><span class="p">][</span><span class="s1">&#39;qsmk&#39;</span><span class="p">],</span> <span class="n">conf_ints</span><span class="p">[</span><span class="s1">&#39;upper&#39;</span><span class="p">][</span><span class="s1">&#39;qsmk&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;         estimate   95% C.I.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;beta_1    </span><span class="si">{:&gt;6.2f}</span><span class="s1">   (</span><span class="si">{:&gt;0.1f}</span><span class="s1">, </span><span class="si">{:&gt;0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+         estimate   95% C.I.
+beta_1      2.40   (-36.5, 41.3)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Program-16.3">
+<h3>Program 16.3<a class="headerlink" href="#Program-16.3" title="Permalink to this headline">¶</a></h3>
+<p>“The parameters of structural mean models can be estimated via g-estimation”</p>
+<p>We’ll solve this using the same methods as in Program 14.2. Recall, in that program we searched for a <span class="math notranslate nohighlight">\(\psi^\dagger\)</span> that would minimize the coefficient on <span class="math notranslate nohighlight">\(H(\psi^\dagger)\)</span>. The <span class="math notranslate nohighlight">\(\psi^\dagger\)</span> that achieves the minimum is our estimate of the causal effect.</p>
+<p>In Program 14.2 we ended with a call to <code class="docutils literal notranslate"><span class="pre">scipy.optimize.minimize</span></code> to do the fine-grained search for <span class="math notranslate nohighlight">\(\psi^\dagger\)</span>. Here, we’ll just go straight to that.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">logit_abs_alpha</span><span class="p">(</span><span class="n">psi</span><span class="p">):</span>
+    <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;H_of_psi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span> <span class="o">-</span> <span class="n">psi</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span>
+    <span class="n">gee</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GEE</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+        <span class="s1">&#39;highprice ~ H_of_psi&#39;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span><span class="p">,</span>
+        <span class="n">groups</span><span class="o">=</span><span class="n">nhefs</span><span class="o">.</span><span class="n">seqn</span><span class="p">,</span>
+        <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">gee</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">H_of_psi</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This can take a while to run</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">opt_results</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+    <span class="n">fun</span><span class="o">=</span><span class="n">logit_abs_alpha</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span>
+<span class="p">)</span>
+
+<span class="n">opt_results</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      fun: 2.9857141760250987e-12
+ hess_inv: array([[4213.9017246]])
+      jac: array([0.00061682])
+  message: &#39;Desired error not necessarily achieved due to precision loss.&#39;
+     nfev: 312
+      nit: 1
+     njev: 100
+   status: 2
+  success: False
+        x: array([2.3962701])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;best estimate: </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">opt_results</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+best estimate: 2.396
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Section-16.5">
+<h2>Section 16.5<a class="headerlink" href="#Section-16.5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-16.4">
+<h3>Program 16.4<a class="headerlink" href="#Program-16.4" title="Permalink to this headline">¶</a></h3>
+<p>We’ll calculate the IV estimate using a few different cutoffs for <code class="docutils literal notranslate"><span class="pre">highprice</span></code></p>
+<p>First, we’ll calculate the “usual” IV estimate using data means</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">wald_estimate</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+    <span class="n">numer</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">Y</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">A</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">cutoff</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.9</span><span class="p">):</span>
+    <span class="n">estimate</span> <span class="o">=</span> <span class="n">wald_estimate</span><span class="p">(</span>
+        <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">,</span>
+        <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">price82</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cutoff price: $</span><span class="si">{:&gt;0.2f}</span><span class="s1">   estimate: </span><span class="si">{:&gt;6.2f}</span><span class="s1">kg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">estimate</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+cutoff price: $1.60   estimate:  41.28kg
+cutoff price: $1.70   estimate: -40.91kg
+cutoff price: $1.80   estimate: -21.10kg
+cutoff price: $1.90   estimate: -12.81kg
+</pre></div></div>
+</div>
+<p>Next we’ll re-calculate using 2-stage models, to get confidence intervals</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;         estimate       95% C.I.&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">cutoff</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.9</span><span class="p">):</span>
+    <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;highprice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">price82</span> <span class="o">&gt;=</span> <span class="n">cutoff</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">lm_IV2SLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+        <span class="s1">&#39;wt82_71 ~ 1 + [qsmk ~ highprice]&#39;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span>
+    <span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;homoskedastic&#39;</span><span class="p">)</span>
+
+    <span class="n">est</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">qsmk</span>
+    <span class="n">conf_ints</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">conf_int</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">conf_ints</span><span class="p">[</span><span class="s1">&#39;lower&#39;</span><span class="p">][</span><span class="s1">&#39;qsmk&#39;</span><span class="p">],</span> <span class="n">conf_ints</span><span class="p">[</span><span class="s1">&#39;upper&#39;</span><span class="p">][</span><span class="s1">&#39;qsmk&#39;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;$</span><span class="si">{:&gt;0.2f}</span><span class="s1">     </span><span class="si">{:&gt;6.2f}</span><span class="s1">   (</span><span class="si">{:&gt;6.1f}</span><span class="s1">, </span><span class="si">{:&gt;6.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cutoff</span><span class="p">,</span> <span class="n">est</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+
+
+<span class="c1"># restore `highprice` to its original meaning</span>
+<span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;highprice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">price82</span> <span class="o">&gt;=</span> <span class="mf">1.50</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+         estimate       95% C.I.
+$1.60      41.28   (-281.8,  364.4)
+$1.70     -40.91   (-408.6,  326.8)
+$1.80     -21.10   ( -76.8,   34.6)
+$1.90     -12.81   ( -59.2,   33.5)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Program-16.5">
+<h3>Program 16.5<a class="headerlink" href="#Program-16.5" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">lm_IV2SLS</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+    <span class="s1">&#39;wt82_71 ~ 1 + sex + race + age + smokeintensity + smokeyrs&#39;</span>
+    <span class="s1">&#39;        + C(exercise) + C(active) + wt71 + [qsmk ~ highprice]&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">nhefs</span>
+<span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;homoskedastic&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<caption>Parameter Estimates</caption>
+<tr>
+          <td></td>         <th>Parameter</th> <th>Std. Err.</th> <th>T-stat</th>  <th>P-value</th> <th>Lower CI</th> <th>Upper CI</th>
+</tr>
+<tr>
+  <th>Intercept</th>         <td>17.280</td>    <td>2.3259</td>   <td>7.4296</td>  <td>0.0000</td>   <td>12.722</td>   <td>21.839</td>
+</tr>
+<tr>
+  <th>C(exercise)[T.1]</th>  <td>0.4987</td>    <td>2.1624</td>   <td>0.2306</td>  <td>0.8176</td>   <td>-3.7395</td>  <td>4.7370</td>
+</tr>
+<tr>
+  <th>C(exercise)[T.2]</th>  <td>0.5818</td>    <td>2.1743</td>   <td>0.2676</td>  <td>0.7890</td>   <td>-3.6796</td>  <td>4.8433</td>
+</tr>
+<tr>
+  <th>C(active)[T.1]</th>    <td>-1.1701</td>   <td>0.6050</td>   <td>-1.9341</td> <td>0.0531</td>   <td>-2.3559</td>  <td>0.0156</td>
+</tr>
+<tr>
+  <th>C(active)[T.2]</th>    <td>-0.5123</td>   <td>1.3031</td>   <td>-0.3931</td> <td>0.6942</td>   <td>-3.0664</td>  <td>2.0418</td>
+</tr>
+<tr>
+  <th>sex</th>               <td>-1.6444</td>   <td>2.6201</td>   <td>-0.6276</td> <td>0.5303</td>   <td>-6.7797</td>  <td>3.4909</td>
+</tr>
+<tr>
+  <th>race</th>              <td>-0.1833</td>   <td>4.6314</td>   <td>-0.0396</td> <td>0.9684</td>   <td>-9.2607</td>  <td>8.8942</td>
+</tr>
+<tr>
+  <th>age</th>               <td>-0.1636</td>   <td>0.2396</td>   <td>-0.6831</td> <td>0.4946</td>   <td>-0.6332</td>  <td>0.3059</td>
+</tr>
+<tr>
+  <th>smokeintensity</th>    <td>0.0058</td>    <td>0.1449</td>   <td>0.0398</td>  <td>0.9683</td>   <td>-0.2783</td>  <td>0.2898</td>
+</tr>
+<tr>
+  <th>smokeyrs</th>          <td>0.0258</td>    <td>0.1608</td>   <td>0.1607</td>  <td>0.8723</td>   <td>-0.2893</td>  <td>0.3409</td>
+</tr>
+<tr>
+  <th>wt71</th>              <td>-0.0979</td>   <td>0.0361</td>   <td>-2.7116</td> <td>0.0067</td>   <td>-0.1687</td>  <td>-0.0271</td>
+</tr>
+<tr>
+  <th>qsmk</th>              <td>-1.0423</td>   <td>29.865</td>   <td>-0.0349</td> <td>0.9722</td>   <td>-59.577</td>  <td>57.492</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter17-因果生存分析.html" class="btn btn-neutral float-right" title="Ch17 因果生存分析" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter15-Outcome_regression_PS.html" class="btn btn-neutral float-left" title="Ch15 结果回归模型和倾向得分" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

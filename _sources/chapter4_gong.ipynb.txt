@@ -1,0 +1,150 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "# Ch4 Effect Modification"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "This chapter emphasizes that **there is not such a thing as the causal effect of treatment**. Rather, the causal effect depends on the characteristics of the particular population under study.\n",
+    "\n",
+    "- Definition of effect modification.\n",
+    "- Stratification to identify effect modification.\n",
+    "- Why care about effect modification?\n",
+    "    - The average causal effect will differ between populations.\n",
+    "    - The extrapolation of causal effects computed in one population to a second population is referred to as **transportability** of causal inferences across populations.\n",
+    "- Stratification as a form of adjustment.\n",
+    "- Matching as another form of adjustment.\n",
+    "- Effect modification and adjustment methods\n",
+    "\n",
+    "\n",
+    "The goal of matching is to construct a subset of the population in which the variables $L$ have the same distribution in both the treated and the untreated. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 从仰望天空开始\n",
+    "\n",
+    "\n",
+    "用仰望天空的例子讲清楚章节目录中的每个概念。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "\n",
+    "到目前为止，我们已经关注了整个目标总体的平均因果效应。但是，许多因果问题是关于子总体的。再次考虑因果问题“抬头仰望天空是否也会使其他行人抬头吗？”您可能有兴趣分别计算城市居民和游客对治疗的平均因果效应（即仰望天空），而不是计算整个行人中的平均因果效应。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "The decision whether to compute average effects in the entire population or in a subset 取决于推断目标. In some cases, you may not care about the variations of the effect across different groups of individuals. For example, suppose you are a policy maker considering the possibility of implementing a nationwide water fluoridation program. Because this public health intervention will reach all households in the population, your primary interest is in the average causal effect in the entire population, rather than in particular subsets. You will be interested in characterizing how the causal effect varies across subsets of the population when the intervention can be targeted to different subsets, or when the findings of the study need to be applied to other populations.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "本章强调离开了特定的总体，我们无法谈及因果效应。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## More to read\n",
+    "\n",
+    "更多可以参考的内容。"
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

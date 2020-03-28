@@ -1,0 +1,1354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch14 结构嵌套模型的G估计 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch15 结果回归模型和倾向得分" href="chapter15-Outcome_regression_PS.html" />
+    <link rel="prev" title="Ch13: 标准化和参数 G-公式" href="chapter13-Standardization_g-formula.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch14 结构嵌套模型的G估计</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#14.1-The-causal-question-revisited">14.1 The causal question revisited</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#14.2-Exchangeability-revisited">14.2 Exchangeability revisited</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#14.3-Structural-nested-mean-models">14.3 Structural nested mean models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-14.1">Program 14.1</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#14.4-Rank-preservation">14.4 Rank preservation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#14.5-G-estimation">14.5 G-estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-14.2">Program 14.2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#14.6-Structural-nested-models-with-two-or-more-parameters">14.6 Structural nested models with two or more parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-14.3">Program 14.3</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch14 结构嵌套模型的G估计</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter14-G估计_of_SNMs.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch14-结构嵌套模型的G估计">
+<h1>Ch14 结构嵌套模型的G估计<a class="headerlink" href="#Ch14-结构嵌套模型的G估计" title="Permalink to this headline">¶</a></h1>
+<p>在前两章中，我们描述了IP权重和标准化，以估计戒烟对体重增加的平均因果关系。在本章中，我们描述了估计平均因果效应的第三种方法：g估计。我们使用相同的NHEFS观测数据，并提供简单的计算机代码来进行分析。</p>
+<p>IP加权，标准化和g估计通常统称为g方法，because they are designed for application to generalized treatment contrasts involving treatments that vary over time. 本书第二部分中将g方法应用于不会随时间变化的治疗方法 may then be overkill since there are alternative, simpler approaches. 但是，通过在相对简单的环境中展示g方法，我们可以专注于 their main features，同时避免了第三部分中描述的更复杂的问题。</p>
+<p>IP加权和标准化在第2章中进行了介绍，然后是在第12章和第13章。In contrast, 我们需要等到 Part II 来描述g估计。原因是：describing g-estimation is facilitated by the specification of a structural model, even if the model is saturated.</p>
+<ul class="simple">
+<li><p>通过g估计来估计其参数的模型称为结构嵌套模型(structural nested models)。这三种g方法基于不同的建模假设。</p></li>
+</ul>
+<p>FAQ：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(G\)</span> 估计只能用于调整混淆，不能用于选择偏差？ 而 IP Weighting and standardization 可以用于 confounding and selection bias</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Setup and imports</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+<span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1629, 64)
+</pre></div></div>
+</div>
+<p>Add a variable for censored weight, then add<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>, dummy variables, and squared variables, as done in previous chapters</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;censored&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">wt82</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+<span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;constant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">edu_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">education</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;edu&#39;</span><span class="p">)</span>
+<span class="n">exercise_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">exercise</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;exercise&#39;</span><span class="p">)</span>
+<span class="n">active_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+
+<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">nhefs_all</span><span class="p">,</span> <span class="n">edu_dummies</span><span class="p">,</span> <span class="n">exercise_dummies</span><span class="p">,</span> <span class="n">active_dummies</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">]:</span>
+    <span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^2&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Subset the data as described in the margin, pg 149.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">restriction_cols</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82&#39;</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span><span class="p">,</span> <span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="s1">&#39;alcoholpy&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span>
+<span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">restriction_cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">nhefs</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">missing</span><span class="p">]</span>
+
+<span class="n">nhefs</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1566, 81)
+</pre></div></div>
+</div>
+<div class="section" id="14.1-The-causal-question-revisited">
+<h2>14.1 The causal question revisited<a class="headerlink" href="#14.1-The-causal-question-revisited" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>估计量：ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span></p></li>
+</ul>
+<p>如前几章所述， we restricted the analysis to NHEFS individuals with known sex, age, race, weight, height, education, alcohol use and intensity of smoking at the baseline (1971-75) and followup (1982) visits, and who answered the medical history questionnaire at baseline.</p>
+<p>在上两章中，我们应用了IP加权和标准化来估计戒烟（治疗）对体重增加（结果）的平均因果效应。We assumed that exchangeability of the treated and the untreated was achieved conditional on the <span class="math notranslate nohighlight">\(L\)</span> variables: sex, age, race, education, intensity and duration of smoking, physical activity in daily life, recreational exercise, and weight.We defined the average causal effect on the difference scale as <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span>, that is, the difference in mean weight that would have been
+observed if everybody had been treated and uncensored compared with untreated and uncensored.</p>
+<p>The quantity <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span> measures the average causal effect in the entire population. 但是有时候，人们可能会对因果效应 in a subset of the population 感兴趣。For example, one may want to estimate the average causal effect in women, in individuals aged 45, in those with low educational level, etc.</p>
+<p>在本章中，我们将使用g估计来估计 ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span>. This conditional effect is represented by <span class="math notranslate nohighlight">\(E[Y^{a, c=0}|L]−E[Y^{a=0, c=0}|L]\)</span> 在描述g估计之前，我们将介绍 structural nested models and rank preservation, and, 在下一节中，将以新的方式阐明给定 <span class="math notranslate nohighlight">\(L\)</span> 的可交换性条件。</p>
+</div>
+<div class="section" id="14.2-Exchangeability-revisited">
+<h2>14.2 Exchangeability revisited<a class="headerlink" href="#14.2-Exchangeability-revisited" title="Permalink to this headline">¶</a></h2>
+<p>As a reminder, 条件可交换性意味着 in any subset of the study population in which all individuals have the same values of <span class="math notranslate nohighlight">\(L\)</span>, those who did not quit smoking <span class="math notranslate nohighlight">\((A = 0)\)</span> would have had the same mean weight gain as those who did quit smoking <span class="math notranslate nohighlight">\((A = 1)\)</span> if they had not quit, and vice versa.</p>
+<div class="math notranslate nohighlight">
+\[P(A=1|Y^{a=0}, L) = P(A=1|L)\]</div>
+<p>理解 <span class="math notranslate nohighlight">\(g\)</span>-估计需要两个方面：</p>
+<ul class="simple">
+<li><p>理解模型 <span class="math notranslate nohighlight">\(logit P(A=1|Y^{a=0}, L) = \alpha_0 + \alpha_1 Y^{a=0} + \alpha_2 L\)</span> 中系数 <span class="math notranslate nohighlight">\(\alpha_1\)</span> 应该是多少？</p></li>
+<li><p>the structural model</p></li>
+</ul>
+</div>
+<div class="section" id="14.3-Structural-nested-mean-models">
+<h2>14.3 Structural nested mean models<a class="headerlink" href="#14.3-Structural-nested-mean-models" title="Permalink to this headline">¶</a></h2>
+<p>Our structural model for the conditional causal effect would be <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}|L] = \beta_1 a\)</span>. 更一般而言，可能会有effect modification. 例如，在重度吸烟者中戒烟的因果效应可能比在轻度吸烟者中更大。 To allow for the causal effect to depend on <span class="math notranslate nohighlight">\(L\)</span> we can add a product term to the structural model, i.e., <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L] = \beta_1 a + \beta_2 a L\)</span>, where <span class="math notranslate nohighlight">\(\beta_2\)</span> is a vector of parameters. Under conditional exchangeability <span class="math notranslate nohighlight">\(Y^a \perp A | L\)</span>,
+治疗和未治疗的条件因果效应相同 because the treated and the untreated are, on average, the same type of people within levels of <span class="math notranslate nohighlight">\(L\)</span>. 因此，在可交换性下，结构模型也可以写成</p>
+<div class="math notranslate nohighlight">
+\[E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a + \beta_2 a L\]</div>
+<p>which is referred to as a <strong>structural nested mean model</strong>. 边际结构模型与结构嵌套模型之间的关系是：</p>
+<ul class="simple">
+<li><p>It leaves the mean counterfactual outcomes under no treatment <span class="math notranslate nohighlight">\(E[Y^{a=0}|L]\)</span> completely unspecified.</p></li>
+</ul>
+<p>Estimating this difference requires adjustment for (两种偏差)both confounding and selection bias (due to censoring <span class="math notranslate nohighlight">\(C = 1\)</span>) for the effect of treatment <span class="math notranslate nohighlight">\(A\)</span>. As described in the previous two chapters, IP weighting and standardization can be used to adjust for these two biases. 如前两章所述，IP加权和标准化可用于针对这两个偏差进行调整。另一方面，<span class="math notranslate nohighlight">\(G\)</span> 估计只能用于调整混淆，不能用于选择偏差。</p>
+<p>现在，我们将注意力转移到 rank preservation 的概念上，这将有助于我们描述结构嵌套模型的 g 估计。</p>
+<div class="section" id="Program-14.1">
+<h3>Program 14.1<a class="headerlink" href="#Program-14.1" title="Permalink to this headline">¶</a></h3>
+<p>“In our smoking cessation example, we will use the nonstabilized IP weights <span class="math notranslate nohighlight">\(W^C = 1 \, / \, \Pr[C = 0|L,A]\)</span> that we estimated in Chapter 12. Again we assume that the vector of variables <span class="math notranslate nohighlight">\(L\)</span> is sufficient to adjust for both confounding and selection bias.” pg 174</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X_ip</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[[</span>
+    <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;qsmk&#39;</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<p>We can reuse a function from chapter 12 to help us create IP weights</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">logit_ip_f</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the f(y|X) part of IP weights</span>
+<span class="sd">    from logistic regression</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : Pandas Series</span>
+<span class="sd">    X : Pandas DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Numpy array of IP weights</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">weights</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">logit_ip_f</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">censored</span><span class="p">,</span> <span class="n">X_ip</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optimization terminated successfully.
+         Current function value: 0.142836
+         Iterations 8
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ip_censor</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">censored</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   min     mean      max&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------------&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">ip_censor</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+    <span class="n">ip_censor</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="n">ip_censor</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   min     mean      max
+------------------------
+  1.00     1.04     1.82
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="14.4-Rank-preservation">
+<h2>14.4 Rank preservation<a class="headerlink" href="#14.4-Rank-preservation" title="Permalink to this headline">¶</a></h2>
+<p>We would then have two lists of individuals ordered from larger to smaller value of the corresponding counterfactual outcome. If both lists are in identical order we say that there is rank preservation.</p>
+<p>然后，我们将有 two lists of individuals，从相应的反事实结果按从大到小的顺序排序。如果两个列表的顺序相同，我们就说有 rank preservation。</p>
+<p>我们没有理由要在实践中使用这种不切实际的 rank-preserving model 模型。但是，我们将在下一节中使用它来介绍g估计，因为对于秩排序模型，g估计更容易理解，并且对于秩排序和非秩排序模型，g 估计过程实际上是相同的。</p>
+<p>Still Program 14.1</p>
+<p>“all individuals can be ranked according to the value of their observed outcome Y”</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ranked</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;wt82_71&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ranked</span><span class="p">[[</span><span class="s1">&#39;seqn&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82_71&#39;</span><span class="p">]][:</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>seqn</th>
+      <th>wt82_71</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1366</td>
+      <td>23522</td>
+      <td>48.538386</td>
+    </tr>
+    <tr>
+      <td>259</td>
+      <td>6928</td>
+      <td>47.511303</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ranked</span><span class="p">[[</span><span class="s1">&#39;seqn&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82_71&#39;</span><span class="p">]][</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>seqn</th>
+      <th>wt82_71</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1328</td>
+      <td>23321</td>
+      <td>-41.28047</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="14.5-G-estimation">
+<h2>14.5 G-estimation<a class="headerlink" href="#14.5-G-estimation" title="Permalink to this headline">¶</a></h2>
+<p>This section links the material in the previous three sections. 我们的目标是 is estimating the parameters of the structural nested mean model <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a\)</span>. For simplicity, we first consider a model with a single parameter <span class="math notranslate nohighlight">\(\beta_1\)</span>.</p>
+<p>We also assume that the additive rank-preserving model <span class="math notranslate nohighlight">\(Y_i^a - Y_i^{a=0} = \psi_1 a\)</span> is correctly specified for all individuals <span class="math notranslate nohighlight">\(i\)</span>. 因为所有个体的模型都是相同的，we write the model in the equivalent form</p>
+<div class="math notranslate nohighlight">
+\[Y^{a=0} = Y^a -  \psi_1 a\]</div>
+<p>g估计的第一步是将模型链接到观测数据，Therefore, if we replace the fixed value <span class="math notranslate nohighlight">\(a\)</span> in the structural model by each individual’s value <span class="math notranslate nohighlight">\(A\)</span>–which will be 1 for some and 0 for others–then we can replace the counterfactual outcome <span class="math notranslate nohighlight">\(Y^a\)</span> by the individual’s observed outcome <span class="math notranslate nohighlight">\(Y^A = Y\)</span>. 于是</p>
+<div class="math notranslate nohighlight">
+\[Y^{a=0} = Y -  \psi_1 A\]</div>
+<div class="section" id="Program-14.2">
+<h3>Program 14.2<a class="headerlink" href="#Program-14.2" title="Permalink to this headline">¶</a></h3>
+<p>“In our smoking cessation example, we first computed each individual’s value of the 31 candidates …”</p>
+<p>We’re going to need a few different things from the regressions, wo we’ll first create a container that holds that information together.</p>
+<p>We’ll want 1. absolute value of the coefficient (the basis of comparison), 2. the value of the coefficient 3. the value of psi that produced the coefficient, and 4. the p-value (for finding the 95% confidence interval)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">GInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;GInfo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abs_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;psi&#39;</span><span class="p">,</span> <span class="s1">&#39;pvalue&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Now we’ll create a function that will perform the regression and return the info we need</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">logit_g_info</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_cols</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return logistic regression parameters to identify best `psi`</span>
+
+<span class="sd">    Note: this is written specifically for the problem in this program</span>
+
+<span class="sd">    Paramters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    psi : float</span>
+<span class="sd">    data : Pandas DataFrame</span>
+<span class="sd">        needs to contain the given `X_cols`</span>
+<span class="sd">    y : Pandas Series or Numpy array</span>
+<span class="sd">    X_cols : list of strings</span>
+<span class="sd">        column names for `X`</span>
+<span class="sd">    weights : Pandas Series or Numpy array</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    GInfo namedtuple, containing</span>
+<span class="sd">    - absolute value of H_of_psi coefficient</span>
+<span class="sd">    - H_of_psi coefficient</span>
+<span class="sd">    - psi value</span>
+<span class="sd">    - p-value for H_of_psi coefficient</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;H_of_psi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">wt82_71</span> <span class="o">-</span> <span class="n">psi</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">qsmk</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">X_cols</span><span class="p">]</span>
+
+    <span class="n">gee</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GEE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">seqn</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">())</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">gee</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">H_of_psi</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">pvalues</span><span class="o">.</span><span class="n">H_of_psi</span>
+    <span class="k">return</span> <span class="n">GInfo</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>For all uses here, <code class="docutils literal notranslate"><span class="pre">y</span></code> and the <code class="docutils literal notranslate"><span class="pre">X</span></code> columns are the same.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">y</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span>
+<span class="n">X_cols</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;H_of_psi&#39;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>We’ll run the regression once for the known right answer</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">g_info</span> <span class="o">=</span> <span class="n">logit_g_info</span><span class="p">(</span><span class="mf">3.446</span><span class="p">,</span> <span class="n">nhefs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_cols</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">ip_censor</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;psi: </span><span class="si">{}</span><span class="s1">  regression coefficient: </span><span class="si">{:&gt;0.2g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">g_info</span><span class="o">.</span><span class="n">psi</span><span class="p">,</span> <span class="n">g_info</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+psi: 3.446  regression coefficient: -1.9e-06
+</pre></div></div>
+</div>
+<p>Now we’ll do the course-grained search for <span class="math notranslate nohighlight">\(\psi\)</span> with <span class="math notranslate nohighlight">\(H(2.0), H(2.1), H(2.2), \ldots , H(4.9)\)</span> and <span class="math notranslate nohighlight">\(H(5.0)\)</span> (pg 178)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">psi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">g_info</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">logit_g_info</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">nhefs</span><span class="p">,</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span> <span class="n">X_cols</span><span class="p">,</span> <span class="n">ip_censor</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">psi</span> <span class="ow">in</span> <span class="n">psi_vals</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># by default, `min` will minimize the first value,</span>
+<span class="c1"># which in this case is the absolute value of the coefficient</span>
+<span class="n">best</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">g_info</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;best psi: </span><span class="si">{:&gt;0.4f}</span><span class="s1">  best alpha: </span><span class="si">{:&gt;0.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">best</span><span class="o">.</span><span class="n">psi</span><span class="p">,</span> <span class="n">best</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+best psi: 3.4000  best alpha: 0.00086
+</pre></div></div>
+</div>
+<p>The plot below shows <span class="math notranslate nohighlight">\(p\)</span>-value as a function of <span class="math notranslate nohighlight">\(\psi\)</span>, with a red line at 0.05.</p>
+<p>To find the 95% confidence interval, we find the last values that are below the line, coming from the left and the right.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">psi_vals</span><span class="p">,</span> <span class="p">[</span><span class="n">g</span><span class="o">.</span><span class="n">pvalue</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g_info</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$\psi$ value&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p value&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$p$-value for each $\psi$ value&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter14-G估计_of_SNMs_52_0.png" src="_images/chapter14-G估计_of_SNMs_52_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cutoff</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">ci_lo</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">psi</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g_info</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">g_info</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
+<span class="n">ci_hi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">psi</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">g_info</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">g_info</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;95</span><span class="si">% c</span><span class="s1">onfidence interval: (</span><span class="si">{:&gt;0.2f}</span><span class="s1">, </span><span class="si">{:&gt;0.2f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_hi</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+95% confidence interval: (2.50, 4.50)
+</pre></div></div>
+</div>
+<p>We can run a finer search between 3.4 and 3.5, with steps of 0.001. That can be done using the same steps as above, but using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">3.4</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we’ll use automatic function optimization to find a more exact <span class="math notranslate nohighlight">\(\psi\)</span>.</p>
+<p>The second cell below can take a while to run.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">just_abs_alpha</span><span class="p">(</span><span class="n">psi</span><span class="p">):</span>
+    <span class="n">g_info</span> <span class="o">=</span> <span class="n">logit_g_info</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">nhefs</span><span class="p">,</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span> <span class="n">X_cols</span><span class="p">,</span> <span class="n">ip_censor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g_info</span><span class="o">.</span><span class="n">abs_alpha</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+    <span class="n">fun</span><span class="o">=</span><span class="n">just_abs_alpha</span><span class="p">,</span>
+    <span class="n">x0</span><span class="o">=</span><span class="mf">4.0</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      fun: 1.2423094722888098e-10
+ hess_inv: array([[3.96249031e-07]])
+      jac: array([0.00212878])
+  message: &#39;Desired error not necessarily achieved due to precision loss.&#39;
+     nfev: 270
+      nit: 2
+     njev: 86
+   status: 2
+  success: False
+        x: array([3.4458988])
+</pre></div></div>
+</div>
+<p>The x value in the output is the estimated <span class="math notranslate nohighlight">\(\psi\)</span>, which rounds to 3.446, as expected</p>
+</div>
+</div>
+<div class="section" id="14.6-Structural-nested-models-with-two-or-more-parameters">
+<h2>14.6 Structural nested models with two or more parameters<a class="headerlink" href="#14.6-Structural-nested-models-with-two-or-more-parameters" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>We have so far considered a structural nested mean model with a single parameter, 但是我们需要交互项。</p></li>
+<li><p>Fortunately, the g-estimation procedure described in the previous section can be generalized to models with product terms.</p></li>
+<li><p>此时，我们的优化问题有所不同。</p></li>
+<li><p>In the more general case, we would consider a model that allows the average causal effect of smoking cessation to vary across all strata of the variables in <span class="math notranslate nohighlight">\(L\)</span>. 但是实际上，很少使用具有多个参数的结构嵌套模型。</p></li>
+</ul>
+<div class="section" id="Program-14.3">
+<h3>Program 14.3<a class="headerlink" href="#Program-14.3" title="Permalink to this headline">¶</a></h3>
+<p>We can solve for <span class="math notranslate nohighlight">\(\psi\)</span> directly. From Technical Point 14.2, we have</p>
+<div class="math notranslate nohighlight">
+\[\hat\psi = \frac{
+    \sum_{i=1}^{N} W_i^C Y_i\left( A_i - \mathrm{E}[A|L_i]\right)
+}{
+    \sum_{i=1}^{N} W_i^C A_i\left( A_i - \mathrm{E}[A|L_i]\right)
+},\]</div>
+<p>where the sum is over the uncensored observations, <span class="math notranslate nohighlight">\(W^C\)</span> is the IP weights, <span class="math notranslate nohighlight">\(Y\)</span> is <code class="docutils literal notranslate"><span class="pre">wt82_71</span></code>, <span class="math notranslate nohighlight">\(A\)</span> is <code class="docutils literal notranslate"><span class="pre">qsmk</span></code>, and <span class="math notranslate nohighlight">\(\mathrm{E}[A|L_i]\)</span> is the predicted <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> from the model below.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[[</span>
+    <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">glm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GLM</span><span class="p">(</span>
+    <span class="n">A</span><span class="p">,</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">freq_weights</span><span class="o">=</span><span class="n">ip_censor</span><span class="p">,</span>
+    <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">glm</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+          <td></td>            <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>constant</th>         <td>   -2.4029</td> <td>    1.314</td> <td>   -1.829</td> <td> 0.067</td> <td>   -4.978</td> <td>    0.172</td>
+</tr>
+<tr>
+  <th>sex</th>              <td>   -0.5137</td> <td>    0.150</td> <td>   -3.422</td> <td> 0.001</td> <td>   -0.808</td> <td>   -0.219</td>
+</tr>
+<tr>
+  <th>race</th>             <td>   -0.8609</td> <td>    0.206</td> <td>   -4.178</td> <td> 0.000</td> <td>   -1.265</td> <td>   -0.457</td>
+</tr>
+<tr>
+  <th>age</th>              <td>    0.1152</td> <td>    0.049</td> <td>    2.328</td> <td> 0.020</td> <td>    0.018</td> <td>    0.212</td>
+</tr>
+<tr>
+  <th>age^2</th>            <td>   -0.0008</td> <td>    0.001</td> <td>   -1.478</td> <td> 0.140</td> <td>   -0.002</td> <td>    0.000</td>
+</tr>
+<tr>
+  <th>edu_2</th>            <td>   -0.0289</td> <td>    0.193</td> <td>   -0.150</td> <td> 0.881</td> <td>   -0.407</td> <td>    0.349</td>
+</tr>
+<tr>
+  <th>edu_3</th>            <td>    0.0877</td> <td>    0.173</td> <td>    0.507</td> <td> 0.612</td> <td>   -0.252</td> <td>    0.427</td>
+</tr>
+<tr>
+  <th>edu_4</th>            <td>    0.0664</td> <td>    0.266</td> <td>    0.249</td> <td> 0.803</td> <td>   -0.455</td> <td>    0.588</td>
+</tr>
+<tr>
+  <th>edu_5</th>            <td>    0.4711</td> <td>    0.221</td> <td>    2.130</td> <td> 0.033</td> <td>    0.038</td> <td>    0.904</td>
+</tr>
+<tr>
+  <th>smokeintensity</th>   <td>   -0.0783</td> <td>    0.015</td> <td>   -5.271</td> <td> 0.000</td> <td>   -0.107</td> <td>   -0.049</td>
+</tr>
+<tr>
+  <th>smokeintensity^2</th> <td>    0.0011</td> <td>    0.000</td> <td>    3.854</td> <td> 0.000</td> <td>    0.001</td> <td>    0.002</td>
+</tr>
+<tr>
+  <th>smokeyrs</th>         <td>   -0.0711</td> <td>    0.027</td> <td>   -2.627</td> <td> 0.009</td> <td>   -0.124</td> <td>   -0.018</td>
+</tr>
+<tr>
+  <th>smokeyrs^2</th>       <td>    0.0008</td> <td>    0.000</td> <td>    1.830</td> <td> 0.067</td> <td>-5.78e-05</td> <td>    0.002</td>
+</tr>
+<tr>
+  <th>exercise_1</th>       <td>    0.3363</td> <td>    0.175</td> <td>    1.921</td> <td> 0.055</td> <td>   -0.007</td> <td>    0.679</td>
+</tr>
+<tr>
+  <th>exercise_2</th>       <td>    0.3800</td> <td>    0.182</td> <td>    2.093</td> <td> 0.036</td> <td>    0.024</td> <td>    0.736</td>
+</tr>
+<tr>
+  <th>active_1</th>         <td>    0.0341</td> <td>    0.130</td> <td>    0.262</td> <td> 0.793</td> <td>   -0.221</td> <td>    0.289</td>
+</tr>
+<tr>
+  <th>active_2</th>         <td>    0.2135</td> <td>    0.206</td> <td>    1.036</td> <td> 0.300</td> <td>   -0.190</td> <td>    0.617</td>
+</tr>
+<tr>
+  <th>wt71</th>             <td>   -0.0077</td> <td>    0.025</td> <td>   -0.312</td> <td> 0.755</td> <td>   -0.056</td> <td>    0.041</td>
+</tr>
+<tr>
+  <th>wt71^2</th>           <td> 8.655e-05</td> <td>    0.000</td> <td>    0.574</td> <td> 0.566</td> <td>   -0.000</td> <td>    0.000</td>
+</tr>
+</table></div>
+</div>
+<p>Using the equation at the top of this section, <span class="math notranslate nohighlight">\(\hat{\psi}\)</span> is calculated as below</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span>
+
+<span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">ip_censor</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">*</span> <span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">A_pred</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span>
+    <span class="p">(</span><span class="n">ip_censor</span> <span class="o">*</span> <span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">A_pred</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+3.4458988033695004
+</pre></div></div>
+</div>
+<p>“If <span class="math notranslate nohighlight">\(\psi\)</span> is D-dimensional…”</p>
+<p>The following is a direct translation of what’s in the R and Stata code examples</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">diff</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">A_pred</span>
+<span class="n">diff2</span> <span class="o">=</span> <span class="n">ip_censor</span> <span class="o">*</span> <span class="n">diff</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span>  <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span> <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="p">]</span>
+<span class="p">])</span>
+
+<span class="n">lhs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[   292.07618742,   5701.54685801],
+       [  5701.54685801, 153044.85432632]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[(</span><span class="n">Y</span> <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()],</span>
+    <span class="p">[(</span><span class="n">Y</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span> <span class="o">*</span> <span class="n">diff2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()]</span>
+<span class="p">])</span>
+
+<span class="n">rhs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[ 1006.46498471],
+       [20901.06799989]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span><span class="n">rhs</span><span class="p">)</span>
+<span class="n">psi</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[2.85947039],
+       [0.03004128]])
+</pre></div></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter15-Outcome_regression_PS.html" class="btn btn-neutral float-right" title="Ch15 结果回归模型和倾向得分" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter13-Standardization_g-formula.html" class="btn btn-neutral float-left" title="Ch13: 标准化和参数 G-公式" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

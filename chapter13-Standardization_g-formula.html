@@ -1,0 +1,1872 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch13: 标准化和参数 G-公式 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch14 结构嵌套模型的G估计" href="chapter14-G估计_of_SNMs.html" />
+    <link rel="prev" title="Ch 12 逆概率加权和边际结构模型" href="chapter12-IPW.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch13: 标准化和参数 G-公式</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#13.1-Standardization-as-an-alternative-to-IP-weighting">13.1 Standardization as an alternative to IP weighting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#13.2-Estimating-the-mean-outcome-via-modeling">13.2 Estimating the mean outcome via modeling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-13.1">Program 13.1</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">13.3 Standardizing the mean outcome to the confounder distribution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-13.2">Program 13.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Program-13.3">Program 13.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Program-13.4">Program 13.4</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#13.4-IP-weighting-or-standardization?">13.4 IP weighting or standardization?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#13.5-How-seriously-do-we-take-our-estimates?">13.5 How seriously do we take our estimates?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#内容简介">内容简介</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Ch13-类">Ch13 类</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch13: 标准化和参数 G-公式</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter13-Standardization_g-formula.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch13:-标准化和参数-G-公式">
+<h1>Ch13: 标准化和参数 G-公式<a class="headerlink" href="#Ch13:-标准化和参数-G-公式" title="Permalink to this headline">¶</a></h1>
+<p>在这一章当中 we describe how to use standardization to estimate the average causal effect of smoking cessation on body weight gain. 我们使用与上一章相同的观测数据集。尽管在第2章介绍了标准化，但我们仅将其描述为非参数方法。现在，我们将模型与标准化的结合使用，这将使我们能够 tackle high-dimensional problems with many covariates and nondichotomous treatments. 与上一章一样，我们提供计算机代码来进行分析。</p>
+<p>在实践中，研究人员通常会在IP权重和标准化之间做出选择，作为从观测数据中获得因果效应估计的分析方法。两种方法均基于相同的可识别性条件，但基于不同的建模假设。</p>
+<p><strong>Setup and Imports</strong></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+<span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1629, 64)
+</pre></div></div>
+</div>
+<div class="section" id="13.1-Standardization-as-an-alternative-to-IP-weighting">
+<h2>13.1 Standardization as an alternative to IP weighting<a class="headerlink" href="#13.1-Standardization-as-an-alternative-to-IP-weighting" title="Permalink to this headline">¶</a></h2>
+<p>Goal: Estimate the causal effect of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> using standardization.</p>
+<div class="math notranslate nohighlight">
+\[\text{estimand} = E[Y^{a=1, c=0}] - E[Y^{a=1, c=0}]\]</div>
+<p><span class="math notranslate nohighlight">\(L\)</span> includes the baseline variables</p>
+<p><code class="docutils literal notranslate"><span class="pre">sex</span> <span class="pre">(0:</span> <span class="pre">male,</span> <span class="pre">1:</span> <span class="pre">female),</span>&#160; <span class="pre">age</span> <span class="pre">(in</span> <span class="pre">years),</span>&#160; <span class="pre">race</span> <span class="pre">(0:</span> <span class="pre">white,</span> <span class="pre">1:</span> <span class="pre">other),</span>&#160; <span class="pre">education</span> <span class="pre">(5</span> <span class="pre">categories),</span> <span class="pre">intensity</span> <span class="pre">and</span> <span class="pre">duration</span> <span class="pre">of</span> <span class="pre">smoking</span> <span class="pre">(number</span> <span class="pre">of</span> <span class="pre">cigarettes</span> <span class="pre">per</span> <span class="pre">day</span> <span class="pre">and</span> <span class="pre">years</span> <span class="pre">of</span> <span class="pre">smoking),</span>&#160; <span class="pre">physical</span> <span class="pre">activity</span> <span class="pre">in</span> <span class="pre">daily</span> <span class="pre">life</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">recreational</span> <span class="pre">exercise</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">weight</span> <span class="pre">(in</span> <span class="pre">kg).</span></code></p>
+<p>Subset the data as in the last chapter (though it’s not necessary to restrict on all of these columns). The standardized mean is:</p>
+<div class="math notranslate nohighlight">
+\[E[Y^a] = \sum_l E[Y|A=a, C=0, L=l] \times Pr(L=l)\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">restriction_cols</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82&#39;</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span><span class="p">,</span> <span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="s1">&#39;alcoholpy&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span>
+<span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">restriction_cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">nhefs</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">missing</span><span class="p">]</span>
+
+<span class="n">nhefs</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1566, 64)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="13.2-Estimating-the-mean-outcome-via-modeling">
+<h2>13.2 Estimating the mean outcome via modeling<a class="headerlink" href="#13.2-Estimating-the-mean-outcome-via-modeling" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">table</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;qsmk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+<span class="n">table</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+<span class="n">table</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>qsmk</th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1163</td>
+      <td>403</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="section" id="Program-13.1">
+<h3>Program 13.1<a class="headerlink" href="#Program-13.1" title="Permalink to this headline">¶</a></h3>
+<p>Add squared features as in chapter 12</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">]:</span>
+    <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^2&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">nhefs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Add constant term. We’ll call it <code class="docutils literal notranslate"><span class="pre">'one'</span></code> this time.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<p>A column of zeros will also be useful later</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<p>Add dummy features</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">edu_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">education</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;edu&#39;</span><span class="p">)</span>
+<span class="n">exercise_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">exercise</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;exercise&#39;</span><span class="p">)</span>
+<span class="n">active_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+
+<span class="n">nhefs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">nhefs</span><span class="p">,</span> <span class="n">edu_dummies</span><span class="p">,</span> <span class="n">exercise_dummies</span><span class="p">,</span> <span class="n">active_dummies</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Add interaction term</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;qsmk_x_smokeintensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span>
+</pre></div>
+</div>
+</div>
+<p>Create the model to estimate <span class="math notranslate nohighlight">\(E[Y|A=a, C=0, L=l]\)</span> for each combination of values of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(L\)</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">y</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;qsmk_x_smokeintensity&#39;</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+            <td></td>               <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>one</th>                   <td>   -1.5882</td> <td>    4.313</td> <td>   -0.368</td> <td> 0.713</td> <td>  -10.048</td> <td>    6.872</td>
+</tr>
+<tr>
+  <th>qsmk</th>                  <td>    2.5596</td> <td>    0.809</td> <td>    3.163</td> <td> 0.002</td> <td>    0.972</td> <td>    4.147</td>
+</tr>
+<tr>
+  <th>sex</th>                   <td>   -1.4303</td> <td>    0.469</td> <td>   -3.050</td> <td> 0.002</td> <td>   -2.350</td> <td>   -0.510</td>
+</tr>
+<tr>
+  <th>race</th>                  <td>    0.5601</td> <td>    0.582</td> <td>    0.963</td> <td> 0.336</td> <td>   -0.581</td> <td>    1.701</td>
+</tr>
+<tr>
+  <th>edu_2</th>                 <td>    0.7904</td> <td>    0.607</td> <td>    1.302</td> <td> 0.193</td> <td>   -0.400</td> <td>    1.981</td>
+</tr>
+<tr>
+  <th>edu_3</th>                 <td>    0.5563</td> <td>    0.556</td> <td>    1.000</td> <td> 0.317</td> <td>   -0.534</td> <td>    1.647</td>
+</tr>
+<tr>
+  <th>edu_4</th>                 <td>    1.4916</td> <td>    0.832</td> <td>    1.792</td> <td> 0.073</td> <td>   -0.141</td> <td>    3.124</td>
+</tr>
+<tr>
+  <th>edu_5</th>                 <td>   -0.1950</td> <td>    0.741</td> <td>   -0.263</td> <td> 0.793</td> <td>   -1.649</td> <td>    1.259</td>
+</tr>
+<tr>
+  <th>exercise_1</th>            <td>    0.2960</td> <td>    0.535</td> <td>    0.553</td> <td> 0.580</td> <td>   -0.754</td> <td>    1.346</td>
+</tr>
+<tr>
+  <th>exercise_2</th>            <td>    0.3539</td> <td>    0.559</td> <td>    0.633</td> <td> 0.527</td> <td>   -0.742</td> <td>    1.450</td>
+</tr>
+<tr>
+  <th>active_1</th>              <td>   -0.9476</td> <td>    0.410</td> <td>   -2.312</td> <td> 0.021</td> <td>   -1.752</td> <td>   -0.143</td>
+</tr>
+<tr>
+  <th>active_2</th>              <td>   -0.2614</td> <td>    0.685</td> <td>   -0.382</td> <td> 0.703</td> <td>   -1.604</td> <td>    1.081</td>
+</tr>
+<tr>
+  <th>age</th>                   <td>    0.3596</td> <td>    0.163</td> <td>    2.202</td> <td> 0.028</td> <td>    0.039</td> <td>    0.680</td>
+</tr>
+<tr>
+  <th>age^2</th>                 <td>   -0.0061</td> <td>    0.002</td> <td>   -3.534</td> <td> 0.000</td> <td>   -0.009</td> <td>   -0.003</td>
+</tr>
+<tr>
+  <th>wt71</th>                  <td>    0.0455</td> <td>    0.083</td> <td>    0.546</td> <td> 0.585</td> <td>   -0.118</td> <td>    0.209</td>
+</tr>
+<tr>
+  <th>wt71^2</th>                <td>   -0.0010</td> <td>    0.001</td> <td>   -1.840</td> <td> 0.066</td> <td>   -0.002</td> <td> 6.39e-05</td>
+</tr>
+<tr>
+  <th>smokeintensity</th>        <td>    0.0491</td> <td>    0.052</td> <td>    0.950</td> <td> 0.342</td> <td>   -0.052</td> <td>    0.151</td>
+</tr>
+<tr>
+  <th>smokeintensity^2</th>      <td>   -0.0010</td> <td>    0.001</td> <td>   -1.056</td> <td> 0.291</td> <td>   -0.003</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>smokeyrs</th>              <td>    0.1344</td> <td>    0.092</td> <td>    1.465</td> <td> 0.143</td> <td>   -0.046</td> <td>    0.314</td>
+</tr>
+<tr>
+  <th>smokeyrs^2</th>            <td>   -0.0019</td> <td>    0.002</td> <td>   -1.209</td> <td> 0.227</td> <td>   -0.005</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>qsmk_x_smokeintensity</th> <td>    0.0467</td> <td>    0.035</td> <td>    1.328</td> <td> 0.184</td> <td>   -0.022</td> <td>    0.116</td>
+</tr>
+</table></div>
+</div>
+<p>Look at an example prediction, for the subject with ID 24770</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">example</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nhefs</span><span class="o">.</span><span class="n">seqn</span> <span class="o">==</span> <span class="mi">24770</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">example</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>one</th>
+      <th>qsmk</th>
+      <th>sex</th>
+      <th>race</th>
+      <th>edu_2</th>
+      <th>edu_3</th>
+      <th>edu_4</th>
+      <th>edu_5</th>
+      <th>exercise_1</th>
+      <th>exercise_2</th>
+      <th>...</th>
+      <th>active_2</th>
+      <th>age</th>
+      <th>age^2</th>
+      <th>wt71</th>
+      <th>wt71^2</th>
+      <th>smokeintensity</th>
+      <th>smokeintensity^2</th>
+      <th>smokeyrs</th>
+      <th>smokeyrs^2</th>
+      <th>qsmk_x_smokeintensity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1581</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>26</td>
+      <td>676</td>
+      <td>111.58</td>
+      <td>12450.0964</td>
+      <td>15</td>
+      <td>225</td>
+      <td>12</td>
+      <td>144</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 21 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1581    0.342157
+dtype: float64
+</pre></div></div>
+</div>
+<p>A quick look at mean and extremes of the predicted weight gain, across subjects</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimated_gain</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   min     mean      max&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------------&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">estimated_gain</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+    <span class="n">estimated_gain</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="n">estimated_gain</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   min     mean      max
+------------------------
+-10.88     2.64     9.88
+</pre></div></div>
+</div>
+<p>A quick look at mean and extreme values for actual weight gain</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   min     mean      max&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------------&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">   </span><span class="si">{:&gt;6.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+    <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+   min     mean      max
+------------------------
+-41.28     2.64    48.54
+</pre></div></div>
+</div>
+<p>A scatterplot of predicted vs actual</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fix</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">estimated_gain</span><span class="p">,</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;predicted gain&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;actual gain&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter13-Standardization_g-formula_32_0.png" src="_images/chapter13-Standardization_g-formula_32_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">
+<h2>13.3 Standardizing the mean outcome to the confounder distribution<a class="headerlink" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-13.2">
+<h3>Program 13.2<a class="headerlink" href="#Program-13.2" title="Permalink to this headline">¶</a></h3>
+<p>The 4 steps to the method are 1. expansion of dataset 2. outcome modeling 3. prediction 4. standardization by averaging</p>
+<p>I am going to use a few shortcuts. “Expansion of dataset” means creating the 3 blocks described in the text. The first block (the original data) is the only one that contributes to the model, so I’ll just build the regression from the first block. The 2nd and 3rd blocks are only needed for predictions, so I’ll only create them at prediction-time.</p>
+<p>Thus my steps will look more like 1. outcome modeling, on the original data 2. prediction on expanded dataset 3. standardization by averaging</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;Rheia&quot;</span><span class="p">,</span> <span class="s2">&quot;Kronos&quot;</span><span class="p">,</span> <span class="s2">&quot;Demeter&quot;</span><span class="p">,</span> <span class="s2">&quot;Hades&quot;</span><span class="p">,</span> <span class="s2">&quot;Hestia&quot;</span><span class="p">,</span> <span class="s2">&quot;Poseidon&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hera&quot;</span><span class="p">,</span> <span class="s2">&quot;Zeus&quot;</span><span class="p">,</span> <span class="s2">&quot;Artemis&quot;</span><span class="p">,</span> <span class="s2">&quot;Apollo&quot;</span><span class="p">,</span> <span class="s2">&quot;Leto&quot;</span><span class="p">,</span> <span class="s2">&quot;Ares&quot;</span><span class="p">,</span> <span class="s2">&quot;Athena&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hephaestus&quot;</span><span class="p">,</span> <span class="s2">&quot;Aphrodite&quot;</span><span class="p">,</span> <span class="s2">&quot;Cyclope&quot;</span><span class="p">,</span> <span class="s2">&quot;Persephone&quot;</span><span class="p">,</span> <span class="s2">&quot;Hermes&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Hebe&quot;</span><span class="p">,</span> <span class="s2">&quot;Dionysus&quot;</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">})</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;A_x_L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">df</span><span class="o">.</span><span class="n">L</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;A_x_L&#39;</span><span class="p">]])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>one</th>   <td>    0.2500</td> <td>    0.255</td> <td>    0.980</td> <td> 0.342</td> <td>   -0.291</td> <td>    0.791</td>
+</tr>
+<tr>
+  <th>A</th>     <td> 1.665e-16</td> <td>    0.361</td> <td> 4.62e-16</td> <td> 1.000</td> <td>   -0.765</td> <td>    0.765</td>
+</tr>
+<tr>
+  <th>L</th>     <td>    0.4167</td> <td>    0.390</td> <td>    1.069</td> <td> 0.301</td> <td>   -0.410</td> <td>    1.243</td>
+</tr>
+<tr>
+  <th>A_x_L</th> <td> 9.714e-17</td> <td>    0.496</td> <td> 1.96e-16</td> <td> 1.000</td> <td>   -1.051</td> <td>    1.051</td>
+</tr>
+</table></div>
+</div>
+<p>Make predictions from the second block, with all A = 0, which also makes A x L = 0.</p>
+<p>“the average of all predicted values in the second block is precisely the standardized mean in the untreated”</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A0_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">]])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;standardized mean: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">A0_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+standardized mean: 0.50
+</pre></div></div>
+</div>
+<p>Make predictions from the third block, with all A = 1, which also makes A x L = L.</p>
+<p>“To estimate the standardized mean outcome in the treated, we compute the average of all predicted values in the third block.”</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A1_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">]])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;standardized mean: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">A1_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+standardized mean: 0.50
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Program-13.3">
+<h3>Program 13.3<a class="headerlink" href="#Program-13.3" title="Permalink to this headline">¶</a></h3>
+<p>We repeat the steps done above, but for the <code class="docutils literal notranslate"><span class="pre">nhefs</span></code> data:</p>
+<ol class="arabic simple">
+<li><p>outcome modeling, on the original data</p></li>
+<li><p>prediction on expanded dataset</p></li>
+<li><p>standardization by averaging</p></li>
+</ol>
+<p>Step 1: Outcome modeling on the <code class="docutils literal notranslate"><span class="pre">nhefs</span></code> data</p>
+<p>Note: For convenience, I’ve moved <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> to the end of the variable list, next to <code class="docutils literal notranslate"><span class="pre">qsmk_x_smokeintensity</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">y</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;qsmk&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk_x_smokeintensity&#39;</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+            <td></td>               <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>one</th>                   <td>   -1.5882</td> <td>    4.313</td> <td>   -0.368</td> <td> 0.713</td> <td>  -10.048</td> <td>    6.872</td>
+</tr>
+<tr>
+  <th>sex</th>                   <td>   -1.4303</td> <td>    0.469</td> <td>   -3.050</td> <td> 0.002</td> <td>   -2.350</td> <td>   -0.510</td>
+</tr>
+<tr>
+  <th>race</th>                  <td>    0.5601</td> <td>    0.582</td> <td>    0.963</td> <td> 0.336</td> <td>   -0.581</td> <td>    1.701</td>
+</tr>
+<tr>
+  <th>edu_2</th>                 <td>    0.7904</td> <td>    0.607</td> <td>    1.302</td> <td> 0.193</td> <td>   -0.400</td> <td>    1.981</td>
+</tr>
+<tr>
+  <th>edu_3</th>                 <td>    0.5563</td> <td>    0.556</td> <td>    1.000</td> <td> 0.317</td> <td>   -0.534</td> <td>    1.647</td>
+</tr>
+<tr>
+  <th>edu_4</th>                 <td>    1.4916</td> <td>    0.832</td> <td>    1.792</td> <td> 0.073</td> <td>   -0.141</td> <td>    3.124</td>
+</tr>
+<tr>
+  <th>edu_5</th>                 <td>   -0.1950</td> <td>    0.741</td> <td>   -0.263</td> <td> 0.793</td> <td>   -1.649</td> <td>    1.259</td>
+</tr>
+<tr>
+  <th>exercise_1</th>            <td>    0.2960</td> <td>    0.535</td> <td>    0.553</td> <td> 0.580</td> <td>   -0.754</td> <td>    1.346</td>
+</tr>
+<tr>
+  <th>exercise_2</th>            <td>    0.3539</td> <td>    0.559</td> <td>    0.633</td> <td> 0.527</td> <td>   -0.742</td> <td>    1.450</td>
+</tr>
+<tr>
+  <th>active_1</th>              <td>   -0.9476</td> <td>    0.410</td> <td>   -2.312</td> <td> 0.021</td> <td>   -1.752</td> <td>   -0.143</td>
+</tr>
+<tr>
+  <th>active_2</th>              <td>   -0.2614</td> <td>    0.685</td> <td>   -0.382</td> <td> 0.703</td> <td>   -1.604</td> <td>    1.081</td>
+</tr>
+<tr>
+  <th>age</th>                   <td>    0.3596</td> <td>    0.163</td> <td>    2.202</td> <td> 0.028</td> <td>    0.039</td> <td>    0.680</td>
+</tr>
+<tr>
+  <th>age^2</th>                 <td>   -0.0061</td> <td>    0.002</td> <td>   -3.534</td> <td> 0.000</td> <td>   -0.009</td> <td>   -0.003</td>
+</tr>
+<tr>
+  <th>wt71</th>                  <td>    0.0455</td> <td>    0.083</td> <td>    0.546</td> <td> 0.585</td> <td>   -0.118</td> <td>    0.209</td>
+</tr>
+<tr>
+  <th>wt71^2</th>                <td>   -0.0010</td> <td>    0.001</td> <td>   -1.840</td> <td> 0.066</td> <td>   -0.002</td> <td> 6.39e-05</td>
+</tr>
+<tr>
+  <th>smokeintensity</th>        <td>    0.0491</td> <td>    0.052</td> <td>    0.950</td> <td> 0.342</td> <td>   -0.052</td> <td>    0.151</td>
+</tr>
+<tr>
+  <th>smokeintensity^2</th>      <td>   -0.0010</td> <td>    0.001</td> <td>   -1.056</td> <td> 0.291</td> <td>   -0.003</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>smokeyrs</th>              <td>    0.1344</td> <td>    0.092</td> <td>    1.465</td> <td> 0.143</td> <td>   -0.046</td> <td>    0.314</td>
+</tr>
+<tr>
+  <th>smokeyrs^2</th>            <td>   -0.0019</td> <td>    0.002</td> <td>   -1.209</td> <td> 0.227</td> <td>   -0.005</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>qsmk</th>                  <td>    2.5596</td> <td>    0.809</td> <td>    3.163</td> <td> 0.002</td> <td>    0.972</td> <td>    4.147</td>
+</tr>
+<tr>
+  <th>qsmk_x_smokeintensity</th> <td>    0.0467</td> <td>    0.035</td> <td>    1.328</td> <td> 0.184</td> <td>   -0.022</td> <td>    0.116</td>
+</tr>
+</table></div>
+</div>
+<p>Step 2: Prediction on expanded dataset</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">block2</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span>  <span class="c1"># qsmk = 0, and thus qsmk_x_smokeintensity = 0</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">block2_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">block2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">block3</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span>  <span class="c1"># qsmk = 1, and thus qsmk_x_smokeintensity = smokeintensity</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">block3_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">block3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Step 3: Standardization by averaging</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">orig_mean</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">block2_mean</span> <span class="o">=</span> <span class="n">block2_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">block3_mean</span> <span class="o">=</span> <span class="n">block3_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">est_diff</span> <span class="o">=</span> <span class="n">block3_mean</span> <span class="o">-</span> <span class="n">block2_mean</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;original mean prediction: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">orig_mean</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; block 2 mean prediction: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block2_mean</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; block 3 mean prediction: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block3_mean</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  causal effect estimate: </span><span class="si">{:&gt;0.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_diff</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+original mean prediction: 2.64
+
+ block 2 mean prediction: 1.76
+ block 3 mean prediction: 5.27
+
+  causal effect estimate: 3.52
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Program-13.4">
+<h3>Program 13.4<a class="headerlink" href="#Program-13.4" title="Permalink to this headline">¶</a></h3>
+<p>Use bootstrap to calculate the confidence interval on the previous estimate</p>
+<p>If this runs too slowly, you can reduce the number of iterations in the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">boot_samples</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">common_X</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">nhefs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">wt82_71</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">common_X</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;qsmk&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk_x_smokeintensity&#39;</span><span class="p">]]</span>
+    <span class="n">block2</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">common_X</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">]]</span>
+    <span class="n">block3</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">common_X</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span><span class="p">]]</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="n">block2_pred</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">block2</span><span class="p">)</span>
+    <span class="n">block3_pred</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">block3</span><span class="p">)</span>
+
+    <span class="n">boot_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block3_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">block2_pred</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">boot_samples</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lo</span> <span class="o">=</span> <span class="n">est_diff</span> <span class="o">-</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">std</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="n">est_diff</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">std</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;               estimate   95% C.I.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;causal effect   </span><span class="si">{:&gt;6.1f}</span><span class="s1">   (</span><span class="si">{:&gt;0.1f}</span><span class="s1">, </span><span class="si">{:&gt;0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_diff</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+               estimate   95% C.I.
+causal effect      3.5   (2.6, 4.5)
+</pre></div></div>
+</div>
+<p>This confidence interval can be slightly different from the book values, because of bootstrap randomness</p>
+</div>
+</div>
+<div class="section" id="13.4-IP-weighting-or-standardization?">
+<h2>13.4 IP weighting or standardization?<a class="headerlink" href="#13.4-IP-weighting-or-standardization?" title="Permalink to this headline">¶</a></h2>
+<p>现在，我们描述了估计平均因果效应的两种方法： IP weighting (previous chapter) and standardization (this chapter). In our smoking cessation example, both yielded almost exactly the same effect estimate. Indeed Technical Point 2.3 proved that the standardized mean equals the IP weighted mean.</p>
+<p>It turns out that the IP weighted and the standardized mean are only exactly equal when no models are used to estimate them. Otherwise they are expected to differ. In practice some degree of misspecification is inescapable in all models, and model misspecification will introduce some bias. But the misspecification of the treatment model (IP weighting) and the outcome model (standardization) will not generally result in the same magnitude and direction of bias in the effect estimate.</p>
+<p>Both IP weighting and standardization are estimators of the g-formula, a general method for causal inference first described in 1986. (Part III provides a definition of the g-formula in settings with time-varying treatments.)</p>
+<ul class="simple">
+<li><p>We say that standardization is a plug-in g-formula estimator because it simply re- places the conditional mean outcome in the g-formula by its estimates.</p></li>
+<li><p>When, like in this chapter, those estimates come from parametric models, we refer to the method as the parametric g-formula. Because here we were only interested in the average causal effect, we only had to estimate the conditional mean outcome.</p></li>
+</ul>
+</div>
+<div class="section" id="13.5-How-seriously-do-we-take-our-estimates?">
+<h2>13.5 How seriously do we take our estimates?<a class="headerlink" href="#13.5-How-seriously-do-we-take-our-estimates?" title="Permalink to this headline">¶</a></h2>
+<p>我们在本书的第一部分中回顾了平均因果效应的定义，估计平均因果效应所需的假设以及许多潜在的偏差。 这个讨论纯粹是概念性的, the data examples hypersimplistic. 一个关键信息是，在 explicitly emulating a (hypothetical) randomized experiment 时–the target trial，观测数据的因果分析更加清晰.</p>
+<p>本章和上一章中的分析是我们从真实数据估计因果效应的首次尝试。Using both IP weighting and the parametric g-formula we estimated that the mean weight gain would have been 5.2 kg if everybody had quit smoking compared with 1.7 kg if nobody had quit smoking. 在下一章中，我们将看到获得类似的估计 when using g-estimation, outcome regression, and propensity scores.</p>
+<p>由于每种方法的估计都是基于不同的建模假设，因此可以确保各种方法的估计的兼容性。However, observational effect estimates are always open to serious criticism. 即使我们不希望将效应估计迁移到其他总体（第4章），并且即使个体之间没有干扰，我们对目标人群的估计有效性也需要很多条件。我们将这些条件分为三类.</p>
+<p>First, the identifiability conditions of exchangeability, positivity, and consistency (Chapter 3) need to hold 为了使得观察性研究可以看作 the target trial. The quitters and the non-quitters need to be exchangeable conditional on the 9 measured covariates <span class="math notranslate nohighlight">\(L\)</span> (see Fine Point 14.2). <strong>Unmeasured confounding (Chapter 7) or selection bias (Chapter 8, Fine Point 12.2) would prevent conditional exchangeability.</strong> Positivity requires that the distribution of the covariates <span class="math notranslate nohighlight">\(L\)</span> in the
+quitters fully overlaps with that in the non-quitters. Fine Point 13.1 discussed the different impact of deviations from positivity for nonparametric IP weighting and standadization. Regarding consistency, note that there are multiple versions of both quitting smoking (e.g., quitting progressively, quitting abruptly) and not quitting smoking (e.g., increasing intensity of smoking by 2 cigarettes per day, reducing intensity but not to zero). Our effect estimate corresponds to a somewhat vague
+hypothetical intervention in the target population that randomly assigns these <strong>versions of treatment</strong> with the same frequency as they actually have in the study population. Other hypothetical interventions might result in a different effect estimate.</p>
+<p>Second, all variables used in the analysis need to be <strong>correctly measured</strong>. Measurement error in the treatment <span class="math notranslate nohighlight">\(A\)</span>, the outcome <span class="math notranslate nohighlight">\(Y\)</span>, or the confounders <span class="math notranslate nohighlight">\(L\)</span> will generally result in bias (Chapter 9).</p>
+<p>Third, all models used in the analysis need to be <strong>correctly specified</strong> (Chapter 11). Suppose that the correct functional form for the continuous covariate age in the treatment model is not the parabolic curve we used but rather a curve represented by a complex polynomial. Then, even if all the confounders had been correctly measured and included in <span class="math notranslate nohighlight">\(L\)</span>, IP weighting would not fully adjust for confounding. Model misspecification has a similar effect as measurement error in the
+confounders.</p>
+<p>因果推断依赖于上述条件 which are heroic and not empirically testable. We replace the lack of data on the distribution of the counterfactual outcomes by the assumption that the above conditions are approximately met. 我们的研究越偏离这些条件，我们的效果估计就可能越有偏差。 In fact, a key step towards less casual causal inferences is the realization that the discussion should primarily revolve around each of the above assumptions. <strong>We only take our effect estimates as seriously as we take the
+conditions</strong> that are needed to endow them with a causal interpretation.</p>
+</div>
+<div class="section" id="End-to-End">
+<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="内容简介">
+<h3>内容简介<a class="headerlink" href="#内容简介" title="Permalink to this headline">¶</a></h3>
+<p>在这一章当中 we describe how to use standardization to estimate the average causal effect of smoking cessation on body weight gain. 我们使用与上一章相同的观测数据集。尽管在第2章介绍了标准化，但我们仅将其描述为非参数方法。现在，我们将模型与标准化的结合使用，这将使我们能够 tackle high-dimensional problems with many covariates and nondichotomous treatments.</p>
+<p>在实践中，研究人员通常会在IP权重和标准化之间做出选择，作为从观测数据中获得因果效应估计的分析方法。两种方法均基于相同的可识别性条件，但基于不同的建模假设。</p>
+<p>In the previous chapter we estimated the average causal effect of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> (1: yes, 0: no) on weight gain <span class="math notranslate nohighlight">\(Y\)</span> (measured in kg) using IP weighting. In this chapter we will estimate the same effect using standardization. Our analyses will also be based on NHEFS data from 1629 cigarette smokers aged 25-74 years who had a baseline visit and a follow-up visit about 10 years later. Of these, 1566 individuals had their weight measured at the follow-up visit and are therefore
+uncensored <span class="math notranslate nohighlight">\((C = 0)\)</span>.</p>
+<p>Goal: Estimate the causal effect of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> using standardization.</p>
+<div class="math notranslate nohighlight">
+\[\text{estimand} = E[Y^{a=1, c=0}] - E[Y^{a=1, c=0}]\]</div>
+<p>where <span class="math notranslate nohighlight">\(E[Y^{a, c=0}]\)</span> is the mean weight gain that would have been observed if all individuals had received treatment level <span class="math notranslate nohighlight">\(a\)</span> and if no individuals had been censored. <span class="math notranslate nohighlight">\(L\)</span> includes the baseline variables.</p>
+<p><code class="docutils literal notranslate"><span class="pre">sex</span> <span class="pre">(0:</span> <span class="pre">male,</span> <span class="pre">1:</span> <span class="pre">female),</span>&#160; <span class="pre">age</span> <span class="pre">(in</span> <span class="pre">years),</span>&#160; <span class="pre">race</span> <span class="pre">(0:</span> <span class="pre">white,</span> <span class="pre">1:</span> <span class="pre">other),</span>&#160; <span class="pre">education</span> <span class="pre">(5</span> <span class="pre">categories),</span> <span class="pre">intensity</span> <span class="pre">and</span> <span class="pre">duration</span> <span class="pre">of</span> <span class="pre">smoking</span> <span class="pre">(number</span> <span class="pre">of</span> <span class="pre">cigarettes</span> <span class="pre">per</span> <span class="pre">day</span> <span class="pre">and</span> <span class="pre">years</span> <span class="pre">of</span> <span class="pre">smoking),</span>&#160; <span class="pre">physical</span> <span class="pre">activity</span> <span class="pre">in</span> <span class="pre">daily</span> <span class="pre">life</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">recreational</span> <span class="pre">exercise</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">weight</span> <span class="pre">(in</span> <span class="pre">kg).</span></code></p>
+<p>Subset the data as in the last chapter (though it’s not necessary to restrict on all of these columns). The standardized mean is:</p>
+<div class="math notranslate nohighlight">
+\[E[Y^{a, c=0}]  = \sum_l E[Y|A=a, C=0, L=l] \times Pr(L=l)\]</div>
+</div>
+<div class="section" id="Ch13-类">
+<h3>Ch13 类<a class="headerlink" href="#Ch13-类" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">CH13</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;This is a demonstration for IP Weighting!&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipw_cols</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+        <span class="n">restriction_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82&#39;</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span><span class="p">,</span> <span class="s1">&#39;school&#39;</span><span class="p">,</span> <span class="s1">&#39;alcoholpy&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span>
+        <span class="p">]</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">restriction_cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">nhefs</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">missing</span><span class="p">]</span>
+        <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">]:</span>
+            <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^2&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">nhefs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="n">edu_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">education</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;edu&#39;</span><span class="p">)</span>
+        <span class="n">exercise_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">exercise</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;exercise&#39;</span><span class="p">)</span>
+        <span class="n">active_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+
+        <span class="n">nhefs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">nhefs</span><span class="p">,</span> <span class="n">edu_dummies</span><span class="p">,</span> <span class="n">exercise_dummies</span><span class="p">,</span> <span class="n">active_dummies</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;qsmk_x_smokeintensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">smokeintensity</span>
+        <span class="k">return</span> <span class="n">nhefs</span>
+
+    <span class="k">def</span> <span class="nf">_logit_ip_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span>   <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">weights</span>
+
+    <span class="k">def</span> <span class="nf">treatment_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipw_cols</span> <span class="o">=</span> <span class="n">cols</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confounders for IP Weight is:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+        <span class="n">X_ip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logit_ip_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span> <span class="n">X_ip</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">ipw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nhefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">denoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">treatment_probs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ipw_cols</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">denoms</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Min and Max of weights:&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">weights</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+
+        <span class="n">gee</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GEE</span><span class="p">(</span>
+            <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">,</span>
+            <span class="n">nhefs</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">]],</span>
+            <span class="n">groups</span><span class="o">=</span><span class="n">nhefs</span><span class="o">.</span><span class="n">seqn</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">weights</span>
+        <span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">gee</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">stabled_ipw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nhefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">qsmk</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">denoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">treatment_probs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ipw_cols</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">denoms</span>
+        <span class="n">s_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">s_weights</span><span class="p">[</span><span class="n">qsmk</span><span class="p">]</span> <span class="o">=</span> <span class="n">qsmk</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="n">qsmk</span><span class="p">]</span>    <span class="c1"># `qsmk` was defined a few cells ago</span>
+        <span class="n">s_weights</span><span class="p">[</span><span class="o">~</span><span class="n">qsmk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qsmk</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[</span><span class="o">~</span><span class="n">qsmk</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">qsmk</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="n">gee</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GEE</span><span class="p">(</span>
+            <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">,</span>
+            <span class="n">nhefs</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">]],</span>
+            <span class="n">groups</span><span class="o">=</span><span class="n">nhefs</span><span class="o">.</span><span class="n">seqn</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">s_weights</span>
+        <span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">gee</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">marginal_structural_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nhefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">numer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logit_ip_f</span><span class="p">(</span><span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span> <span class="n">nhefs</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">]])</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">treatment_probs</span><span class="p">()</span>
+        <span class="n">sw_AV</span> <span class="o">=</span> <span class="n">numer</span> <span class="o">*</span> <span class="n">weights</span>
+        <span class="n">nhefs</span><span class="p">[</span><span class="s1">&#39;qsmk_and_female&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">*</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">sex</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">WLS</span><span class="p">(</span>
+            <span class="n">nhefs</span><span class="o">.</span><span class="n">wt82_71</span><span class="p">,</span>
+            <span class="n">nhefs</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk_and_female&#39;</span><span class="p">]],</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">sw_AV</span>
+        <span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;groups&#39;</span><span class="p">:</span> <span class="n">nhefs</span><span class="o">.</span><span class="n">seqn</span><span class="p">})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Marignal Structural Models 的有关变量:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;qsmk_and_female&#39;</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">CH13</span><span class="p">()</span>
+<span class="n">g</span><span class="o">.</span><span class="n">data</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>seqn</th>
+      <th>qsmk</th>
+      <th>death</th>
+      <th>yrdth</th>
+      <th>modth</th>
+      <th>dadth</th>
+      <th>sbp</th>
+      <th>dbp</th>
+      <th>sex</th>
+      <th>age</th>
+      <th>...</th>
+      <th>edu_3</th>
+      <th>edu_4</th>
+      <th>edu_5</th>
+      <th>exercise_0</th>
+      <th>exercise_1</th>
+      <th>exercise_2</th>
+      <th>active_0</th>
+      <th>active_1</th>
+      <th>active_2</th>
+      <th>qsmk_x_smokeintensity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>233</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>175.0</td>
+      <td>96.0</td>
+      <td>0</td>
+      <td>42</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>235</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>123.0</td>
+      <td>80.0</td>
+      <td>0</td>
+      <td>36</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>244</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>115.0</td>
+      <td>75.0</td>
+      <td>1</td>
+      <td>56</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>245</td>
+      <td>0</td>
+      <td>1</td>
+      <td>85.0</td>
+      <td>2.0</td>
+      <td>14.0</td>
+      <td>148.0</td>
+      <td>78.0</td>
+      <td>0</td>
+      <td>68</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>252</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>118.0</td>
+      <td>77.0</td>
+      <td>0</td>
+      <td>40</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>1623</td>
+      <td>25013</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>125.0</td>
+      <td>77.0</td>
+      <td>1</td>
+      <td>47</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1624</td>
+      <td>25014</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>115.0</td>
+      <td>66.0</td>
+      <td>0</td>
+      <td>45</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1625</td>
+      <td>25016</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>124.0</td>
+      <td>80.0</td>
+      <td>1</td>
+      <td>47</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1627</td>
+      <td>25032</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>171.0</td>
+      <td>77.0</td>
+      <td>0</td>
+      <td>68</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1628</td>
+      <td>25061</td>
+      <td>1</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>136.0</td>
+      <td>90.0</td>
+      <td>0</td>
+      <td>29</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>30</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566 rows × 82 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter14-G估计_of_SNMs.html" class="btn btn-neutral float-right" title="Ch14 结构嵌套模型的G估计" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter12-IPW.html" class="btn btn-neutral float-left" title="Ch 12 逆概率加权和边际结构模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

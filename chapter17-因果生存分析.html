@@ -1,0 +1,1965 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch17 因果生存分析 &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch18 因果变量选择" href="chapter18-variable_selection.html" />
+    <link rel="prev" title="Ch16 工具变量法" href="chapter16-工具变量法.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch17 因果生存分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Section-17.1">Section 17.1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-17.1">Program 17.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Survival-curve-plot">Survival curve plot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-17.2">Section 17.2</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-17.2">Program 17.2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-17.4">Section 17.4</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-17.3">Program 17.3</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Section-17.5">Section 17.5</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-17.4">Program 17.4</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch17 因果生存分析</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter17-因果生存分析.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch17-因果生存分析">
+<h1>Ch17 因果生存分析<a class="headerlink" href="#Ch17-因果生存分析" title="Permalink to this headline">¶</a></h1>
+<p>Causal Survial Analysis</p>
+<p>在前面的章节中，我们一直关注有关在特定时间点发生的治疗对结果影响的因果问题。例如，我们估计了1982年戒烟对体重增加的影响。但是，许多因果关系问题涉及到treatment effects on the time until the occurrence of an event of interest. 例如，我们可能想要估算the causal effect of smoking cessation on the time until death, whenever death occurs. 这是生存分析的一个例子。</p>
+<p>使用“生存”一词并不意味着所关注的事件必定是死亡。术语“生存分析”或等效术语 “failure time analysis” 适用于事件发生时间的任何分析，其中事件可能是死亡，婚姻，监禁，癌症，流感感染等。生存分析需要一些特殊的考虑和技巧，因为许多人的失败时间可能在研究结束后发生，因此未知。本章 outlines basic techniques for survival analysis in the simplified setting of time-fixed treatments.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">]:</span>
+    <span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^2&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">nhefs_all</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;one&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">edu_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">education</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;edu&#39;</span><span class="p">)</span>
+<span class="n">exercise_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">exercise</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;exercise&#39;</span><span class="p">)</span>
+<span class="n">active_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+
+<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">nhefs_all</span><span class="p">,</span> <span class="n">edu_dummies</span><span class="p">,</span> <span class="n">exercise_dummies</span><span class="p">,</span> <span class="n">active_dummies</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1629, 80)
+</pre></div></div>
+</div>
+<div class="section" id="Section-17.1">
+<h2>Section 17.1<a class="headerlink" href="#Section-17.1" title="Permalink to this headline">¶</a></h2>
+<p>Check the number that died during follow-up</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">death</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">death</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;      # died: </span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">death</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# didn&#39;t die: </span><span class="si">{:&gt;4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">death</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      # died:  318
+# didn&#39;t die: 1311
+</pre></div></div>
+</div>
+<p>Number of deaths for untreated and treated</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;qsmk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;death&#39;</span><span class="p">:</span> <span class="s1">&#39;sum&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>qsmk</th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>death</th>
+      <td>216</td>
+      <td>102</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Check the first and last dates of recorded death</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">date_death</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">*</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">yrdth</span> <span class="o">+</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">modth</span> <span class="o">+</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">dadth</span>
+<span class="n">date_death</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date_death</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first death: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date_death</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b </span><span class="si">%d</span><span class="s2">, %Y&quot;</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; last death: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date_death</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%b </span><span class="si">%d</span><span class="s2">, %Y&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+first death: Jan 08, 1983
+ last death: Dec 12, 1992
+</pre></div></div>
+</div>
+<div class="section" id="Program-17.1">
+<h3>Program 17.1<a class="headerlink" href="#Program-17.1" title="Permalink to this headline">¶</a></h3>
+<p>Add <code class="docutils literal notranslate"><span class="pre">longevity</span></code> and <code class="docutils literal notranslate"><span class="pre">survived</span></code> to the data set</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">longevity</span></code> will be the number of months of follow-up lived until death. If the individual did not die, the value is set to the number of follow-up months, 120.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;longevity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">yrdth</span> <span class="o">-</span> <span class="mi">83</span><span class="p">)</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">+</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">modth</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">nhefs_all</span><span class="o">.</span><span class="n">longevity</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;survived&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">death</span>
+</pre></div>
+</div>
+</div>
+<p>Percent of survived at month 120 for untreated and treated</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;qsmk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;survived&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">{:&gt;0.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">col</span><span class="o">.</span><span class="n">mean</span><span class="p">())}</span>
+<span class="p">)</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>qsmk</th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>survived</th>
+      <td>82.0%</td>
+      <td>76.2%</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Log-rank test: “a common statistical test to compare survival curves”, pg 211 margin</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">chisq</span><span class="p">,</span> <span class="n">pvalue</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">duration</span><span class="o">.</span><span class="n">survdiff</span><span class="p">(</span>
+    <span class="n">nhefs_all</span><span class="o">.</span><span class="n">longevity</span><span class="p">,</span>
+    <span class="n">nhefs_all</span><span class="o">.</span><span class="n">death</span><span class="p">,</span>
+    <span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;log-rank test p-value: </span><span class="si">{:&gt;0.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pvalue</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+log-rank test p-value: 0.005
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Survival-curve-plot">
+<h3>Survival curve plot<a class="headerlink" href="#Survival-curve-plot" title="Permalink to this headline">¶</a></h3>
+<p>This plot is constructed by iterating through months and measuring the fraction of longevity values greater than that month. Those fraction values are the survival curve values.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">longevity0</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">longevity</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">longevity1</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">longevity</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># non-quitters</span>
+<span class="n">max0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">longevity0</span><span class="p">[</span><span class="n">longevity0</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># max longevity for non-quitters</span>
+<span class="n">surv_curve_0</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">longevity0</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">longevity0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># fraction of longevities greather than current month i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max0</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># quitters</span>
+<span class="n">max1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">longevity1</span><span class="p">[</span><span class="n">longevity1</span> <span class="o">&lt;</span> <span class="mi">120</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>  <span class="c1"># max longevity for quitters</span>
+<span class="n">surv_curve_1</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">longevity1</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">longevity1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># fraction of longevities greather than current month i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max1</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_curve_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_curve_1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_28_0.png" src="_images/chapter17-因果生存分析_28_0.png" />
+</div>
+</div>
+<p>Hazard at 120 months for treated</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">numer</span> <span class="o">=</span> <span class="p">(</span><span class="n">longevity1</span> <span class="o">==</span> <span class="mi">119</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">denom</span> <span class="o">=</span> <span class="p">(</span><span class="n">longevity1</span> <span class="o">&gt;</span> <span class="mi">118</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> = </span><span class="si">{:&gt;0.2f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">numer</span><span class="p">,</span> <span class="n">denom</span><span class="p">,</span> <span class="n">numer</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="n">denom</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0/326 = 0.00%
+</pre></div></div>
+</div>
+<p>Hazard at 120 months for untreated</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">numer</span> <span class="o">=</span> <span class="p">(</span><span class="n">longevity0</span> <span class="o">==</span> <span class="mi">119</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">denom</span> <span class="o">=</span> <span class="p">(</span><span class="n">longevity0</span> <span class="o">&gt;</span> <span class="mi">118</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1"> = </span><span class="si">{:&gt;0.2f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">numer</span><span class="p">,</span> <span class="n">denom</span><span class="p">,</span> <span class="n">numer</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="n">denom</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1/986 = 0.10%
+</pre></div></div>
+</div>
+<p>The description of the curves above is different from the book. The book describes calculating the hazard by “dividing the number of cases during the interval <span class="math notranslate nohighlight">\(k\)</span> by the number of individuals alive at the end of the interval <span class="math notranslate nohighlight">\(k - 1\)</span>” and, from pg 212,</p>
+<div class="math notranslate nohighlight">
+\[\text{Pr}[D_k = 0] = \prod_{m=1}^k \text{Pr}[D_m  =0 | D_{m-1} = 0]\]</div>
+<p>“That is, the survival at <span class="math notranslate nohighlight">\(k\)</span> equals the product of one minus the hazard at all previous times.”</p>
+<p>I’ll show that you get (roughly) the same values for the survival curve for <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> = 0.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">hazard0</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">longevity0</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">longevity0</span> <span class="o">&gt;=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max0</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Survival curves will be calculated from hazard values multiple times throughout the notebook, so I’ll make a function</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">survival_curve</span><span class="p">(</span><span class="n">hazard</span><span class="p">):</span>
+    <span class="n">survival</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">hazard</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hazard</span><span class="p">)):</span>
+        <span class="n">survival</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">hazard</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">survival</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">survival</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">survival0_v2</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">hazard0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">surv_curve_0</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1.0, 1.0, 1.0, 0.9991673605328892, 0.9983347210657785]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">survival0_v2</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1.0, 1.0, 1.0, 0.9991673605328892, 0.9983354143542607]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">max_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">([</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">surv_curve_0</span><span class="p">,</span> <span class="n">survival0_v2</span><span class="p">)])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;maximum difference between methods: </span><span class="si">{:&gt;0.2e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_diff</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+maximum difference between methods: 2.87e-04
+</pre></div></div>
+</div>
+<p>This difference is likely due to a propagation of rounding errors, and probably wouldn’t be visible on the plot</p>
+</div>
+</div>
+<div class="section" id="Section-17.2">
+<h2>Section 17.2<a class="headerlink" href="#Section-17.2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-17.2">
+<h3>Program 17.2<a class="headerlink" href="#Program-17.2" title="Permalink to this headline">¶</a></h3>
+<p>Create the person-time format</p>
+<p>The following function will be used throughout this notebook to create the person-time format</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">person_time_format</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># This works for the current data only; it requires the data</span>
+    <span class="c1"># have `longevity` and `death` columns.</span>
+
+    <span class="c1"># accumulate rows in a dict, then convert the dict to DataFrame;</span>
+    <span class="c1"># the dict will contain each column of the input data, plus</span>
+    <span class="c1"># `time`, which keeps track of month within individual, and</span>
+    <span class="c1"># `event`, a 0/1 indicator of death for each month</span>
+    <span class="n">newrows</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
+    <span class="n">newrows</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="p">[]})</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="c1"># n_mos: a zero for each month of `longevity`</span>
+        <span class="c1"># and then a zero/one to indicate death afterwards</span>
+        <span class="n">n_mos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">longevity</span> <span class="o">+</span> <span class="n">row</span><span class="o">.</span><span class="n">death</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">newrows</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="n">name</span><span class="p">]]</span> <span class="o">*</span> <span class="n">n_mos</span><span class="p">)</span>
+        <span class="n">newrows</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_mos</span><span class="p">))</span>
+        <span class="n">newrows</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_mos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">death</span><span class="p">:</span>
+            <span class="n">newrows</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">newrows</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pt_data</span> <span class="o">=</span> <span class="n">person_time_format</span><span class="p">(</span><span class="n">nhefs_all</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pt_data</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(176764, 84)
+</pre></div></div>
+</div>
+<p>“An easy way to parametrically estimate the hazards is to fit a logistic regression model …”, pg 213</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+    <span class="s1">&#39;event ~ qsmk + qsmk:time + qsmk:np.power(time, 2) + time + np.power(time, 2)&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">pt_data</span>
+<span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optimization terminated successfully.
+         Current function value: 0.013100
+         Iterations 11
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+             <td></td>               <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>Intercept</th>              <td>   -6.9956</td> <td>    0.231</td> <td>  -30.291</td> <td> 0.000</td> <td>   -7.448</td> <td>   -6.543</td>
+</tr>
+<tr>
+  <th>qsmk</th>                   <td>    0.3355</td> <td>    0.397</td> <td>    0.845</td> <td> 0.398</td> <td>   -0.443</td> <td>    1.114</td>
+</tr>
+<tr>
+  <th>qsmk:time</th>              <td>    0.0121</td> <td>    0.015</td> <td>    0.804</td> <td> 0.422</td> <td>   -0.017</td> <td>    0.042</td>
+</tr>
+<tr>
+  <th>qsmk:np.power(time, 2)</th> <td>   -0.0002</td> <td>    0.000</td> <td>   -1.293</td> <td> 0.196</td> <td>   -0.000</td> <td> 8.31e-05</td>
+</tr>
+<tr>
+  <th>time</th>                   <td>    0.0196</td> <td>    0.008</td> <td>    2.329</td> <td> 0.020</td> <td>    0.003</td> <td>    0.036</td>
+</tr>
+<tr>
+  <th>np.power(time, 2)</th>      <td>   -0.0001</td> <td> 6.69e-05</td> <td>   -1.878</td> <td> 0.060</td> <td>   -0.000</td> <td> 5.47e-06</td>
+</tr>
+</table></div>
+</div>
+<p>Create predictions for each time point, for both <code class="docutils literal notranslate"><span class="pre">qsmk</span> <span class="pre">==</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">qsmk</span> <span class="pre">==</span> <span class="pre">1</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A0_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+<span class="p">)</span>
+<span class="n">A1_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Just a quick look at the values of <code class="docutils literal notranslate"><span class="pre">A0_pred</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A0_pred</span><span class="o">.</span><span class="n">hist</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_54_0.png" src="_images/chapter17-因果生存分析_54_0.png" />
+</div>
+</div>
+<p>Create the model-based survival curves, and recreate Figure 17.2</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">survival_curve</span></code> function below was defined in cell 22 above. For explanation, see the text between cells 20 and 21.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model_surv_0</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A0_pred</span><span class="p">)</span>
+<span class="n">model_surv_1</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A1_pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_58_0.png" src="_images/chapter17-因果生存分析_58_0.png" />
+</div>
+</div>
+<p>“These curves are a smooth version of those in Figure 17.1”, pg 213</p>
+<p>Plot the new parametric version and the previous nonparametric version together, just to see how well they line up</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_curve_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_curve_1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_60_0.png" src="_images/chapter17-因果生存分析_60_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Section-17.4">
+<h2>Section 17.4<a class="headerlink" href="#Section-17.4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-17.3">
+<h3>Program 17.3<a class="headerlink" href="#Program-17.3" title="Permalink to this headline">¶</a></h3>
+<p>“The estimation of IP weighted survival curves has two steps”</p>
+<p>“First, we estimate the stabilized IP weights <span class="math notranslate nohighlight">\(SW^A\)</span>”, pg 217</p>
+<p>We’ll once again borrow a function from Chapter 12 to create IP weights</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">logit_ip_weights</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create IP weights from logistic regression</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : Pandas Series</span>
+<span class="sd">    X : Pandas DataFrame</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Numpy array of IP weights</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">weights</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">weights</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="p">[[</span>
+    <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_2&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_3&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_4&#39;</span><span class="p">,</span> <span class="s1">&#39;edu_5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;exercise_1&#39;</span><span class="p">,</span> <span class="s1">&#39;exercise_2&#39;</span><span class="p">,</span> <span class="s1">&#39;active_1&#39;</span><span class="p">,</span> <span class="s1">&#39;active_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;age^2&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71&#39;</span><span class="p">,</span> <span class="s1">&#39;wt71^2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;smokeintensity&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeintensity^2&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs&#39;</span><span class="p">,</span> <span class="s1">&#39;smokeyrs^2&#39;</span>
+<span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ip_denom</span> <span class="o">=</span> <span class="n">logit_ip_weights</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Optimization terminated successfully.
+         Current function value: 0.542264
+         Iterations 6
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pr_qsmk</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">ip_numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ip_denom</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">ip_numer</span><span class="p">[</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pr_qsmk</span>
+<span class="n">ip_numer</span><span class="p">[</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">qsmk</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pr_qsmk</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ip_weights</span> <span class="o">=</span> <span class="n">ip_numer</span> <span class="o">/</span> <span class="n">ip_denom</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Stabilized weights&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; min   mean    max&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;04.2f}</span><span class="s1">   </span><span class="si">{:&gt;04.2f}</span><span class="s1">   </span><span class="si">{:&gt;04.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">ip_weights</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+    <span class="n">ip_weights</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+    <span class="n">ip_weights</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Stabilized weights
+ min   mean    max
+------------------
+0.33   1.00   4.21
+</pre></div></div>
+</div>
+<p>“Second, using the person-time format, we fit a harzards model like the one described in Section 17.2, except that individuals are weighted by their estimated <span class="math notranslate nohighlight">\(SW^A\)</span>”, pg 217</p>
+<p>So, recreate the person-time dataset, but with weights, and fit the model. We can create the person-time format by adding the IP weights to the dataset, and using the function <code class="docutils literal notranslate"><span class="pre">person_time_format</span></code> from above. Since that function expands every column into the person-time format, it’ll handle the weights too.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ip_weights</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pt_data</span> <span class="o">=</span> <span class="n">person_time_format</span><span class="p">(</span><span class="n">nhefs_all</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GLM</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+    <span class="s1">&#39;event ~ qsmk + qsmk:time + qsmk:np.power(time, 2) + time + np.power(time, 2)&#39;</span><span class="p">,</span>
+    <span class="n">freq_weights</span><span class="o">=</span><span class="n">pt_data</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
+    <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">(),</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">pt_data</span>
+<span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<caption>Generalized Linear Model Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>event</td>      <th>  No. Observations:  </th>  <td>176764</td>
+</tr>
+<tr>
+  <th>Model:</th>                  <td>GLM</td>       <th>  Df Residuals:      </th> <td>176922.33</td>
+</tr>
+<tr>
+  <th>Model Family:</th>        <td>Binomial</td>     <th>  Df Model:          </th>  <td>     5</td>
+</tr>
+<tr>
+  <th>Link Function:</th>         <td>logit</td>      <th>  Scale:             </th> <td>  1.0000</td>
+</tr>
+<tr>
+  <th>Method:</th>                <td>IRLS</td>       <th>  Log-Likelihood:    </th> <td> -2313.1</td>
+</tr>
+<tr>
+  <th>Date:</th>            <td>Wed, 22 Jan 2020</td> <th>  Deviance:          </th> <td>  4626.2</td>
+</tr>
+<tr>
+  <th>Time:</th>                <td>21:46:47</td>     <th>  Pearson chi2:      </th> <td>1.76e+05</td>
+</tr>
+<tr>
+  <th>No. Iterations:</th>         <td>10</td>        <th>                     </th>     <td> </td>
+</tr>
+<tr>
+  <th>Covariance Type:</th>     <td>nonrobust</td>    <th>                     </th>     <td> </td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+             <td></td>               <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>Intercept</th>              <td>   -6.8970</td> <td>    0.221</td> <td>  -31.241</td> <td> 0.000</td> <td>   -7.330</td> <td>   -6.464</td>
+</tr>
+<tr>
+  <th>qsmk</th>                   <td>   -0.1794</td> <td>    0.440</td> <td>   -0.408</td> <td> 0.683</td> <td>   -1.042</td> <td>    0.683</td>
+</tr>
+<tr>
+  <th>qsmk:time</th>              <td>    0.0189</td> <td>    0.016</td> <td>    1.155</td> <td> 0.248</td> <td>   -0.013</td> <td>    0.051</td>
+</tr>
+<tr>
+  <th>qsmk:np.power(time, 2)</th> <td>   -0.0002</td> <td>    0.000</td> <td>   -1.556</td> <td> 0.120</td> <td>   -0.000</td> <td> 5.47e-05</td>
+</tr>
+<tr>
+  <th>time</th>                   <td>    0.0189</td> <td>    0.008</td> <td>    2.345</td> <td> 0.019</td> <td>    0.003</td> <td>    0.035</td>
+</tr>
+<tr>
+  <th>np.power(time, 2)</th>      <td>   -0.0001</td> <td>  6.4e-05</td> <td>   -1.846</td> <td> 0.065</td> <td>   -0.000</td> <td> 7.31e-06</td>
+</tr>
+</table></div>
+</div>
+<p>Plotting the curves is the same as last plot</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A0_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+<span class="p">)</span>
+<span class="n">A1_pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">survival_curve</span></code> function below was defined in cell 22 above. For explanation, see the text between cells 20 and 21.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">surv_ip_0</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A0_pred</span><span class="p">)</span>
+<span class="n">surv_ip_1</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A1_pred</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_79_0.png" src="_images/chapter17-因果生存分析_79_0.png" />
+</div>
+</div>
+<p>Plot the curves on top of the curves from the previous model, to see how they’ve changed</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_0</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">model_surv_1</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_81_0.png" src="_images/chapter17-因果生存分析_81_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;survival estimates&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     smoking cessation: </span><span class="si">{:&gt;0.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  no smoking cessation: </span><span class="si">{:&gt;0.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">surv_ip_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+survival estimates
+     smoking cessation: 80.7%
+  no smoking cessation: 80.5%
+</pre></div></div>
+</div>
+<p><strong>Create 500 boostrap samples to get confidence intervals</strong></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">model_results</span><span class="p">(</span><span class="n">boot_data</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GLM</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+        <span class="s1">&#39;event ~ qsmk + qsmk:time + qsmk:np.power(time, 2) + time + np.power(time, 2)&#39;</span><span class="p">,</span>
+        <span class="n">freq_weights</span><span class="o">=</span><span class="n">boot_data</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
+        <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">(),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">boot_data</span>
+    <span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">month_preds</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="n">A0_pred</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+    <span class="p">)</span>
+    <span class="n">A1_pred</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">120</span><span class="p">)),</span> <span class="s1">&#39;qsmk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">120</span><span class="p">})</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">A0_pred</span><span class="p">,</span> <span class="n">A1_pred</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">survival_difference</span><span class="p">(</span><span class="n">boot_data</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">model_results</span><span class="p">(</span><span class="n">boot_data</span><span class="p">)</span>
+    <span class="n">A0_pred</span><span class="p">,</span> <span class="n">A1_pred</span> <span class="o">=</span> <span class="n">month_preds</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">surv_ip_0</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A0_pred</span><span class="p">)</span>
+    <span class="n">surv_ip_1</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">A1_pred</span><span class="p">)</span>
+    <span class="n">min_diff</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">s1</span> <span class="o">-</span> <span class="n">s0</span> <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s0</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">,</span> <span class="n">surv_ip_0</span><span class="p">))</span>
+    <span class="n">end_diff</span> <span class="o">=</span> <span class="n">surv_ip_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">surv_ip_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">min_diff</span><span class="p">,</span> <span class="n">end_diff</span>
+</pre></div>
+</div>
+</div>
+<p>The next cell will take a while to run</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">min_diff_samples</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">end_diff_samples</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">nrows</span> <span class="o">=</span> <span class="n">pt_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">)):</span>
+    <span class="n">boot_data</span> <span class="o">=</span> <span class="n">pt_data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">min_diff</span><span class="p">,</span> <span class="n">end_diff</span> <span class="o">=</span> <span class="n">survival_difference</span><span class="p">(</span><span class="n">boot_data</span><span class="p">)</span>
+    <span class="n">min_diff_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">min_diff</span><span class="p">)</span>
+    <span class="n">end_diff_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_diff</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 500/500 [02:26&lt;00:00,  3.41it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">surv_ip_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">surv_ip_0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">end_diff_samples</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;difference in final survival probability&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  est   CI&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{:&gt;0.1f}</span><span class="s1">%   (</span><span class="si">{:&gt;0.1f}</span><span class="s1">, </span><span class="si">{:&gt;0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_hi</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+difference in final survival probability
+  est   CI
+ 0.2%   (-5.0, 4.2)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">estimate</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">s1</span> <span class="o">-</span> <span class="n">s0</span> <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s0</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">,</span> <span class="n">surv_ip_0</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">min_diff_samples</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">97.5</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;largest difference in survival probability&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;   est   CI&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{:&gt;0.1f}</span><span class="s1">%   (</span><span class="si">{:&gt;0.1f}</span><span class="s1">, </span><span class="si">{:&gt;0.1f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="n">ci_lo</span><span class="p">,</span> <span class="n">ci_hi</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+largest difference in survival probability
+   est   CI
+ -1.9%   (-6.2, 0.1)
+</pre></div></div>
+</div>
+<p>The previous two confidence intervals differ from the book’s, but they also change from run to run</p>
+</div>
+</div>
+<div class="section" id="Section-17.5">
+<h2>Section 17.5<a class="headerlink" href="#Section-17.5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-17.4">
+<h3>Program 17.4<a class="headerlink" href="#Program-17.4" title="Permalink to this headline">¶</a></h3>
+<p>The steps will be similar to Program 13.3, with calculation of survival curves similar to the previous program. However, survival curves will be estimated for each individual, and the final curves will be averages of those curves</p>
+<ol class="arabic simple">
+<li><p>outcome modeling, on the original data (aka “block 1”)</p></li>
+<li><p>prediction on expanded dataset <em>per individual</em>, see below)</p>
+<ul class="simple">
+<li><p>block 2: a copy of the dataset with <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> set to zero</p></li>
+<li><p>block 3: a copy of the dataset with <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> set to one</p></li>
+</ul>
+</li>
+<li><p>create the survival curves from the predictions, <em>per individual</em>, see below</p></li>
+<li><p>average the individual curves to get marginal survival curves</p></li>
+</ol>
+<p>Step 1</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">GLM</span><span class="o">.</span><span class="n">from_formula</span><span class="p">(</span>
+    <span class="s1">&#39;event ~ qsmk + qsmk:time + qsmk:I(time ** 2) + time + I(time ** 2) + sex&#39;</span>
+    <span class="s1">&#39;+ race + age + I(age**2) + C(education) + smokeintensity + I(smokeintensity ** 2)&#39;</span>
+    <span class="s1">&#39;+ smokeyrs + I(smokeyrs ** 2) + C(exercise) + C(active) + wt71 + I(wt71 ** 2)&#39;</span>
+    <span class="s1">&#39;+ smkintensity82_71&#39;</span><span class="p">,</span>
+    <span class="n">family</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Binomial</span><span class="p">(),</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">pt_data</span>
+<span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<caption>Generalized Linear Model Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>event</td>      <th>  No. Observations:  </th>  <td>176764</td>
+</tr>
+<tr>
+  <th>Model:</th>                  <td>GLM</td>       <th>  Df Residuals:      </th>  <td>176739</td>
+</tr>
+<tr>
+  <th>Model Family:</th>        <td>Binomial</td>     <th>  Df Model:          </th>  <td>    24</td>
+</tr>
+<tr>
+  <th>Link Function:</th>         <td>logit</td>      <th>  Scale:             </th> <td>  1.0000</td>
+</tr>
+<tr>
+  <th>Method:</th>                <td>IRLS</td>       <th>  Log-Likelihood:    </th> <td> -2092.9</td>
+</tr>
+<tr>
+  <th>Date:</th>            <td>Wed, 22 Jan 2020</td> <th>  Deviance:          </th> <td>  4185.7</td>
+</tr>
+<tr>
+  <th>Time:</th>                <td>21:49:17</td>     <th>  Pearson chi2:      </th> <td>1.74e+05</td>
+</tr>
+<tr>
+  <th>No. Iterations:</th>         <td>11</td>        <th>                     </th>     <td> </td>
+</tr>
+<tr>
+  <th>Covariance Type:</th>     <td>nonrobust</td>    <th>                     </th>     <td> </td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+             <td></td>               <th>coef</th>     <th>std err</th>      <th>z</th>      <th>P>|z|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>Intercept</th>              <td>   -9.2724</td> <td>    1.379</td> <td>   -6.723</td> <td> 0.000</td> <td>  -11.976</td> <td>   -6.569</td>
+</tr>
+<tr>
+  <th>C(education)[T.2.0]</th>    <td>   -0.1401</td> <td>    0.157</td> <td>   -0.895</td> <td> 0.371</td> <td>   -0.447</td> <td>    0.167</td>
+</tr>
+<tr>
+  <th>C(education)[T.3.0]</th>    <td>   -0.4335</td> <td>    0.153</td> <td>   -2.841</td> <td> 0.005</td> <td>   -0.733</td> <td>   -0.134</td>
+</tr>
+<tr>
+  <th>C(education)[T.4.0]</th>    <td>   -0.2350</td> <td>    0.279</td> <td>   -0.842</td> <td> 0.400</td> <td>   -0.782</td> <td>    0.312</td>
+</tr>
+<tr>
+  <th>C(education)[T.5.0]</th>    <td>   -0.3750</td> <td>    0.239</td> <td>   -1.571</td> <td> 0.116</td> <td>   -0.843</td> <td>    0.093</td>
+</tr>
+<tr>
+  <th>C(exercise)[T.1.0]</th>     <td>   -0.1469</td> <td>    0.179</td> <td>   -0.820</td> <td> 0.412</td> <td>   -0.498</td> <td>    0.204</td>
+</tr>
+<tr>
+  <th>C(exercise)[T.2.0]</th>     <td>    0.1504</td> <td>    0.176</td> <td>    0.854</td> <td> 0.393</td> <td>   -0.195</td> <td>    0.496</td>
+</tr>
+<tr>
+  <th>C(active)[T.1.0]</th>       <td>    0.1601</td> <td>    0.130</td> <td>    1.232</td> <td> 0.218</td> <td>   -0.095</td> <td>    0.415</td>
+</tr>
+<tr>
+  <th>C(active)[T.2.0]</th>       <td>    0.2294</td> <td>    0.188</td> <td>    1.222</td> <td> 0.222</td> <td>   -0.139</td> <td>    0.597</td>
+</tr>
+<tr>
+  <th>qsmk</th>                   <td>   -0.0596</td> <td>    0.415</td> <td>   -0.143</td> <td> 0.886</td> <td>   -0.874</td> <td>    0.755</td>
+</tr>
+<tr>
+  <th>qsmk:time</th>              <td>    0.0149</td> <td>    0.015</td> <td>    0.987</td> <td> 0.324</td> <td>   -0.015</td> <td>    0.044</td>
+</tr>
+<tr>
+  <th>qsmk:I(time ** 2)</th>      <td>   -0.0002</td> <td>    0.000</td> <td>   -1.367</td> <td> 0.172</td> <td>   -0.000</td> <td> 7.39e-05</td>
+</tr>
+<tr>
+  <th>time</th>                   <td>    0.0227</td> <td>    0.008</td> <td>    2.690</td> <td> 0.007</td> <td>    0.006</td> <td>    0.039</td>
+</tr>
+<tr>
+  <th>I(time ** 2)</th>           <td>   -0.0001</td> <td> 6.71e-05</td> <td>   -1.750</td> <td> 0.080</td> <td>   -0.000</td> <td> 1.41e-05</td>
+</tr>
+<tr>
+  <th>sex</th>                    <td>   -0.4368</td> <td>    0.141</td> <td>   -3.101</td> <td> 0.002</td> <td>   -0.713</td> <td>   -0.161</td>
+</tr>
+<tr>
+  <th>race</th>                   <td>    0.0524</td> <td>    0.173</td> <td>    0.302</td> <td> 0.763</td> <td>   -0.288</td> <td>    0.392</td>
+</tr>
+<tr>
+  <th>age</th>                    <td>    0.0875</td> <td>    0.059</td> <td>    1.481</td> <td> 0.139</td> <td>   -0.028</td> <td>    0.203</td>
+</tr>
+<tr>
+  <th>I(age ** 2)</th>            <td>-8.128e-05</td> <td>    0.001</td> <td>   -0.149</td> <td> 0.882</td> <td>   -0.001</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>smokeintensity</th>         <td>    0.0016</td> <td>    0.014</td> <td>    0.114</td> <td> 0.909</td> <td>   -0.026</td> <td>    0.030</td>
+</tr>
+<tr>
+  <th>I(smokeintensity ** 2)</th> <td> 7.182e-05</td> <td>    0.000</td> <td>    0.301</td> <td> 0.764</td> <td>   -0.000</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>smokeyrs</th>               <td>    0.0168</td> <td>    0.031</td> <td>    0.547</td> <td> 0.584</td> <td>   -0.043</td> <td>    0.077</td>
+</tr>
+<tr>
+  <th>I(smokeyrs ** 2)</th>       <td>  5.28e-05</td> <td>    0.000</td> <td>    0.124</td> <td> 0.901</td> <td>   -0.001</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>wt71</th>                   <td>   -0.0622</td> <td>    0.019</td> <td>   -3.270</td> <td> 0.001</td> <td>   -0.100</td> <td>   -0.025</td>
+</tr>
+<tr>
+  <th>I(wt71 ** 2)</th>           <td>    0.0004</td> <td>    0.000</td> <td>    3.584</td> <td> 0.000</td> <td>    0.000</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>smkintensity82_71</th>      <td>    0.0017</td> <td>    0.007</td> <td>    0.259</td> <td> 0.795</td> <td>   -0.011</td> <td>    0.014</td>
+</tr>
+</table></div>
+</div>
+<p>Steps 2 &amp; 3</p>
+<p>The model gives the information for constructing <em>conditional</em> survival curves.</p>
+<p>As the text says, “we can use this model to estimate the survival curves under treatment and no treatment for white men aged 61, with college education, low levels of exercise, etc. However, our goal is estimating the marginal, not the conditional”, pg 218</p>
+<p>To get the marginal survival curves, we create conditional curves and average them. To do this, we create a full person-time set for each individual twice, once with <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> equal to zero, and once with <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> equal to one. Then we’ll create the survival curves for each individual, and average by time.</p>
+<p>To create the individual person-time sets, we’ll go row-by-row through the original data, set <code class="docutils literal notranslate"><span class="pre">death</span></code> to zero and <code class="docutils literal notranslate"><span class="pre">longevity</span></code> to 120, i.e. survived through end of follow-up, and set <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> to zero or one.</p>
+<p>We’ll use two arrays to carry all of the survival curves, fill it in for each individual, then average the array.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">survivals_qsmk0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">120</span><span class="p">))</span>
+<span class="n">survivals_qsmk1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">120</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">survival_curve</span></code> function below was defined in cell 22 above. For explanation, see the text between cells 20 and 21.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># fill in the individual survival curves</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nhefs_all</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+    <span class="c1"># the person_time_format function expects a DataFrame, so convert the</span>
+    <span class="c1"># row to a DataFrame first</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;death&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">frame</span><span class="p">[</span><span class="s2">&quot;longevity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">120</span>
+
+    <span class="c1"># qsmk = 0 curve</span>
+    <span class="n">pt_block2_i</span> <span class="o">=</span> <span class="n">person_time_format</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">pt_block2_i</span><span class="p">[</span><span class="s2">&quot;qsmk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">hazard</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pt_block2_i</span><span class="p">)</span>
+    <span class="n">survivals_qsmk0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">hazard</span><span class="p">)</span>
+
+    <span class="c1"># qsmk = 1 curve</span>
+    <span class="n">pt_block3_i</span> <span class="o">=</span> <span class="n">pt_block2_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pt_block3_i</span><span class="p">[</span><span class="s2">&quot;qsmk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">hazard</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pt_block3_i</span><span class="p">)</span>
+    <span class="n">survivals_qsmk1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">survival_curve</span><span class="p">(</span><span class="n">hazard</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Step 4: Average the individual curves</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">surv_gform_0</span> <span class="o">=</span> <span class="n">survivals_qsmk0</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">surv_gform_1</span> <span class="o">=</span> <span class="n">survivals_qsmk1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_106_0.png" src="_images/chapter17-因果生存分析_106_0.png" />
+</div>
+</div>
+<p>Plot these curves over the previous version, to see how they change</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_ip_1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_108_0.png" src="_images/chapter17-因果生存分析_108_0.png" />
+</div>
+</div>
+<p>Looks like a pretty good match</p>
+<p>Now let’s look at the mean survival curves plotted over some of the individual curves</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">n_subj_tot</span> <span class="o">=</span> <span class="n">nhefs_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_subj_tot</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">survivals_qsmk0</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">survivals_qsmk1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">surv_gform_1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Months of follow-up&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Survival probability&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.88</span><span class="p">,</span> <span class="s1">&#39;A = 0&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.76</span><span class="p">,</span> <span class="s1">&#39;A = 1&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 1629/1629 [00:04&lt;00:00, 361.02it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter17-因果生存分析_111_1.png" src="_images/chapter17-因果生存分析_111_1.png" />
+</div>
+</div>
+<p>Apparently, there is a <em>lot</em> of variation between individuals</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter18-variable_selection.html" class="btn btn-neutral float-right" title="Ch18 因果变量选择" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter16-工具变量法.html" class="btn btn-neutral float-left" title="Ch16 工具变量法" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

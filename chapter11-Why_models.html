@@ -1,0 +1,1511 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ch11 Why Model? &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Ch 12 逆概率加权和边际结构模型" href="chapter12-IPW.html" />
+    <link rel="prev" title="Ch7-10 因果推断的偏差" href="chapter7-10_gong.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch11 Why Model?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#11.1-Data-cannot-speak-for-themselves">11.1 Data cannot speak for themselves</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-11.1">Program 11.1</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#11.2-Parametric-estimators-of-the-conditional-mean">11.2 Parametric estimators of the conditional mean</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-11.2">Program 11.2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#11.3-Nonparametric-estimators-of-the-conditional-mean">11.3 Nonparametric estimators of the conditional mean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#11.4-Smoothing">11.4 Smoothing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-11.3">Program 11.3</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#11.5-The-bias-variance-trade-off">11.5 The bias-variance trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#估计置信区间">估计置信区间</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#本章的主要内容">本章的主要内容</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Ch11 Why Model?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/chapter11-Why_models.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Ch11-Why-Model?">
+<h1>Ch11 Why Model?<a class="headerlink" href="#Ch11-Why-Model?" title="Permalink to this headline">¶</a></h1>
+<p>本章描述了本书第一部分中使用的非参数估计量与第二部分中使用的基于模型的参数估计量之间的区别。它还回顾了 smoothing 的概念，并简要回顾了任何建模决策中涉及的 bias-variance trade-off。本章motivates the need for models in data analysis，无论分析目标是因果推理还是预测。We will take a break from causal considerations until the next chapter. 请记住，有关建模的统计文献非常丰富；本章只能重点介绍一些关键问题。</p>
+<p><strong>Big Picturce:</strong></p>
+<p>非参数模型 –&gt; parametric models –&gt; structural mean models</p>
+<ul class="simple">
+<li><p>Models for the marginal mean of a counterfactual outcome are referred to as marginal structural mean models.</p></li>
+<li><p>Effect modification and marginal structural models 在上面的模型增加新的变量 for effect modification</p></li>
+<li><p>Structural nested mean model 会有一个对比某个基准 potential outcome.</p></li>
+</ul>
+<p>In Part II of this book we have described two different types of models for causal inference:</p>
+<ul class="simple">
+<li><p>propensity models and</p></li>
+<li><p>structural models.</p></li>
+</ul>
+<p>Let us now compare them.</p>
+<ul class="simple">
+<li><p>Propensity models are models for the probability of treatment <span class="math notranslate nohighlight">\(A\)</span> given the variables <span class="math notranslate nohighlight">\(L\)</span> used to try to achieve conditional exchangeability.</p></li>
+<li><p>Structural models describe the relation between the treatment <span class="math notranslate nohighlight">\(A\)</span> and some component of the distribution (e.g., the mean) of the counterfactual outcome</p></li>
+</ul>
+<div class="section" id="Setup-and-imports">
+<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="11.1-Data-cannot-speak-for-themselves">
+<h2>11.1 Data cannot speak for themselves<a class="headerlink" href="#11.1-Data-cannot-speak-for-themselves" title="Permalink to this headline">¶</a></h2>
+<p>考虑一个研究总体，其中有16个人感染了人类免疫缺陷病毒（HIV）。与本书第一部分不同，我们不会将这些人视为 representatives of 1 billion individuals identical to them. Rather, these are just 16 individuals randomly sampled from a large, possibly hypothetical super-population: the target population.</p>
+<p>在研究开始时，每个人都会接受一定程度的治疗 <span class="math notranslate nohighlight">\(A\)</span> (antiretroviral therapy), which is maintained during the study. At the end of the study, a continuous outcome <span class="math notranslate nohighlight">\(Y\)</span> (CD4 cell count, in cells/mm3) is measured in all individuals. 我们希望一致的估算 the mean of <span class="math notranslate nohighlight">\(Y\)</span> among individuals with treatment level <span class="math notranslate nohighlight">\(A = a\)</span> in the population from which the 16 individuals were randomly sampled. 也就是说，估计是未知的总体参数 <span class="math notranslate nohighlight">\(E[Y|A=a]\)</span>.</p>
+<div class="section" id="Program-11.1">
+<h3>Program 11.1<a class="headerlink" href="#Program-11.1" title="Permalink to this headline">¶</a></h3>
+<p>Half of the individuals were treated <span class="math notranslate nohighlight">\((A = 1)\)</span>. Figure 11.1 is a scatter plot that displays each of the 16 individuals as a dot. The height of the dot indicates the value of the individual’s outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="mi">200</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span>
+        <span class="mi">170</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span>
+    <span class="p">]</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">],</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_10_0.png" src="_images/chapter11-Why_models_10_0.png" />
+</div>
+</div>
+<p>Our estimate of the population mean in the treated is the sample aver- age 146.25 for those with <span class="math notranslate nohighlight">\(A = 1\)</span>, and our estimate of the population mean in the untreated is the sample average 67.50 in those with <span class="math notranslate nohighlight">\(A = 0\)</span>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df1</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="8" halign="left">Y</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>A</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>8.0</td>
+      <td>67.50</td>
+      <td>53.117121</td>
+      <td>10.0</td>
+      <td>27.5</td>
+      <td>60.0</td>
+      <td>87.5</td>
+      <td>170.0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>8.0</td>
+      <td>146.25</td>
+      <td>58.294205</td>
+      <td>50.0</td>
+      <td>105.0</td>
+      <td>160.0</td>
+      <td>185.0</td>
+      <td>220.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>“Now suppose treatment <span class="math notranslate nohighlight">\(A\)</span> is a polytomous variable that can take 4 possible values”. Now suppose treatment <span class="math notranslate nohighlight">\(A\)</span> is a polytomous variable that can take 4 possible values: no treatment <span class="math notranslate nohighlight">\((A = 1)\)</span>, low-dose treatment <span class="math notranslate nohighlight">\((A = 2)\)</span>, medium-dose treatment <span class="math notranslate nohighlight">\((A = 3)\)</span>, and high-dose treatment <span class="math notranslate nohighlight">\((A = 4)\)</span>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="mi">110</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="mi">110</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">210</span>
+    <span class="p">]</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df2</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">],</span> <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_15_0.png" src="_images/chapter11-Why_models_15_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="8" halign="left">Y</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>A</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>4.0</td>
+      <td>70.0</td>
+      <td>31.622777</td>
+      <td>40.0</td>
+      <td>47.5</td>
+      <td>65.0</td>
+      <td>87.5</td>
+      <td>110.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>4.0</td>
+      <td>80.0</td>
+      <td>62.182527</td>
+      <td>30.0</td>
+      <td>45.0</td>
+      <td>60.0</td>
+      <td>95.0</td>
+      <td>170.0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>4.0</td>
+      <td>117.5</td>
+      <td>53.774219</td>
+      <td>50.0</td>
+      <td>95.0</td>
+      <td>120.0</td>
+      <td>142.5</td>
+      <td>180.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>4.0</td>
+      <td>195.0</td>
+      <td>31.091264</td>
+      <td>150.0</td>
+      <td>187.5</td>
+      <td>205.0</td>
+      <td>212.5</td>
+      <td>220.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+<div class="section" id="11.2-Parametric-estimators-of-the-conditional-mean">
+<h2>11.2 Parametric estimators of the conditional mean<a class="headerlink" href="#11.2-Parametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h2>
+<p>当使用参数模型时，只有在模型中编码的限制正确（i.e. if the model is correctly specified）的情况下，推断才是正确的。因此，基于模型的因果推断（本书其余大部分内容都基于此因果推断）依赖于(approximately)没有模型错误指定的条件。由于很少（甚至从来没有）完美地指定参数模型，因此几乎总是会期望一定程度的模型指定错误。This can be at least partially rectified by using nonparametric estimators，我们将在下一部分中进行描述。</p>
+<div class="section" id="Program-11.2">
+<h3>Program 11.2<a class="headerlink" href="#Program-11.2" title="Permalink to this headline">¶</a></h3>
+<p>Finally, suppose that treatment <span class="math notranslate nohighlight">\(A\)</span> is a variable representing the dose of treatment in mg/day, and that it takes integer values from 0 to 100 mg. This creates a problem: how can we estimate the mean of the outcome <span class="math notranslate nohighlight">\(Y\)</span> among individuals with treatment level <span class="math notranslate nohighlight">\(A = 90\)</span> in the target population?</p>
+<p>上面的描述表明，我们不能总是让数据“为自己说话”以获得有意义的估计。相反，我们经常需要用模型来补充数据，如我们在下一节中所述。</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">54</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">29</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="mi">65</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="mi">157</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">53</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">67</span><span class="p">,</span> <span class="mi">111</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">79</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">83</span><span class="p">,</span> <span class="mi">140</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">220</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">230</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">71</span><span class="p">,</span> <span class="mi">217</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="mi">190</span><span class="p">),</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">16</span><span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_21_0.png" src="_images/chapter11-Why_models_21_0.png" />
+</div>
+</div>
+<p>“The values <span class="math notranslate nohighlight">\(\hat{\theta}_0\)</span> and <span class="math notranslate nohighlight">\(\hat{\theta}_1\)</span> can be easily computed using linear algebra, as described in any statistics textbook.”</p>
+<p>Briefly, make <span class="math notranslate nohighlight">\(X\)</span> be the matrix with ones in the first column and <span class="math notranslate nohighlight">\(A\)</span> in the second column, and make <span class="math notranslate nohighlight">\(Y\)</span> an <span class="math notranslate nohighlight">\(n \times 1\)</span> matrix. Then <span class="math notranslate nohighlight">\(\hat{\theta}_0\)</span> and <span class="math notranslate nohighlight">\(\hat{\theta}_1\)</span> are calculated as <span class="math notranslate nohighlight">\(\hat\theta = (X^TX)^{-1}X^TY\)</span></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">df3</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>        <span class="c1"># make X a matrix of ones</span>
+<span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span>                       <span class="c1"># replace second column with A</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># make Y an n x 1 matrix</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">theta</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[24.54636872],
+       [ 2.13715198]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;theta0 est.: </span><span class="si">{:&gt;5.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;theta1 est.: </span><span class="si">{:&gt;5.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+theta0 est.: 24.55
+theta1 est.:  2.14
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">expectation_at_90</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;E[Y|A=90] est.: </span><span class="si">{:&gt;5.1f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expectation_at_90</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+E[Y|A=90] est.: 216.9
+</pre></div></div>
+</div>
+<p>We can also compute this with a statistics package, like Statsmodels, which will also give us confidence intervals and other values</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">]])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+      <td></td>        <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>constant</th> <td>   24.5464</td> <td>   21.330</td> <td>    1.151</td> <td> 0.269</td> <td>  -21.202</td> <td>   70.295</td>
+</tr>
+<tr>
+  <th>A</th>        <td>    2.1372</td> <td>    0.400</td> <td>    5.347</td> <td> 0.000</td> <td>    1.280</td> <td>    2.994</td>
+</tr>
+</table></div>
+</div>
+<p>Initially, it wasn’t clear how to get confidence intervals for expected values from Statsmodels, so the next cells calculate them from scratch.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">n</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">yvar</span> <span class="o">=</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">resid</span> <span class="o">*</span> <span class="n">res</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># = res.mse_resid</span>
+<span class="n">xval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">]])</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">]]</span>
+<span class="n">XpXinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X</span><span class="p">))</span>
+<span class="n">se_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yvar</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xval</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">XpXinv</span><span class="p">,</span> <span class="n">xval</span><span class="o">.</span><span class="n">T</span><span class="p">)))[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">t</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.975</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ypred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">]])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;           estimate      95% C.I.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;E[Y|A=90]   </span><span class="si">{:&gt;6.2f}</span><span class="s1">   (</span><span class="si">{:&gt;6.2f}</span><span class="s1">, </span><span class="si">{:&gt;6.2f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">ypred</span><span class="p">,</span> <span class="n">ypred</span> <span class="o">-</span> <span class="n">t</span> <span class="o">*</span> <span class="n">se_mean</span><span class="p">,</span> <span class="n">ypred</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">se_mean</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+           estimate      95% C.I.
+E[Y|A=90]   216.89   (172.15, 261.63)
+</pre></div></div>
+</div>
+<p>Here’s an easier way to calculate the confidence intervals, contributed by GitHub user &#64;pettypychen</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">exog</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span>
+<span class="n">pred</span><span class="o">.</span><span class="n">summary_frame</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>mean_se</th>
+      <th>mean_ci_lower</th>
+      <th>mean_ci_upper</th>
+      <th>obs_ci_lower</th>
+      <th>obs_ci_upper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>216.89</td>
+      <td>20.86</td>
+      <td>172.15</td>
+      <td>261.63</td>
+      <td>112.27</td>
+      <td>321.51</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">]]))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_34_0.png" src="_images/chapter11-Why_models_34_0.png" />
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="11.3-Nonparametric-estimators-of-the-conditional-mean">
+<h2>11.3 Nonparametric estimators of the conditional mean<a class="headerlink" href="#11.3-Nonparametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h2>
+<p>(Still Program 11.2)</p>
+<ul class="simple">
+<li><p>In this book we define “model” as an a priori mathematical restriction on the possible states of nature (Robins, Greenland 1986). Part I was entitled “Causal inference without models” because it only described <strong>saturated models</strong>.</p></li>
+<li><p>本书第二部分中描述的大多数因果推断方法都依赖于 estimators that are parametric estimators of some part of the distribution of the data. Parametric estimation and other approaches to borrow information are our only hope when, as is often the case, data are unable to speak for themselves.</p></li>
+</ul>
+<p>“Let us return to the data in Figure 11.1.”</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;constant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span> <span class="n">df1</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">]])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+      <td></td>        <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>constant</th> <td>   67.5000</td> <td>   19.716</td> <td>    3.424</td> <td> 0.004</td> <td>   25.213</td> <td>  109.787</td>
+</tr>
+<tr>
+  <th>A</th>        <td>   78.7500</td> <td>   27.883</td> <td>    2.824</td> <td> 0.014</td> <td>   18.947</td> <td>  138.553</td>
+</tr>
+</table></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">est_at_0</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">est_at_1</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;E[Y|A=0] est.: </span><span class="si">{:&gt;6.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_at_0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;E[Y|A=1] est.: </span><span class="si">{:&gt;6.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est_at_1</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+E[Y|A=0] est.:  67.50
+E[Y|A=1] est.: 146.25
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="11.4-Smoothing">
+<h2>11.4 Smoothing<a class="headerlink" href="#11.4-Smoothing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Program-11.3">
+<h3>Program 11.3<a class="headerlink" href="#Program-11.3" title="Permalink to this headline">¶</a></h3>
+<p>Starting from the same data as Section 11.2, Program 11.2</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;A^2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A^2&#39;</span><span class="p">]])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+      <td></td>        <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>constant</th> <td>   -7.4069</td> <td>   31.748</td> <td>   -0.233</td> <td> 0.819</td> <td>  -75.994</td> <td>   61.180</td>
+</tr>
+<tr>
+  <th>A</th>        <td>    4.1072</td> <td>    1.531</td> <td>    2.683</td> <td> 0.019</td> <td>    0.800</td> <td>    7.414</td>
+</tr>
+<tr>
+  <th>A^2</th>      <td>   -0.0204</td> <td>    0.015</td> <td>   -1.331</td> <td> 0.206</td> <td>   -0.053</td> <td>    0.013</td>
+</tr>
+</table></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df3</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A^2&#39;</span><span class="p">]]))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_49_0.png" src="_images/chapter11-Why_models_49_0.png" />
+</div>
+</div>
+<p>The expected value and confidence interval can be obtained with the method contributed by &#64;pettypychen above</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">exog</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="o">**</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">pred</span><span class="o">.</span><span class="n">summary_frame</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>mean_se</th>
+      <th>mean_ci_lower</th>
+      <th>mean_ci_upper</th>
+      <th>obs_ci_lower</th>
+      <th>obs_ci_upper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>197.13</td>
+      <td>25.16</td>
+      <td>142.77</td>
+      <td>251.49</td>
+      <td>89.63</td>
+      <td>304.62</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+</div>
+<div class="section" id="11.5-The-bias-variance-trade-off">
+<h2>11.5 The bias-variance trade-off<a class="headerlink" href="#11.5-The-bias-variance-trade-off" title="Permalink to this headline">¶</a></h2>
+<p>这种偏差-方差分析是数据分析的核心。Investigators using models need to decide whether some protection against bias–by, say, adding more parameters to the model–is worth the cost in terms of variance. 尽管存在一些有助于这些决定的正式程序，但实际上，许多研究人员会根据诸如传统，参数的可解释性和软件可用性等标准来决定使用哪种模型。在本书中，我们通常会假设正确指定了我们的参数模型。这是一个不现实的假设，但它使我们能够专注于因果分析所特有的问题。毕竟，Model misspecification
+是在任何类型的数据分析中都可能出现的问题，无论估计值是否具有因果关系。在实践中，谨慎的研究人员将始终对模型的有效性提出质疑，并将 conduct an analysis to assess the sensitivity of their estimates to model specification.</p>
+</div>
+<div class="section" id="End-to-End">
+<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="估计置信区间">
+<h3>估计置信区间<a class="headerlink" href="#估计置信区间" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">A</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">54</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">29</span><span class="p">,</span> <span class="mi">85</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="mi">65</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="mi">157</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">53</span><span class="p">,</span> <span class="mi">120</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">67</span><span class="p">,</span> <span class="mi">111</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">79</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">83</span><span class="p">,</span> <span class="mi">140</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">220</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">230</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">71</span><span class="p">,</span> <span class="mi">217</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="mi">190</span><span class="p">),</span>
+<span class="p">))</span>
+
+<span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">16</span><span class="p">)})</span>
+<span class="c1"># fig, ax = plt.subplots(figsize=(8, 6))</span>
+<span class="c1"># ax.scatter(df3.A, df3.Y)</span>
+<span class="c1"># ax.set_xlabel(&#39;A&#39;, fontsize=14)</span>
+<span class="c1"># ax.set_ylabel(&#39;Y&#39;, fontsize=14)</span>
+<span class="c1"># plt.show()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;A^2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span>
+
+<span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A^2&#39;</span><span class="p">]])</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<table class="simpletable">
+<tr>
+      <td></td>        <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
+</tr>
+<tr>
+  <th>constant</th> <td>   -7.4069</td> <td>   31.748</td> <td>   -0.233</td> <td> 0.819</td> <td>  -75.994</td> <td>   61.180</td>
+</tr>
+<tr>
+  <th>A</th>        <td>    4.1072</td> <td>    1.531</td> <td>    2.683</td> <td> 0.019</td> <td>    0.800</td> <td>    7.414</td>
+</tr>
+<tr>
+  <th>A^2</th>      <td>   -0.0204</td> <td>    0.015</td> <td>   -1.331</td> <td> 0.206</td> <td>   -0.053</td> <td>    0.013</td>
+</tr>
+</table></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># df3.sort_values(&#39;A&#39;, inplace=True)</span>
+<span class="c1"># fig, ax = plt.subplots(figsize=(8, 6))</span>
+<span class="c1"># ax.scatter(df3.A, df3.Y)</span>
+<span class="c1"># ax.plot(df3.A, res.predict(df3[[&#39;constant&#39;, &#39;A&#39;, &#39;A^2&#39;]]))</span>
+<span class="c1"># ax.set_xlabel(&#39;A&#39;, fontsize=14)</span>
+<span class="c1"># ax.set_ylabel(&#39;Y&#39;, fontsize=14);</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pred</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">get_prediction</span><span class="p">(</span><span class="n">exog</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="o">**</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">pred</span><span class="o">.</span><span class="n">summary_frame</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>mean_se</th>
+      <th>mean_ci_lower</th>
+      <th>mean_ci_upper</th>
+      <th>obs_ci_lower</th>
+      <th>obs_ci_upper</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>197.13</td>
+      <td>25.16</td>
+      <td>142.77</td>
+      <td>251.49</td>
+      <td>89.63</td>
+      <td>304.62</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="本章的主要内容">
+<h3>本章的主要内容<a class="headerlink" href="#本章的主要内容" title="Permalink to this headline">¶</a></h3>
+<p>本章描述了本书第一部分中使用的非参数估计量与第二部分中使用的基于模型的参数估计量之间的区别。它还回顾了 smoothing 的概念，并简要回顾了任何建模决策中涉及的 bias-variance trade-off。本章motivates the need for models in data analysis，无论分析目标是因果推理还是预测。We will take a break from causal considerations until the next chapter. 请记住，有关建模的统计文献非常丰富；本章只能重点介绍一些关键问题。</p>
+<p>Table of contents</p>
+<ul class="simple">
+<li><p>Data cannot speak for themselves</p></li>
+<li><p>Parametric estimators of the conditional mean</p></li>
+<li><p>Nonparametric estimators of the conditional mean</p></li>
+<li><p>Smoothing</p></li>
+<li><p>The bias-variance trade-off</p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="chapter12-IPW.html" class="btn btn-neutral float-right" title="Ch 12 逆概率加权和边际结构模型" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="chapter7-10_gong.html" class="btn btn-neutral float-left" title="Ch7-10 因果推断的偏差" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
