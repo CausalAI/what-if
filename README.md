@@ -2,12 +2,10 @@
 
 --- *by [Heyang Gong](https://sites.google.com/view/minituring/home)*
 
-XXXXX
+本书是关于 [Causal Inference: What If 的编译的解读。](https://causalai.github.io/what-if/)
 
-- [从翻译官方教程出发]()
-- [从 EndToEnd 例子出发]()
-- [从某本经典教材出发]()
-- [从某一门课程出发]()
+原书地址: https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/
+
 
 
 [https://causalai.github.io/pyro_zh_tutorial/](https://causalai.github.io/pyro_zh_tutorial/)
