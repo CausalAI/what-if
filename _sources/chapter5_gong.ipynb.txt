@@ -6,7 +6,7 @@
     "Collapsed": "false"
    },
    "source": [
-    "# Ch5-Interaction\n",
+    "# Ch5 Interaction\n",
     "\n",
     "\n",
     "When joint interventions on two or more treatments are feasible, the identification of interaction allows one to implement the most effective interventions. Thus understanding the concept of interaction is key for causal inference.\n",

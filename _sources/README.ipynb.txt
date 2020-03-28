@@ -6,11 +6,8 @@
     "Collapsed": "false"
    },
    "source": [
-    "# README\n",
-    "\n",
-    "\n",
-    "\n",
-    "> **For simplicity, in this book we do not distinguish between vector and scalar parameters. This is an abuse of notation, but we believe it does not create any confusion.**"
+    "# 项目简介\n",
+    "\n"
    ]
   },
   {
@@ -19,16 +16,48 @@
     "Collapsed": "false"
    },
    "source": [
-    "[原书地址](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)"
+    "本项目是关于因果推断教材 [Causal Inference: What If 的编译和解读](https://causalai.github.io/what-if/)\n",
+    "\n",
+    "- [原书地址](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/)"
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
+   "cell_type": "markdown",
    "metadata": {
     "Collapsed": "false"
    },
-   "outputs": [],
+   "source": [
+    "## 内容概要\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "本项目的主要内容是：\n",
+    "\n",
+    "- 翻译教材中的部分内容，按照易懂的方式重新组织，然后加入一些理解和解读。\n",
+    "- 使用 DoWhy 来构建本书的代码工作，用 DoWhy 的视角来理解该教材内容。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "注：For simplicity, in this book we do not distinguish between vector and scalar parameters. This is an abuse of notation, but we believe it does not create any confusion"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
    "source": []
   }
  ],

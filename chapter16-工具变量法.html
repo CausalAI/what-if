@@ -92,7 +92,7 @@
             
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -100,27 +100,26 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch16 工具变量法</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-16.1">Section 16.1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-16.2">Section 16.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#16.1-模型假设">16.1 模型假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#16.2-The-usal-IV-estimand">16.2 The usal IV estimand</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.1">Program 16.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.2">Program 16.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.3">Program 16.3</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-16.5">Section 16.5</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#16.5-The-three-instrumental-conditions-revisited">16.5 The three instrumental conditions revisited</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.4">Program 16.4</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.5">Program 16.5</a></li>
 </ul>
@@ -134,7 +133,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for Time-varing Treatments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
 </ul>
 
@@ -447,15 +446,12 @@ div.rendered_html tbody tr:hover {
 <p>到目前为止，本书中描述的因果推论方法都基于一个不可检验的关键假设：all variables needed to adjust for confounding and selection bias have been identified and correctly measured. 如果这个假设是错误的，并且在一定程度上一直是这样，那么我们的因果估计中就会有剩余偏差。</p>
 <p>It turns out that there exist other methods Instrumental variable estimation is one of those methods. Economists and other social scientists reading this book can breathe now. We are finally going to describe a very common method in their fields, a method that is unlike any other we have discussed so far.</p>
 <p>事实证明，存在其他方法可以that can validly estimate causal effects under an alternative set of assumptions that do not require measuring all adjustment factors. 工具变量估计是这些方法之一。读这本书的经济学家和其他社会科学家 can breathe now. 我们最终将在他们的领域中描述一种非常通用的方法，该方法与我们迄今为止讨论的任何其他方法都不相同。</p>
-<div class="section" id="Setup-and-imports">
-<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-
+<span></span><span class="c1">## Setup and imports</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 
@@ -464,14 +460,30 @@ div.rendered_html tbody tr:hover {
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">scipy.optimize</span>
-
-<span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 </div>
 </div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
 </div>
-<div class="section" id="Section-16.1">
-<h2>Section 16.1<a class="headerlink" href="#Section-16.1" title="Permalink to this headline">¶</a></h2>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nhefs_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="section" id="16.1-模型假设">
+<h2>16.1 模型假设<a class="headerlink" href="#16.1-模型假设" title="Permalink to this headline">¶</a></h2>
+<p>The three intrumental conditions.</p>
 <p>Create the instrument, <span class="math notranslate nohighlight">\(Z\)</span></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -541,8 +553,8 @@ Pr[A=1|Z=1] − Pr[A=1|Z=0] =  6.3%
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="Section-16.2">
-<h2>Section 16.2<a class="headerlink" href="#Section-16.2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="16.2-The-usal-IV-estimand">
+<h2>16.2 The usal IV estimand<a class="headerlink" href="#16.2-The-usal-IV-estimand" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-16.1">
 <h3>Program 16.1<a class="headerlink" href="#Program-16.1" title="Permalink to this headline">¶</a></h3>
 <p>Pg 196: For a dichotomous instrument <span class="math notranslate nohighlight">\(Z\)</span> that also meets condition (iv) from section 16.3,</p>
@@ -871,8 +883,8 @@ best estimate: 2.396
 </div>
 </div>
 </div>
-<div class="section" id="Section-16.5">
-<h2>Section 16.5<a class="headerlink" href="#Section-16.5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="16.5-The-three-instrumental-conditions-revisited">
+<h2>16.5 The three instrumental conditions revisited<a class="headerlink" href="#16.5-The-three-instrumental-conditions-revisited" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-16.4">
 <h3>Program 16.4<a class="headerlink" href="#Program-16.4" title="Permalink to this headline">¶</a></h3>
 <p>We’ll calculate the IV estimate using a few different cutoffs for <code class="docutils literal notranslate"><span class="pre">highprice</span></code></p>
