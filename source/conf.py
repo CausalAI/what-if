@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 Uber Technologies, Inc.
+# Copyright (c) 2019-2020 Causal AI.
 # SPDX-License-Identifier: Apache-2.0
 
 import sphinx_rtd_theme
@@ -63,9 +63,9 @@ nbsphinx_allow_errors = True
 master_doc = 'index'
 
 # General information about the project.
-project = u'Pyro Tutorials 编译'
-copyright = u'Uber Technologies, Inc; 编译 by Heyang Gong'
-author = u'Uber AI Labs'
+project = u'Causal inference: What if 教材解读'
+copyright = u'编译和解读 by Heyang Gong'
+author = u'Heyang Gong'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -155,7 +155,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'PyroTutorials.tex', u'Pyro Examples and Tutorials',
-     u'Uber AI Labs', 'manual'),
+     u'Causal AI', 'manual'),
 ]
 
 
@@ -175,7 +175,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'PyroTutorials', u'Pyro Examples and Tutorials',
-     author, 'PyroTutorials', 'One line description of project.',
+    (master_doc, 'Causal Inference', u'Causal Inference with python code',
+     author, 'Causal Inference Tutorials', 'One line description of project.',
      'Miscellaneous'),
 ]

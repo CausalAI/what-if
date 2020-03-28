@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to Pyro Examples and Tutorials! &mdash; Pyro Tutorials 编译 1.3.0 documentation</title>
+  <title>Welcome to Causal Inference: What If! &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Pyro 模型介绍" href="intro_part_i.html" /> 
+    <link rel="next" title="README" href="README.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -89,67 +89,37 @@
               
             
             
-              <p class="caption"><span class="caption-text">Introduction:</span></p>
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a></li>
-<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Advanced:</span></p>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a></li>
-<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a></li>
-<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a></li>
-<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Examples:</span></p>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributed:</span></p>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a></li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a></li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a></li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a></li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Code Examples:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
 </ul>
 
             
@@ -164,7 +134,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Pyro Tutorials 编译</a>
+          <a href="#">Causal inference: What if 教材解读</a>
         
       </nav>
 
@@ -195,7 +165,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Welcome to Pyro Examples and Tutorials!</li>
+      <li>Welcome to Causal Inference: What If!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -238,317 +208,119 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="welcome-to-pyro-examples-and-tutorials">
-<h1>Welcome to Pyro Examples and Tutorials!<a class="headerlink" href="#welcome-to-pyro-examples-and-tutorials" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="welcome-to-causal-inference-what-if">
+<h1>Welcome to Causal Inference: What If!<a class="headerlink" href="#welcome-to-causal-inference-what-if" title="Permalink to this headline">¶</a></h1>
+<p>编译和解读 by Heyang Gong</p>
+<p>原书地址: <a class="reference external" href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/</a></p>
+<p>该书对因果推理的概念和方法进行了全面的介绍。目前，这些材料大部分散布在多个学科的期刊中，或者仅限于技术文章。我们希望对因果推理感兴趣的人，例如流行病学家，统计学家，心理学家，经济学家，社会学家，政治学家，计算机科学家，都会对这本书感兴趣。这本书分为三个难度越来越大的部分：无模型的因果推理，有模型的因果推理，以及复杂纵向数据的因果推理。</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Introduction:</span></p>
+<p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro_part_i.html">Pyro 模型介绍</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#原始随机函数">原始随机函数</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#一个简单模型">一个简单模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#The-pyro.sample-Primitive">The <code class="docutils literal notranslate"><span class="pre">pyro.sample</span></code> Primitive</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#通用概率编程">通用概率编程</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_i.html#下一步？">下一步？</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intro_part_ii.html">Pyro 推断简介</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#一个简单例子">一个简单例子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#Conditioning">Conditioning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#近似推断">近似推断</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#变分推断">变分推断</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro_part_ii.html#下一步？">下一步？</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_i.html">SVI Part I: Pyro 随机变分推断基础</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#SVI数学基础">SVI数学基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#近似后验分布Guide">近似后验分布Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#目标函数ELBO">目标函数ELBO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#SVI-Class"><code class="docutils literal notranslate"><span class="pre">SVI</span></code> Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#optimizers">optimizers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#端对端例子">端对端例子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_i.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_ii.html">SVI Part II: 条件独立, 子采样和 Amortization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#在Pyro中标记条件独立">在Pyro中标记条件独立</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#子采样">子采样</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#Amortization">Amortization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#More-about-plate">More about <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_ii.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="svi_part_iii.html">SVI Part III: ELBO 梯度估计</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#Setup">Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#简单情况:-可重参数化">简单情况: 可重参数化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#Tricky-case:-不可重参数化">Tricky case: 不可重参数化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#缓解方差问题策略">缓解方差问题策略</a></li>
-<li class="toctree-l2"><a class="reference internal" href="svi_part_iii.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tensor_shapes.html">Pyro中模型和数据维度</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#随机函数的维度">随机函数的维度</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#独立性声明">独立性声明</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Subsampling-tensors-inside-a-plate">Subsampling tensors inside a <code class="docutils literal notranslate"><span class="pre">plate</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="tensor_shapes.html#Broadcasting-to-allow-parallel-enumeration">Broadcasting to allow parallel enumeration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">README</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Advanced:</span></p>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="enumeration.html">Inference with 离散潜变量</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Mechanics-of-enumeration">Mechanics of enumeration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Plates-and-enumeration">Plates and enumeration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enumeration.html#Time-series-example">Time series example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="custom_objectives.html">自定义 SVI 目标函数</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Basic-SVI-Usage">Basic SVI Usage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Custom-Regularizer">Example: Custom Regularizer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Clipping-Gradients">Example: Clipping Gradients</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Scaling-the-Loss">Example: Scaling the Loss</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Mixing-Optimizers">Example: Mixing Optimizers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_objectives.html#Example:-Custom-ELBO">Example: Custom ELBO</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="jit.html">Pyro 模型中使用 PyTorch JIT Compiler</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="jit.html#Introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jit.html#A-simple-model">A simple model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="jit.html#Varying-structure">Varying structure</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="minipyro.html">Mini-Pyro</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="minipyro.html#example-use-of-mini-pyro">Example use of mini-Pyro</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="effect_handlers.html">Poutine: Pyro 中使用 Effect Handlers 编程手册</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Poutine:-Pyro-算法库的基石">Poutine: Pyro 算法库的基石</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Implementing-new-effect-handlers-with-the-Messenger-API">Implementing new effect handlers with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#The-Messenger-API-in-more-detail">The <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API in more detail</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Inside-the-messages-sent-by-Messengers">Inside the messages sent by <code class="docutils literal notranslate"><span class="pre">Messenger</span></code>s</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Implementing-inference-algorithms-with-existing-effect-handlers:-examples">Implementing inference algorithms with existing effect handlers: examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#Example:-implementing-lazy-evaluation-with-the-Messenger-API">Example: implementing lazy evaluation with the <code class="docutils literal notranslate"><span class="pre">Messenger</span></code> API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="effect_handlers.html#References:-algebraic-effects-and-handlers-in-programming-language-research">References: algebraic effects and handlers in programming language research</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5-Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Examples:</span></p>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="vae.html">变分自编码器</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="vae.html#VAE-数学简介">VAE 数学简介</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vae.html#VAE-in-Pyro">VAE in Pyro</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vae.html#Inference">Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vae.html#Code-and-Sample-results">Code and Sample results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vae.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#Setup-and-imports">Setup and imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#11.1-Data-cannot-speak-for-themselves">11.1 Data cannot speak for themselves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#11.2-Parametric-estimators-of-the-conditional-mean">11.2 Parametric estimators of the conditional mean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#11.3-Nonparametric-estimators-of-the-conditional-mean">11.3 Nonparametric estimators of the conditional mean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#11.4-Smoothing">11.4 Smoothing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#11.5-The-bias-variance-trade-off">11.5 The bias-variance trade-off</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter11-Why_models.html#End-to-End">End to End</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression.html">贝叶斯回归-介绍(Part 1)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Setup">Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Linear-Regression">Linear Regression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Bayesian-Regression-with-Pyro’s-Stochastic-Variational-Inference-(SVI)">Bayesian Regression with Pyro’s Stochastic Variational Inference (SVI)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Model-Evaluation">Model Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression.html#Model-Serving-via-TorchScript">Model Serving via TorchScript</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch 12 逆概率加权和边际结构模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#The-causal-question">The causal question</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#12.2-Estimating-IP-weights-via-modeling">12.2 Estimating IP weights via modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#12.3-Stabilized-IP-weights">12.3 Stabilized IP weights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#12.4-Marginal-structural-models">12.4 Marginal structural models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#12.5-Effect-modification-and-marginal-structural-models">12.5 Effect modification and marginal structural models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#12.6-Censoring-and-missing-data">12.6 Censoring and missing data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter12-IPW.html#End-to-End">End to End</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="bayesian_regression_ii.html">贝叶斯回归-推断算法(Part 2)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Bayesian-Linear-Regression">Bayesian Linear Regression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Model-+-Guide">Model + Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#SVI">SVI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#HMC">HMC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#Comparing-Posterior-Distributions">Comparing Posterior Distributions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#MultivariateNormal-Guide">MultivariateNormal Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bayesian_regression_ii.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13: 标准化和参数 G-公式</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#13.1-Standardization-as-an-alternative-to-IP-weighting">13.1 Standardization as an alternative to IP weighting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#13.2-Estimating-the-mean-outcome-via-modeling">13.2 Estimating the mean outcome via modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">13.3 Standardizing the mean outcome to the confounder distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#13.4-IP-weighting-or-standardization?">13.4 IP weighting or standardization?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#13.5-How-seriously-do-we-take-our-estimates?">13.5 How seriously do we take our estimates?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter13-Standardization_g-formula.html#End-to-End">End to End</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="dmm.html">深马尔可夫模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#The-Model">The Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Inference">Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Packaging-the-Model-and-Guide-as-a-PyTorch-Module">Packaging the Model and Guide as a PyTorch Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Stochastic-Variational-Inference">Stochastic Variational Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#The-Black-Magic-of-Optimization">The Black Magic of Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Data-Loading,-Training,-and-Evaluation">Data Loading, Training, and Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Evaluation">Evaluation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Results">Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#Bells,-whistles,-and-other-improvements">Bells, whistles, and other improvements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dmm.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.1-The-causal-question-revisited">14.1 The causal question revisited</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.2-Exchangeability-revisited">14.2 Exchangeability revisited</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.3-Structural-nested-mean-models">14.3 Structural nested mean models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.4-Rank-preservation">14.4 Rank preservation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.5-G-estimation">14.5 G-estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter14-G估计_of_SNMs.html#14.6-Structural-nested-models-with-two-or-more-parameters">14.6 Structural nested models with two or more parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="air.html">Attend Infer Repeat</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="air.html#Introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#Model">Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#Guide">Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#Inference">Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#Results">Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#In-practice">In practice</a></li>
-<li class="toctree-l2"><a class="reference internal" href="air.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter15-Outcome_regression_PS.html#Setup-and-imports">Setup and imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter15-Outcome_regression_PS.html#Section-15.1">Section 15.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter15-Outcome_regression_PS.html#Section-15.2">Section 15.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter15-Outcome_regression_PS.html#Section-15.3">Section 15.3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter15-Outcome_regression_PS.html#End-to-End">End to End</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="ss-vae.html">半监督 VAE</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#The-Challenges-of-Inference">The Challenges of Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#First-Variant:-Standard-objective-function,-naive-estimator">First Variant: Standard objective function, naive estimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Interlude:-Summing-Out-Discrete-Latents">Interlude: Summing Out Discrete Latents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Second-Variant:-Standard-Objective-Function,-Better-Estimator">Second Variant: Standard Objective Function, Better Estimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Third-Variant:-Adding-a-Term-to-the-Objective">Third Variant: Adding a Term to the Objective</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Results">Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#Final-thoughts">Final thoughts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ss-vae.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter16-工具变量法.html#Setup-and-imports">Setup and imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter16-工具变量法.html#Section-16.1">Section 16.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter16-工具变量法.html#Section-16.2">Section 16.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter16-工具变量法.html#Section-16.5">Section 16.5</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stable.html">随机波动率的 Levy 稳定分布模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stable.html#Summary">Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stable.html#Table-of-contents">Table of contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter17-因果生存分析.html#Section-17.1">Section 17.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter17-因果生存分析.html#Section-17.2">Section 17.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter17-因果生存分析.html#Section-17.4">Section 17.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter17-因果生存分析.html#Section-17.5">Section 17.5</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contributed:</span></p>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="gmm.html">高斯混合模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gmm.html#Overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gmm.html#Training-a-MAP-estimator">Training a MAP estimator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gmm.html#Serving-the-model:-predicting-membership">Serving the model: predicting membership</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gmm.html#MCMC">MCMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ch19-time_varying.html#知识点">知识点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ch19-time_varying.html#Questions">Questions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="gp.html">高斯过程</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#Imports">Imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#Data">Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#Define-model">Define model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#Inference">Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#Sparse-GPs">Sparse GPs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#More-Sparse-GPs">More Sparse GPs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gp.html#参考文献">参考文献</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for time-varing treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ch22-target_trail_emulation.html#The-target-trail">The target trail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ch22-target_trail_emulation.html#Causal-effects-in-randomized-trials">Causal effects in randomized trials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ch22-target_trail_emulation.html#Causal-effects-in-observational-analyses-that-emulate-a-target-trial">Causal effects in observational analyses that emulate a target trial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ch22-target_trail_emulation.html#Time-zero">Time zero</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ch22-target_trail_emulation.html#A-unified-analysis-for-causal-inference">A unified analysis for causal inference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="gplvm.html">高斯过程潜变量模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Dataset">Dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Modelling">Modelling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Inference">Inference</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Visualizing-the-result">Visualizing the result</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#Remarks">Remarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gplvm.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="bo.html">贝叶斯优化</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#Problem-Setup">Problem Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#Define-an-objective-function">Define an objective function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#Setting-a-Gaussian-Process-prior">Setting a Gaussian Process prior</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#Define-an-acquisition-function">Define an acquisition function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#The-inner-loop-of-Bayesian-Optimization">The inner loop of Bayesian Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#Running-the-algorithm">Running the algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bo.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="easyguide.html">用 EasyGuide 构建 guides</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Modeling-time-series-data">Modeling time series data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Writing-a-guide-without-EasyGuide">Writing a guide without EasyGuide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Using-EasyGuide">Using EasyGuide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="easyguide.html#Amortized-guides">Amortized guides</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_i.html">Forecasting I: univariate, heavy tailed</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_i.html#Summary">Summary</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_ii.html">Forecasting II: 状态空间模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_ii.html#Intro-to-state-space-models">Intro to state space models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_ii.html#Gaussian-HMM">Gaussian HMM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_ii.html#Heavy-tailed-modeling-with-Linear-HMM">Heavy-tailed modeling with Linear HMM</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="forecasting_iii.html">Forecasting III: 层级模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_iii.html#Multivariate-time-series">Multivariate time series</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_iii.html#Deeper-hierarchical-models">Deeper hierarchical models</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forecasting_iii.html#Subsampling">Subsampling</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tracking_1d.html">跟踪未知数量的对象</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tracking_1d.html#Generate-data">Generate data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tracking_1d.html#Train">Train</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="csis.html">Compiled Sequential 重要采样</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="csis.html#构建-model">构建 model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="csis.html#构建-guide:">构建 guide:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="csis.html#Create-a-CSIS-instance:">Create a <code class="docutils literal notranslate"><span class="pre">CSIS</span></code> instance:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="csis.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-implicature.html">理性言论行动框架</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RSA-hyperbole.html">用 RSA 理解 Hyperbole</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="RSA-hyperbole.html#Pragmatic-Halo">Pragmatic Halo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RSA-hyperbole.html#Irony-and-More-Complex-Affect">Irony and More Complex Affect</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ekf.html">卡尔曼滤子</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ekf.html#Dynamic-process">Dynamic process</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ekf.html#Kalman-Update">Kalman Update</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ekf.html#Nonlinear-Estimation:-Extended-Kalman-Filter">Nonlinear Estimation: Extended Kalman Filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ekf.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="working_memory.html">设计自适应实验以研究工作记忆</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#工作记忆模型">工作记忆模型</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#Inference-in-the-model">Inference in the model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#Bayesian-optimal-experimental-design">Bayesian optimal experimental design</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#The-adaptive-experiment">The adaptive experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#Extensions">Extensions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_memory.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="elections.html">贝叶斯最优实验设计预测美国总统选举</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#选择先验分布">选择先验分布</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#Setting-up-the-model">Setting up the model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#Measuring-the-expected-information-gain-of-a-polling-strategy">Measuring the expected information gain of a polling strategy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#Running-the-experiment">Running the experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#Conclusions">Conclusions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="elections.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dirichlet_process_mixture.html">Dirichlet 过程混合模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#什么是贝叶斯非参数模型？">什么是贝叶斯非参数模型？</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#Inference"><strong>Inference</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#Criticism"><strong>Criticism</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="dirichlet_process_mixture.html#参考文献">参考文献</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="boosting_bbvi.html">Boosting 黑盒变分推断</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#Theoretical-Background">Theoretical Background</a></li>
-<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#BBBVI-in-Pyro">BBBVI in Pyro</a></li>
-<li class="toctree-l2"><a class="reference internal" href="boosting_bbvi.html#The-Complete-Implementation">The Complete Implementation</a></li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Code Examples:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="capture_recapture.html">Capture-Recapture Models (CJS Models)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cevae.html">因果VAE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hmm.html">隐马尔可夫模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lda.html">LDA主题模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mcmc.html">Markov Chain Monte Carlo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="neutra.html">NeuTraReparam</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sparse_gamma.html">稀疏 Gamma 深度指数族分布</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dkl.html">Deep Kernel Learning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="einsum.html">Plated Einsum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="forecast_simple.html">多元预测</a></li>
-<li class="toctree-l1"><a class="reference internal" href="timeseries.html">高斯过程时间序列模型</a></li>
-<li class="toctree-l1"><a class="reference internal" href="smcfilter.html">序贯蒙特卡洛滤波</a></li>
 </ul>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
@@ -561,7 +333,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="intro_part_i.html" class="btn btn-neutral float-right" title="Pyro 模型介绍" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="README.html" class="btn btn-neutral float-right" title="README" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -571,7 +343,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright Uber Technologies, Inc; 编译 by Heyang Gong
+        &copy; Copyright 编译和解读 by Heyang Gong
 
     </p>
   </div>

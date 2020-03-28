@@ -523,6 +523,23 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Bayesian-Linear-Regression">
 <h2>Bayesian Linear Regression<a class="headerlink" href="#Bayesian-Linear-Regression" title="Permalink to this headline">¶</a></h2>
 <p>Our goal is once again to predict log GDP per capita of a nation as a function of two features from the dataset - whether the nation is in Africa, and its Terrain Ruggedness Index, but we will explore more expressive guides.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="k">import</span> <span class="n">Source</span>
+<span class="n">Source</span><span class="p">(</span><span class="s1">&#39;Digraph{a, bA, br, bar -&gt; mean; mean, sigma -&gt; log_gdp}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/bayesian_regression_ii_6_0.svg" src="_images/bayesian_regression_ii_6_0.svg" /></div>
+</div>
 </div>
 <div class="section" id="Model-+-Guide">
 <h2>Model + Guide<a class="headerlink" href="#Model-+-Guide" title="Permalink to this headline">¶</a></h2>
@@ -685,8 +702,24 @@ Site: sigma
 </div>
 <div class="section" id="HMC">
 <h2>HMC<a class="headerlink" href="#HMC" title="Permalink to this headline">¶</a></h2>
-<p>In contrast to using variational inference which gives us an approximate posterior over our latent variables, we can also do exact inference using <a class="reference external" href="http://docs.pyro.ai/en/dev/mcmc.html">Markov Chain Monte Carlo</a> (MCMC), a class of algorithms that in the limit, allow us to draw unbiased samples from the true posterior. The algorithm that we will be using is called the No-U Turn Sampler (NUTS) [1], which provides an efficient and automated way of running Hamiltonian Monte Carlo. It is slightly
-slower than variational inference, but provides an exact estimate.</p>
+<p>相对于使用变分推断 which gives us an approximate posterior over our latent variables, 我们还可以使用马尔可夫链蒙特卡洛 <a class="reference external" href="http://docs.pyro.ai/en/dev/mcmc.html">Markov Chain Monte Carlo</a>(MCMC) 进行精确推断，这是一类算法，在一定程度上可以使我们从 true posterior 中无偏抽样。我们将使用的算法称为 No-U Turn Sampler (NUTS)[1]，它提供了一种汉密尔顿蒙特卡洛抽样的有效且自动化的方式。 It is slightly slower than variational inference, but provides an exact estimate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="k">import</span> <span class="n">Source</span>
+<span class="n">Source</span><span class="p">(</span><span class="s1">&#39;Digraph{a, bA, br, bar -&gt; mean; mean, sigma -&gt; log_gdp}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/bayesian_regression_ii_16_0.svg" src="_images/bayesian_regression_ii_16_0.svg" /></div>
+</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -778,7 +811,7 @@ Site: sigma
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/bayesian_regression_ii_18_0.png" src="_images/bayesian_regression_ii_18_0.png" />
+<img alt="_images/bayesian_regression_ii_20_0.png" src="_images/bayesian_regression_ii_20_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -803,7 +836,7 @@ Site: sigma
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/bayesian_regression_ii_19_0.png" src="_images/bayesian_regression_ii_19_0.png" />
+<img alt="_images/bayesian_regression_ii_21_0.png" src="_images/bayesian_regression_ii_21_0.png" />
 </div>
 </div>
 </div>
@@ -877,7 +910,7 @@ Elbo loss: 249.86634194850922
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/bayesian_regression_ii_23_0.png" src="_images/bayesian_regression_ii_23_0.png" />
+<img alt="_images/bayesian_regression_ii_25_0.png" src="_images/bayesian_regression_ii_25_0.png" />
 </div>
 </div>
 <p>Now let’s compare the posterior computed by the Diagonal Normal guide vs the Multivariate Normal guide. Note that the multivariate distribution is more dispresed than the Diagonal Normal.</p>
@@ -903,7 +936,7 @@ Elbo loss: 249.86634194850922
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/bayesian_regression_ii_25_0.png" src="_images/bayesian_regression_ii_25_0.png" />
+<img alt="_images/bayesian_regression_ii_27_0.png" src="_images/bayesian_regression_ii_27_0.png" />
 </div>
 </div>
 <p>and the Multivariate guide with the posterior computed by HMC. Note that the Multivariate guide better captures the true posterior.</p>
@@ -929,7 +962,7 @@ Elbo loss: 249.86634194850922
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/bayesian_regression_ii_27_0.png" src="_images/bayesian_regression_ii_27_0.png" />
+<img alt="_images/bayesian_regression_ii_29_0.png" src="_images/bayesian_regression_ii_29_0.png" />
 </div>
 </div>
 </div>

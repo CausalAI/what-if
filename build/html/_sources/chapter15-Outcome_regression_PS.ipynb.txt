@@ -1,0 +1,1811 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "# Ch15 结果回归模型和倾向得分\n",
+    "\n",
+    "Outcome Regression and Propensity Scores"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "结果回归和倾向得分分析的各种版本是因果推断最常用的参数方法。您可能想知道为什么我们花这么长时间才包含讨论这些方法的章节。到目前为止，我们已经描述了IP加权，标准化和g估计-g方法。在最不常用的方法之后再提出最常用的方法，对于我们而言似乎是一个奇怪的选择。我们为什么不从基于结果回归和倾向得分的更简单，广泛使用的方法开始呢？因为这些方法通常无法使用。\n",
+    "\n",
+    "\n",
+    "更准确地说，更简单的结果回归和倾向评分方法（as described in a zillion publications that this chapter cannot possibly summarize）在更简单的环境下可以很好地工作，但这些方法并非handle the complexities associated with causal inference with time-varying treatments. 在第三部分中，我们将再次讨论g方法，但是将不再赘述常规结果回归和倾向评分方法。本章专门讨论因果方法，这些因果方法通常 have limited applicability for complex longitudinal data.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Setup and imports"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import statsmodels.api as sm\n",
+    "import matplotlib.pyplot as plt\n",
+    "from tqdm import tqdm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero\n"
+     ]
+    }
+   ],
+   "source": [
+    "nhefs_all = pd.read_excel('NHEFS.xls')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Subset the data as described in the margin, pg 149."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "restriction_cols = [\n",
+    "    'sex', 'age', 'race', 'wt82', 'ht', 'school', 'alcoholpy', 'smokeintensity'\n",
+    "]\n",
+    "missing = nhefs_all[restriction_cols].isnull().any(axis=1)\n",
+    "nhefs = nhefs_all.loc[~missing]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "This time, instead of adding dummy variables and squared variables, we'll use formulas to specify Statsmodels models"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Section 15.1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### Program 15.1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "\"Using the same model as in Section 13.2...\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "             <td></td>               <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th>              <td>   -1.5882</td> <td>    4.313</td> <td>   -0.368</td> <td> 0.713</td> <td>  -10.048</td> <td>    6.872</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.2]</th>      <td>    0.7904</td> <td>    0.607</td> <td>    1.302</td> <td> 0.193</td> <td>   -0.400</td> <td>    1.981</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.3]</th>      <td>    0.5563</td> <td>    0.556</td> <td>    1.000</td> <td> 0.317</td> <td>   -0.534</td> <td>    1.647</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.4]</th>      <td>    1.4916</td> <td>    0.832</td> <td>    1.792</td> <td> 0.073</td> <td>   -0.141</td> <td>    3.124</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.5]</th>      <td>   -0.1950</td> <td>    0.741</td> <td>   -0.263</td> <td> 0.793</td> <td>   -1.649</td> <td>    1.259</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(exercise)[T.1]</th>       <td>    0.2960</td> <td>    0.535</td> <td>    0.553</td> <td> 0.580</td> <td>   -0.754</td> <td>    1.346</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(exercise)[T.2]</th>       <td>    0.3539</td> <td>    0.559</td> <td>    0.633</td> <td> 0.527</td> <td>   -0.742</td> <td>    1.450</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(active)[T.1]</th>         <td>   -0.9476</td> <td>    0.410</td> <td>   -2.312</td> <td> 0.021</td> <td>   -1.752</td> <td>   -0.143</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(active)[T.2]</th>         <td>   -0.2614</td> <td>    0.685</td> <td>   -0.382</td> <td> 0.703</td> <td>   -1.604</td> <td>    1.081</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk</th>                   <td>    2.5596</td> <td>    0.809</td> <td>    3.163</td> <td> 0.002</td> <td>    0.972</td> <td>    4.147</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:smokeintensity</th>    <td>    0.0467</td> <td>    0.035</td> <td>    1.328</td> <td> 0.184</td> <td>   -0.022</td> <td>    0.116</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>sex</th>                    <td>   -1.4303</td> <td>    0.469</td> <td>   -3.050</td> <td> 0.002</td> <td>   -2.350</td> <td>   -0.510</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>race</th>                   <td>    0.5601</td> <td>    0.582</td> <td>    0.963</td> <td> 0.336</td> <td>   -0.581</td> <td>    1.701</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>age</th>                    <td>    0.3596</td> <td>    0.163</td> <td>    2.202</td> <td> 0.028</td> <td>    0.039</td> <td>    0.680</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(age ** 2)</th>            <td>   -0.0061</td> <td>    0.002</td> <td>   -3.534</td> <td> 0.000</td> <td>   -0.009</td> <td>   -0.003</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>smokeintensity</th>         <td>    0.0491</td> <td>    0.052</td> <td>    0.950</td> <td> 0.342</td> <td>   -0.052</td> <td>    0.151</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(smokeintensity ** 2)</th> <td>   -0.0010</td> <td>    0.001</td> <td>   -1.056</td> <td> 0.291</td> <td>   -0.003</td> <td>    0.001</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>smokeyrs</th>               <td>    0.1344</td> <td>    0.092</td> <td>    1.465</td> <td> 0.143</td> <td>   -0.046</td> <td>    0.314</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(smokeyrs ** 2)</th>       <td>   -0.0019</td> <td>    0.002</td> <td>   -1.209</td> <td> 0.227</td> <td>   -0.005</td> <td>    0.001</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>wt71</th>                   <td>    0.0455</td> <td>    0.083</td> <td>    0.546</td> <td> 0.585</td> <td>   -0.118</td> <td>    0.209</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(wt71 ** 2)</th>           <td>   -0.0010</td> <td>    0.001</td> <td>   -1.840</td> <td> 0.066</td> <td>   -0.002</td> <td> 6.39e-05</td>\n",
+       "</tr>\n",
+       "</table>"
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.table.SimpleTable'>"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "formula = (\n",
+    "    'wt82_71 ~ qsmk + qsmk:smokeintensity + sex + race + age + I(age**2) + C(education)'\n",
+    "    '        + smokeintensity + I(smokeintensity**2) + smokeyrs + I(smokeyrs**2)'\n",
+    "    '        + C(exercise) + C(active) + wt71 + I(wt71**2)'\n",
+    ")\n",
+    "\n",
+    "ols = sm.OLS.from_formula(formula, data=nhefs) \n",
+    "res = ols.fit()\n",
+    "res.summary().tables[1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "           estimate\n",
+      "alpha_1       2.56\n",
+      "alpha_2       0.05\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('           estimate')\n",
+    "print('alpha_1     {:>6.2f}'.format(res.params.qsmk))\n",
+    "print('alpha_2     {:>6.2f}'.format(res.params['qsmk:smokeintensity']))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "To obtain the estimates of the effect of quitting smoking, we'll use a `t_test` on the fitted model"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "First, we'll construct the a contrast DataFrame for the 5 cigarettes/day example"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "# start with empty DataFrame\n",
+    "contrast = pd.DataFrame(\n",
+    "    np.zeros((2, res.params.shape[0])),\n",
+    "    columns=res.params.index\n",
+    ")\n",
+    "\n",
+    "# modify the entries\n",
+    "contrast['Intercept'] = 1\n",
+    "contrast['qsmk'] = [1, 0]\n",
+    "contrast['smokeintensity'] = [5, 5]\n",
+    "contrast['qsmk:smokeintensity'] = [5, 0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Intercept</th>\n",
+       "      <th>C(education)[T.2]</th>\n",
+       "      <th>C(education)[T.3]</th>\n",
+       "      <th>C(education)[T.4]</th>\n",
+       "      <th>C(education)[T.5]</th>\n",
+       "      <th>C(exercise)[T.1]</th>\n",
+       "      <th>C(exercise)[T.2]</th>\n",
+       "      <th>C(active)[T.1]</th>\n",
+       "      <th>C(active)[T.2]</th>\n",
+       "      <th>qsmk</th>\n",
+       "      <th>...</th>\n",
+       "      <th>sex</th>\n",
+       "      <th>race</th>\n",
+       "      <th>age</th>\n",
+       "      <th>I(age ** 2)</th>\n",
+       "      <th>smokeintensity</th>\n",
+       "      <th>I(smokeintensity ** 2)</th>\n",
+       "      <th>smokeyrs</th>\n",
+       "      <th>I(smokeyrs ** 2)</th>\n",
+       "      <th>wt71</th>\n",
+       "      <th>I(wt71 ** 2)</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>2 rows × 21 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Intercept  C(education)[T.2]  C(education)[T.3]  C(education)[T.4]  \\\n",
+       "0          1                0.0                0.0                0.0   \n",
+       "1          1                0.0                0.0                0.0   \n",
+       "\n",
+       "   C(education)[T.5]  C(exercise)[T.1]  C(exercise)[T.2]  C(active)[T.1]  \\\n",
+       "0                0.0               0.0               0.0             0.0   \n",
+       "1                0.0               0.0               0.0             0.0   \n",
+       "\n",
+       "   C(active)[T.2]  qsmk  ...  sex  race  age  I(age ** 2)  smokeintensity  \\\n",
+       "0             0.0     1  ...  0.0   0.0  0.0          0.0               5   \n",
+       "1             0.0     0  ...  0.0   0.0  0.0          0.0               5   \n",
+       "\n",
+       "   I(smokeintensity ** 2)  smokeyrs  I(smokeyrs ** 2)  wt71  I(wt71 ** 2)  \n",
+       "0                     0.0       0.0               0.0   0.0           0.0  \n",
+       "1                     0.0       0.0               0.0   0.0           0.0  \n",
+       "\n",
+       "[2 rows x 21 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "contrast"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "The effect estimate and confidence interval can be calculated with a t-test on row 0 minus row 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<class 'statsmodels.stats.contrast.ContrastResults'>\n",
+       "                             Test for Constraints                             \n",
+       "==============================================================================\n",
+       "                 coef    std err          t      P>|t|      [0.025      0.975]\n",
+       "------------------------------------------------------------------------------\n",
+       "c0             2.7929      0.668      4.179      0.000       1.482       4.104\n",
+       "=============================================================================="
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "res.t_test(contrast.iloc[0] - contrast.iloc[1])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "For the effect estimate with 40 cigarettes/day, we can change a few entries in the `contrast` DataFrame and again use a t-test"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<class 'statsmodels.stats.contrast.ContrastResults'>\n",
+       "                             Test for Constraints                             \n",
+       "==============================================================================\n",
+       "                 coef    std err          t      P>|t|      [0.025      0.975]\n",
+       "------------------------------------------------------------------------------\n",
+       "c0             4.4261      0.848      5.221      0.000       2.763       6.089\n",
+       "=============================================================================="
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "contrast['smokeintensity'] = [40, 40]\n",
+    "contrast['qsmk:smokeintensity'] = [40, 0]\n",
+    "\n",
+    "res.t_test(contrast.iloc[0] - contrast.iloc[1])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "If we don't use the product term `qsmk:smokeintensity`, we get the following model and effect estimate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "             <td></td>               <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th>              <td>   -1.6586</td> <td>    4.314</td> <td>   -0.384</td> <td> 0.701</td> <td>  -10.120</td> <td>    6.803</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.2]</th>      <td>    0.8185</td> <td>    0.607</td> <td>    1.349</td> <td> 0.178</td> <td>   -0.372</td> <td>    2.009</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.3]</th>      <td>    0.5715</td> <td>    0.556</td> <td>    1.028</td> <td> 0.304</td> <td>   -0.519</td> <td>    1.662</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.4]</th>      <td>    1.5085</td> <td>    0.832</td> <td>    1.812</td> <td> 0.070</td> <td>   -0.124</td> <td>    3.141</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(education)[T.5]</th>      <td>   -0.1708</td> <td>    0.741</td> <td>   -0.230</td> <td> 0.818</td> <td>   -1.625</td> <td>    1.283</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(exercise)[T.1]</th>       <td>    0.3207</td> <td>    0.535</td> <td>    0.599</td> <td> 0.549</td> <td>   -0.729</td> <td>    1.370</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(exercise)[T.2]</th>       <td>    0.3629</td> <td>    0.559</td> <td>    0.649</td> <td> 0.516</td> <td>   -0.734</td> <td>    1.459</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(active)[T.1]</th>         <td>   -0.9430</td> <td>    0.410</td> <td>   -2.300</td> <td> 0.022</td> <td>   -1.747</td> <td>   -0.139</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(active)[T.2]</th>         <td>   -0.2580</td> <td>    0.685</td> <td>   -0.377</td> <td> 0.706</td> <td>   -1.601</td> <td>    1.085</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk</th>                   <td>    3.4626</td> <td>    0.438</td> <td>    7.897</td> <td> 0.000</td> <td>    2.603</td> <td>    4.323</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>sex</th>                    <td>   -1.4650</td> <td>    0.468</td> <td>   -3.128</td> <td> 0.002</td> <td>   -2.384</td> <td>   -0.546</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>race</th>                   <td>    0.5864</td> <td>    0.582</td> <td>    1.008</td> <td> 0.314</td> <td>   -0.555</td> <td>    1.727</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>age</th>                    <td>    0.3627</td> <td>    0.163</td> <td>    2.220</td> <td> 0.027</td> <td>    0.042</td> <td>    0.683</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(age ** 2)</th>            <td>   -0.0061</td> <td>    0.002</td> <td>   -3.555</td> <td> 0.000</td> <td>   -0.010</td> <td>   -0.003</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>smokeintensity</th>         <td>    0.0652</td> <td>    0.050</td> <td>    1.295</td> <td> 0.196</td> <td>   -0.034</td> <td>    0.164</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(smokeintensity ** 2)</th> <td>   -0.0010</td> <td>    0.001</td> <td>   -1.117</td> <td> 0.264</td> <td>   -0.003</td> <td>    0.001</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>smokeyrs</th>               <td>    0.1334</td> <td>    0.092</td> <td>    1.454</td> <td> 0.146</td> <td>   -0.047</td> <td>    0.313</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(smokeyrs ** 2)</th>       <td>   -0.0018</td> <td>    0.002</td> <td>   -1.183</td> <td> 0.237</td> <td>   -0.005</td> <td>    0.001</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>wt71</th>                   <td>    0.0374</td> <td>    0.083</td> <td>    0.449</td> <td> 0.653</td> <td>   -0.126</td> <td>    0.200</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>I(wt71 ** 2)</th>           <td>   -0.0009</td> <td>    0.001</td> <td>   -1.749</td> <td> 0.080</td> <td>   -0.002</td> <td>    0.000</td>\n",
+       "</tr>\n",
+       "</table>"
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.table.SimpleTable'>"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "formula = (\n",
+    "    'wt82_71 ~ qsmk + sex + race + age + I(age**2) + C(education)'\n",
+    "    '        + smokeintensity + I(smokeintensity**2) + smokeyrs + I(smokeyrs**2)'\n",
+    "    '        + C(exercise) + C(active) + wt71 + I(wt71**2)'\n",
+    ")  # no qsmk_x_smokeintensity\n",
+    "\n",
+    "ols = sm.OLS.from_formula(formula, data=nhefs)\n",
+    "res = ols.fit()\n",
+    "res.summary().tables[1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "           estimate   95% C.I.\n",
+      "alpha_1       3.5    (2.6, 4.3)\n"
+     ]
+    }
+   ],
+   "source": [
+    "est = res.params.qsmk\n",
+    "conf_ints = res.conf_int(alpha=0.05, cols=None)\n",
+    "lo, hi = conf_ints[0]['qsmk'], conf_ints[1]['qsmk']\n",
+    "\n",
+    "print('           estimate   95% C.I.')\n",
+    "print('alpha_1     {:>5.1f}    ({:>0.1f}, {:>0.1f})'.format(est, lo, hi))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Section 15.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### Program 15.2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "To estimate propensity score, we fit a logistic model for `qsmk` conditional on $L$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "formula = (\n",
+    "    'qsmk ~ sex + race + age + I(age**2) + C(education)'\n",
+    "    '     + smokeintensity + I(smokeintensity**2) + smokeyrs + I(smokeyrs**2)'\n",
+    "    '     + C(exercise) + C(active) + wt71 + I(wt71**2)'\n",
+    ")\n",
+    "\n",
+    "model = sm.Logit.from_formula(formula, data=nhefs_all) \n",
+    "res = model.fit(disp=0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Then propensity is the predicted values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "propensity = res.predict(nhefs_all)\n",
+    "nhefs_all['propensity'] = propensity"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "The lowest and highest propensity scores:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "ranked = nhefs_all[['seqn', 'propensity']].sort_values('propensity').reset_index(drop=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "seqn          22941.000000\n",
+       "propensity        0.052981\n",
+       "Name: 0, dtype: float64"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ranked.loc[0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "seqn          24949.000000\n",
+       "propensity        0.793205\n",
+       "Name: 1628, dtype: float64"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ranked.loc[ranked.shape[0] - 1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Now we'll attempt to recreate Figure 15.1, pg 45\n",
+    "\n",
+    "First, we'll split the propensities based on whether the subject quit smoking"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "propensity0 = propensity[nhefs_all.qsmk == 0]\n",
+    "propensity1 = propensity[nhefs_all.qsmk == 1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "It looks like the bins are spaced every 0.05 (except at the right end), with the first bin starting at 0.025."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "bins = np.arange(0.025, 0.85, 0.05)\n",
+    "\n",
+    "top0, _ = np.histogram(propensity0, bins=bins)\n",
+    "top1, _ = np.histogram(propensity1, bins=bins)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAAgEAAAF3CAYAAAA8dZggAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADh0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uMy4xLjEsIGh0dHA6Ly9tYXRwbG90bGliLm9yZy8QZhcZAAAgAElEQVR4nOzdf5zNdf7//9uDQfkRWaYdhlSUYWgwG75Jyg6KzY5RS7YIq+3dDyot71WfUitq+0Gx/VpKdhutSiSpJG9S7SSGJhLFrkH5sYxf+TE8v3+cY/YYg2PmnPM6Z879ermcy5zzfL3O6/l4njMz53Ger+fr+TTnHCIiIhJ/KngdgIiIiHhDSYCIiEicUhIgIiISp5QEiIiIxCklASIiInFKSYCIiEicSvA6gEiqU6eOa9SokddhiIiIRMyXX3653TlXt6RtcZUENGrUiKVLl3odhoiISMSY2b9Otk2nA0REROKUkgAREZE4pSRAREQkTikJEBERiVNKAkREROKUkgAREZE4pSRAREQkTikJEBERiVNKAkREROKUkgAREZE4pSRAPLFx40auuuoqUlJSaN68ORMmTADgoYceon79+qSlpZGWlsbcuXMBOHz4MP3796dFixakpKQwduxYL8MXESkX4mrtAIkeCQkJPPnkk7Ru3Zo9e/bQpk0bMjIyALj77rsZPnz4cfvPmDGDgwcP8tVXX7F//36aNWtG37590YJQIiKlpyRAPJGUlERSUhIANWrUICUlhU2bNp10fzNj3759FBYW8tNPP1G5cmXOOeecSIUrIlIu6XSAeG7Dhg0sX76ctm3bAjBx4kRatmzJwIED2blzJwC9e/emWrVqJCUl0bBhQ4YPH07t2rW9DFtEJOYpCRBP7d27l6ysLMaPH88555zDbbfdxnfffUdubi5JSUnce++9AOTk5FCxYkU2b97M+vXrefLJJ/n+++89jl5EJLYpCRDPHD58mKysLPr160evXr0AOO+886hYsSIVKlTgd7/7HTk5OQC89tprdOvWjUqVKpGYmMjll1/O0qVLvQxfRCTmKQkQTzjnGDRoECkpKdxzzz1F5Vu2bCm6P3PmTFJTUwFo2LAhCxYswDnHvn37+Pzzz2natGnE4xYRKU80MFA8sWTJEqZNm0aLFi1IS0sD4NFHHyU7O5vc3FzMjEaNGvHCCy8AcPvtt3PLLbeQmpqKc45bbrmFli1betkEEZGYZ845r2OImPT0dKcuZBERKcnMmTPp1asXq1evDklP48GDB7n55pv58ssv+dnPfsbrr7/uyWXNZvalcy69pG06HSAiIgJkZ2fToUMHpk+fHpLjTZ48mXPPPZd169Zx9913M2LEiJAcN5SUBIiISNzbu3cvS5YsYfLkySFLAmbNmkX//v0B32XOH330EdHW+64xASIiEvfefvttunXrxsUXX0zt2rVZtmwZrVu3PmG/K664gj179pxQ/sQTT/DLX/7yuLJNmzbRoEEDwDdLas2aNdmxYwd16tQJTyNKQUmAiIjEvezsbIYNGwZAnz59yM7OLjEJWLx4cdDHLOlbv5mVPsgwUBIgIiJxbceOHSxYsIC8vDzMjCNHjmBmPP744yd8aJ9JT0BycjIbN24kOTmZwsJCCgoKom6mUyUBIiIS19544w1uvvnmokuSAa688ko++eQTrrjiiuP2PZOegOuuu46pU6fSvn173njjDa6++uqo6wnQwEAREYlr2dnZZGZmHleWlZXFa6+9VqbjDho0iB07dtC4cWOeeuopxo0bV6bjhYPmCRARESnHTjVPgE4HSMSNHz+egoKCkB2vZs2aRQN6REQkeEoCJOIKCgp48MEHQ3a80aNHh+xYIiLxRGMCRERE4lTUJAFm1sDMPjaz1Wb2tZkN9Zc/ZGabzCzXf7s24Dn/a2brzGyNmXX1LnoREZHYE02nAwqBe51zy8ysBvClmX3o3/a0c+6JwJ3NrBnQB2gO1APmm9nFzrkjEY1aREQkRkVNT4Bzbotzbpn//h5gNVD/FE/pCUx3zh10zq0H1gGXhT9SERGR8iFqkoBAZtYIaAX80190h5mtNLMpZnauv6w+sDHgafmUkDSY2RAzW2pmS7dt2xbGqEVERGJL1CUBZlYdeBMY5pzbDTwHXASkAVuAJ4/tWsLTT5j0wDn3onMu3TmXXrdu3TBFLSIiEnuiKgkws0r4EoC/O+feAnDO/eicO+KcOwq8xH+7/POBBgFPTwY2RzJeERGRWBY1SYD5JlSeDKx2zj0VUJ4UsFsmkOe/PxvoY2ZVzOwCoAmQE6l4RUREYl00XR1wOXAT8JWZ5frL/gj0NbM0fF39G4BbAZxzX5vZP4BV+K4suF1XBoiIiAQvapIA59wnlHyef+4pnjMGGBO2oERERMqxqDkdICIiIpGlJEBERCROKQkQERGJU0oCRERE4pSSABERkTilJEBERCROKQkQERGJU0oCRERE4pSSABERkTilJEBERCROKQkQERGJU0oCRERE4pSSABERkTilJEBERCROKQmQcm3jxo1cddVVpKSk0Lx5cyZMmADAf/7zHzIyMmjSpAkZGRns3LkTgFmzZtGyZUvS0tJIT0/nk08+8TJ8EZGwUhIg5VpCQgJPPvkkq1ev5vPPP2fSpEmsWrWKcePG0blzZ9auXUvnzp0ZN24cAJ07d2bFihXk5uYyZcoUBg8e7HELRETCR0mAlGtJSUm0bt0agBo1apCSksKmTZuYNWsW/fv3B6B///68/fbbAFSvXh0zA2Dfvn1F90VEyiMlARI3NmzYwPLly2nbti0//vgjSUlJgC9R2Lp1a9F+M2fOpGnTpnTv3p0pU6Z4Fa6ISNgpCZC4sHfvXrKyshg/fjznnHPOKffNzMzkm2++4e233+aBBx6IUIQiIpGnJEDKvcOHD5OVlUW/fv3o1asXAOeddx5btmwBYMuWLSQmJp7wvI4dO/Ldd9+xffv2iMYrIhIpSgKkXHPOMWjQIFJSUrjnnnuKyq+77jqmTp0KwNSpU+nZsycA69atwzkHwLJlyzh06BA/+9nPIh+4iEgEJHgdgEg4LVmyhGnTptGiRQvS0tIAePTRRxk5ciQ33HADkydPpmHDhsyYMQOAN998k1dffZVKlSpx9tln8/rrr2twoIiUW0oCpFzr0KFD0Tf74j766KMTykaMGMGIESPCHZaISFTQ6QA5wcCBA0lMTCQ1NbWobMWKFbRv354WLVrwq1/9it27dwPw4Ycf0qZNG1q0aEGbNm1YsGCBV2GLiMgZUhIgJxgwYADz5s07rmzw4MGMGzeOr776iszMTP785z8DUKdOHd555x2++uorpk6dyk033eRFyCIiUgpKAuQEHTt2pHbt2seVrVmzho4dOwKQkZHBm2++CUCrVq2oV68eAM2bN+fAgQMcPHgwsgGLiEipKAmQoKSmpjJ79mwAZsyYwcaNG0/Y580336RVq1ZUqVIl0uGJiEgpKAmQoEyZMoVJkybRpk0b9uzZQ+XKlY/b/vXXXzNixAheeOEFjyIUEZEzpasDJChNmzblgw8+AODbb7/l3XffLdqWn59PZmYmr776KhdddJFXIYqIyBlST4AE5djc+kePHuVPf/oTv//97wHYtWsX3bt3Z+zYsVx++eVehigiImdISYCcoG/fvrRv3541a9aQnJzM5MmTyc7O5uKLL6Zp06bUq1ePW265BYCJEyeybt06HnnkEdLS0khLSztuMR4REYleUXM6wMwaAK8CPweOAi865yaYWW3gdaARsAG4wTm303zTuE0ArgX2AwOcc8u8iL28yc7OLrF86NChJ5Tdf//93H///eEOSUREwiBqkgCgELjXObfMzGoAX5rZh8AA4CPn3DgzGwmMBEYA1wBN/Le2wHP+nyKMHz+egoKCkB6zZs2aDBs2LKTHFBHxUtQkAc65LcAW//09ZrYaqA/0BDr5d5sKLMSXBPQEXnW+OWE/N7NaZpbkP47EuYKCAh588MGQHnP06NEhPZ6IiNeickyAmTUCWgH/BM479sHu/3lszdf6QODF6vn+suLHGmJmS81s6bZt28IZtoiISEyJuiTAzKoDbwLDnHO7T7VrCWUnrBTjnHvROZfunEuvW7duqMIUERGJeVGVBJhZJXwJwN+dc2/5i380syT/9iTg2NDzfKBBwNOTgc2RilVERCTWRU0S4B/tPxlY7Zx7KmDTbKC//35/YFZA+c3m0w4o0HgAERGR4EXNwEDgcuAm4Cszy/WX/REYB/zDzAYB/wau92+bi+/ywHX4LhG8JbLhioiIxLaoSQKcc59Q8nl+gM4l7O+A28MalEiQBg4cyJw5c0hMTCQvLw+A3/zmN6xZswbwzaxYq1YtcnNz+fDDDxk5ciSHDh2icuXK/PnPf+bqq6/2MnwRiVNRkwSIxLIBAwZwxx13cPPNNxeVvf7660X37733XmrWrAlAnTp1eOedd6hXrx55eXl07dqVTZs2RTxmERElAVJEE+yUXseOHdmwYUOJ25xz/OMf/2DBggUAtGrVqmhb8+bNOXDgAAcPHtQSzCIScUoCpIgm2AmPxYsXc95559GkSZMTtr355pu0atVKCYCIeEJJgEiYZWdn07dv3xPKv/76a0aMGFG0RLOISKQpCRAJo8LCQt566y2+/PLL48rz8/PJzMzk1Vdf5aKLLvIoOhGJd1EzT4BIeTR//nyaNm1KcnJyUdmuXbvo3r07Y8eO5fLLL/cwOhGJd0oCREKgb9++tG/fnjVr1pCcnMzkyZMBmD59+gmnAiZOnMi6det45JFHSEtLIy0tja1bt5Z0WBGRsNLpAJEQyM7OLrH8lVdeOaHs/vvv5/777w9zRCIip6eeABERkTilJEBERCROKQkQERGJU0oCRERE4pSSABERkTilJEBERCROKQkQERGJU0oCRERE4pQmCxIpAy2/LCKxTEmASBlo+WURiWU6HSAiIhKnlASIiIjEKSUBIiIicUpJgIiISJxSEiAiIhKnlASIiIjEKSUBIiIicUpJgIiISJxSEiAiIhKnlASIiIjEKSUBIiIicUpJgIiISJxSEiAiIhKnoioJMLMpZrbVzPICyh4ys01mluu/XRuw7X/NbJ2ZrTGzrt5ELSIiEpuiKgkAXgG6lVD+tHMuzX+bC2BmzYA+QHP/c/5iZhUjFqmIiEiMi6okwDm3CPhPkLv3BKY75w4659YD64DLwhaciIhIORNVScAp3GFmK/2nC871l9UHNgbsk+8vO46ZDTGzpWa2dNu2bZGIVUREJCbEQhLwHHARkAZsAZ70l1sJ+7oTCpx70TmX7pxLr1u3bviiFBERiTFRnwQ45350zh1xzh0FXuK/Xf75QIOAXZOBzZGOT0REJFZFfRJgZkkBDzOBY1cOzAb6mFkVM7sAaALkRDo+ERGRWBVVSYCZZQOfAZeYWb6ZDQIeN7OvzGwlcBVwN4Bz7mvgH8AqYB5wu3PuiEehR8TAgQNJTEwkNTW1qOy+++6jadOmtGzZkszMTHbt2gVATk4OaWlppKWlcemllzJz5kyvwhYRkShV6iTAzBqb2VmhDMY519c5l+Scq+ScS3bOTXbO3eSca+Gca+mcu845tyVg/zHOuYucc5c4594LZSzRaMCAAcybN++4soyMDPLy8li5ciUXX3wxY8eOBSA1NZWlS5eSm5vLvHnzuPXWWyksLPQibBERiVJBJQFm9qiZ9fffNzP7EPgW2GJmbcMZoPxXx44dqV279nFlXbp0ISEhAYB27dqRn58PQNWqVYvKDxw4gFlJ4yhFRCSeBdsT0A9Y479/Db6R+u2AV4FxYYhLSmHKlClcc801RY//+c9/0rx5c1q0aMHzzz9flBSIiIhA8EnAefhG4wNcC/zDOZcDPAu0CkdgcmbGjBlDQkIC/fr1Kypr27YtX3/9NV988QVjx47lwIEDHkYoIiLRJtgkYAdwvv9+F2CB/34CJV+vLxE0depU5syZw9///vcSu/1TUlKoVq0aeXl5JTxbRETiVbBJwJvAa/6xALXxjcYH32mBdeEITIIzb948HnvsMWbPnk3VqlWLytevX180EPBf//oXa9asoVGjRh5FKSIi0SjYk8T3AP8CGgJ/cM7t85cn4ZvRTyKgb9++LFy4kO3bt5OcnMzo0aMZO3YsBw8eJCMjA/ANDnz++ef55JNPGDduHJUqVaJChQr85S9/oU6dOh63QEREokmwSUA9fCv5HS1WPp7jZ+2TMMrOzj6hbNCgQSXue9NNN3HTTTeFOyQREYlhwZ4OWA+U9DWytn+biIiIxJhgkwCjhMV5gOqAhpyLiIjEoFOeDjCzZ/x3HTDWzPYHbK6IbzGf3DDFJiIiImF0ujEBLfw/DUgBDgVsOwQsA54IQ1wiIiISZqdMApxzVwGY2cvAUOfc7ohEJSIiImEX7JiAPwLnFC80s2QzOy+0IYmIiEgkBJsEvIpvzYDiugLTQheOiIiIREqwScAvgEUllC8G0kMXjoiIiERKsJMFJQBVSig/6yTlEkLjx4+noKAgpMesWbMmw4YNC+kxRUQktgSbBPwTuM1/C3Q78EVII5ITFBQU8OCDD4b0mKNHjw7p8UREJPYEmwSMAhaY2aXAR/6yq/EtI/zLcAQmIiIi4RXUmADn3OdAe3xTBPcCsvz32zvnPg1feCJyMhMmTCA1NZXmzZszfvx4AHJzc2nXrh1paWmkp6eTk5PjcZQiEs2C7QnAObcC6BfGWEQkSHl5ebz00kvk5ORQuXJlunXrRvfu3fnDH/7Agw8+yDXXXMPcuXP5wx/+wMKFC70OV0SiVLBXB2Bm55nZcDP7i5nV8ZddbmYXhC88ESnJ6tWradeuHVWrViUhIYErr7ySmTNnYmbs3u2b06ugoIB69ep5HKmIRLOgegLMrA2+sQDrgeb4pgreDmQAFwM3hitAETlRamoqo0aNYseOHZx99tnMnTuX9PR0xo8fT9euXRk+fDhHjx7l0091tk5ETi7YnoAngAnOuVbAwYDy94HLQx6ViJxSSkoKI0aMICMjg27dunHppZeSkJDAc889x9NPP83GjRt5+umnGTRokNehikgUCzYJaANMLaF8C6Bpg0U8MGjQIJYtW8aiRYuoXbs2TZo0YerUqfTq1QuA66+/XgMDReSUgk0CfgLOLaG8KbA1dOGISLC2bvX96f373//mrbfeom/fvtSrV4//+7//A2DBggU0adLEyxBFJMoFe3XALOBBM7ve/9iZWSPgMeDNMMQlIqeRlZXFjh07qFSpEpMmTeLcc8/lpZdeYujQoRQWFnLWWWfx4osveh2miESxYJOA4cBcYBtQFfgE32mAJcD94QlNRE5l8eLFJ5R16NCBL7/80oNoRCQWBZUEOOd2Ax3M7GqgNb7TCMucc/PDGZyIiIiET9CTBQE45xYAC8IUi4iIiETQSZMAM7sH+Itz7oD//qnsBfI0hbCIiEjsOFVPwJ34Lgs84L9/KlWARDMb75wbXtpgzGwK0APY6pxL9ZfVBl4HGgEbgBucczvNzIAJwLXAfmCAc25ZaesWERGJNye9RNA5d4FzbkfA/VPd6gHXAP3LGM8rQLdiZSOBj5xzTfDNWjjSX34N0MR/GwI8V8a6RURE4krQawcE4RPgT2U5gHNuEfCfYsU9+e9ERVOBXweUv+p8PgdqmVlSWeoXERGJJ2eygNCvzWyRmW333xabWeax7c65n5xzE8IQ43nOuS3+OrYAif7y+sDGgP3y/WUiIiIShKCSADO7F995+TXAH/y3b4DXzKzUYwDKyEoocyfsZDbEzJaa2dJt27ZFICwREZHYcCaTBd3hnHspoGyKmeUAD+NbYChcfjSzJOfcFn93/7FpivOBBgH7JQObiz/ZOfci8CJAenr6CUmCSCwYP348BQUFITtezZo1GTZsWMiOJyKxKdgkoDrwcQnlH/u3hdNsfAMOx/l/zgoov8PMpgNtgYJjpw1EypuCggIefPDBkB1v9OjRITuWiMSuYMcEvA30LqE8C9+HcUiYWTbwGXCJmeWb2SB8H/4ZZrYWyPA/Bt80xt8D64CXgP8JVRwiIiLx4HSTBR2zDhhpZlfh+5AGaOe/PRWqYJxzfU+yqXMJ+zrg9lDVLSIiEm9ON1lQoJ3Axf5bYNkAfOMCREREJIacNAlwzl0QyUBEREQkskI5WZCIiIjEkKCuDjCzZ0613Tl3V2jCERERkUgJ9hLBFsUeVwKa+p+vRXtERERiUFBJgHPuquJlZnYWMBlYHOqgREREJPxKPSbAOXcAGAOMCl04IiIiEillHRhYl/DPGCgiIiJhEOzAwHuKFwFJQD98M/eJSDm1a9cuBg8eTF5eHmbGlClTyM/P56GHHmL16tXk5OSQnp7udZgiUgrBDgwsPnHQUWAb8DIwNqQRiUhUGTp0KN26deONN97g0KFD7N+/n1q1avHWW29x6623eh2eiJRBsAMDNXGQSBzavXs3ixYt4pVXXgGgcuXKVK5cmVq1ankbmIiERKnGBJhZgplpLIBIOff9999Tt25dbrnlFlq1asXgwYPZt2+f12GJSIicMgkws85mdkOxspHAXmCXmc0zM30lECmnCgsLWbZsGbfddhvLly+nWrVqjBs37vRPFJGYcLqegJFA8rEHZnYZ8CgwDfgDcCm6RFCk3EpOTiY5OZm2bdsC0Lt3b5Yt0/xgIuXF6ZKAFsD/BTy+HvjUOfc759xTwF3AdeEKTkS89fOf/5wGDRqwZs0aAD766COaNWvmcVQiEiqnSwJqAVsDHl8OzAt4/AVQP9RBiUj0ePbZZ+nXrx8tW7YkNzeXP/7xj8ycOZPk5GQ+++wzunfvTteuXb0OU0RK4XRXB2wBLgI2mlkVoBXwQMD2GsDBMMUmIlEgLS2NpUuXHleWmZlJZmamRxGJSKicrifgPeBxM7saeAzYx/FrBbQE1oUpNhEREQmj0/UE/D/gLWA+visC+jvnDgVsHwh8GKbYREREJIxOmQQ457YDHc2sJrDXOXek2C7X40sOREREJMYEO2NgwUnK/xPacERERCRSyrqKoIiIiMQoJQEiIiJxSkmAiIhInFISICJR48iRI7Rq1YoePXoAMHHiRBo3boyZsX37do+jEyl/lASISNSYMGECKSkpRY8vv/xy5s+fz/nnn+9hVCLlV1BXB5yMma0GmjjnynQcEYkO48ePp6CgxIuBSqVmzZoMGzYsqH3z8/N59913GTVqFE899RQArVq1ClksInKisn54TwJ+FopARMR7BQUFPPjggyE73ujRo4Ped9iwYTz++OPs2bMnZPWLyKmV6XSAc26icy74v3IRkRLMmTOHxMRE2rRp43UoInHljHoCzOwsoDHggO+ccwfCEpWIxJUlS5Ywe/Zs5s6dy4EDB9i9eze//e1v+dvf/uZ1aCLlWlA9AWaWYGZ/BnYCK4CvgJ1m9riZVQpngCJS/o0dO5b8/Hw2bNjA9OnTufrqq5UAiERAsKcDHgd+C/weuBhoAtwG3ASMDU9oxzOzDWb2lZnlmtlSf1ltM/vQzNb6f54biVhEJDKeeeYZkpOTyc/Pp2XLlgwePNjrkETKlWBPB9wIDHTOzQ0o+87MtgF/BYaHPLKSXeVf1OiYkcBHzrlxZjbS/3hEhGIRkTDo1KkTnTp1AuCuu+7irrvu8jYgkXIs2J6AmsB3JZR/B9QKXThnrCcw1X9/KvBrD2MRERGJKcEmASuAktLxoUBu6MI5JQd8YGZfmtkQf9l5zrktAP6fiRGKRUREJOYFezrgD8BcM8sAPsP3gdweqAdcE6bYirvcObfZzBKBD83sm2Ce5E8YhgA0bNgwnPGJiIjElKB6Apxzi/ANCJwBVAfO8d+/xDn3SfjCOy6Gzf6fW4GZwGXAj2aWBOD/ubWE573onEt3zqXXrVs3EqGKiIjEhKDnCfB/CI8KYywnZWbVgArOuT3++12Ah4HZQH9gnP/nLC/iExERiUWnTALMrHYwB3HO/Sc04ZzUecBMMwNfzK855+aZ2RfAP8xsEPBv4PowxyEiIlJunK4nYDu+8/+n4oI4Tpk4574HLi2hfAfQOZx1i0j5sXHjRm6++WZ++OEHKlSowJAhQxg6dCgPPPAAs2bNokKFCiQmJvLKK69Qr149r8MVCbvTfXhfdYpt3fBdHVAYunBERMInISGBJ598ktatW7Nnzx7atGlDRkYG9913H4888gjgm6Do4Ycf5vnnn/c4WpHwO2US4Jz7v+JlZtYaeAzoCLwAPBKe0EREQispKYmkpCQAatSoQUpKCps2baJZs2ZF++zbtw//qUeRci/obnwzuwAYg++8+1tAM+dcSRMIiYic1Pjx4ykoKAjpMWvWrMmwYcPO6DkbNmxg+fLltG3bFoBRo0bx6quvUrNmTT7++OOQxicSrU6bBJjZz4D/h2/dgCVAe+fc0nAHJiLlU0FBAQ8++GBIjzl69JmtaL53716ysrIYP34855xzDgBjxoxhzJgxjB07lokTJ57xMUVi0SnnCTCzP+KbGvhKoKdz7molACISyw4fPkxWVhb9+vWjV69eJ2y/8cYbefPNNz2ITCTyTtcT8CfgJyAf+B8z+5+SdnLOXRfqwEREQs05x6BBg0hJSeGee+4pKl+7di1NmjQBYPbs2TRt2tSrEEUi6nRJwKuc/hJBEZGYsGTJEqZNm0aLFi1IS0sD4NFHH2Xy5MmsWbOGChUqcP755+vKAIkbp7s6YECE4ihXBg4cyJw5c0hMTCQvLw9A1yGLRIEOHTrg3Infa6699loPohHxXrCrCMoZGDBgAPPmzTuu7L777mPlypXk5ubSo0cPHn74YY+iExER8VESEAYdO3akdu3jZ1w+NgIZdB2yiIhEByUBETRq1CgaNGjA3//+d/UEiMSJCRMmkJqaSvPmzRk/frzX4YgcR0lABI0ZM4aNGzfSr18/Jk6c6HU4IhJmeXl5vPTSS+Tk5LBixQrmzJnD2rVrvQ5LpIiSAA/oOmSR+LB69WratWtH1apVSUhI4Morr2TmzJlehyVSRElAhARm/7oOWSQ+pKamsmjRInbs2MH+/fuZO3cuGzduDEtdjRo1Krr0MT09PSx1SPkT1iWA41Xfvn1ZuHAh25Do0LMAACAASURBVLdvJzk5mdGjRzN37lxdhywSZ1JSUhgxYgQZGRlUr16dSy+9lISE8P3b/fjjj6lTp07Yji/lj5KAMMjOzj6hbNCgQR5EIiJeGzRoUNHf/x//+EeSk5M9jqj0Dhw4QMeOHTl48CCFhYX07t1bayzEOCUBIlIuhXq1wtKsVAiwdetWEhMT+fe//81bb73FZ599FrKYApkZXbp0wcy49dZbGTJkSMjrqFKlCgsWLKB69eocPnyYDh06cM0119CuXbuQ1yWRoSRARMqlUK9WWNpvvFlZWezYsYNKlSoxadIkzj333JDFFGjJkiXUq1ePrVu3kpGRQdOmTenYsWNI6zAzqlevDvgWYjp8+HBY5jyZN28eQ4cO5ciRIwwePJiRI0eGvI7yWE9paGCgiEgYLV68mFWrVrFixQo6d+4ctnqOTUOemJhIZmYmOTk5YannyJEjpKWlkZiYSEZGBm3btg358W+//Xbee+89Vq1aRXZ2NqtWrQppHeWxntJSEiAiEuP27dvHnj17iu5/8MEHpKamhqWuihUrkpubS35+Pjk5OUXro4RKTk4OjRs35sILL6Ry5cr06dOHWbNmhbSO8lhPaSkJEBGJcT/++CMdOnTg0ksv5bLLLqN79+5069YtrHXWqlWLTp06nbBOSllt2rSJBg0aFD1OTk5m06ZNIa2jPNZTWhoTICIS4y688EJWrFgR9nq2bdtGpUqVqFWrFj/99BPz589nxIgRIa2jpFUewzHuoLzVU1pKAkREJChbtmyhf//+HDlyhKNHj3LDDTfQo0ePkNaRnJx83IRK+fn5YVl2vbzVU1pKAkREJCgtW7Zk+fLlYa3jF7/4BWvXrmX9+vXUr1+f6dOn89prr6meMFESUEbRci2yiEh5kJCQwMSJE+natStHjhxh4MCBNG/eXPWEiZKAMoqWa5FFRMqLa6+9lmuvvVb1RICuDhAREYlT6gkQESkDnRKUWKYkQESkDHRKUGKZTgeIiIjEKfUEiIhEuVCfcgCddhCfmE8CzKwbMAGoCPzVOTfO45BEREIq1KccQKcdxCemkwAzqwhMAjKAfOALM5vtnIueJZpERGKEehziT0wnAcBlwDrn3PcAZjYd6AkoCRAROUPqcYg/VtLiBrHCzHoD3Zxzg/2PbwLaOufuCNhnCDAEICkpqc2tt97qSawiIiJeeOihh750zqWXtC3Wk4Drga7FkoDLnHN3lrR/enq6W7p0aUhjCEeWWzwTD1cmXZ7qKU9tiVQ9JX3j03tzZnVEqp5Yfs1KqueJJ55g3759ITt+tWrVGD58eMiOdyZC3RYIfXvM7KRJQKyfDsgHGgQ8TgY2RzKAatWqhfyXWUSkPPPqAzscYr0tsZ4EfAE0MbMLgE1AH+DGSAYQ678AIiLHhPpLzbFjSvSK6STAOVdoZncA7+O7RHCKc+5rj8MSEYlJ+lITf2I6CQBwzs0F5nodh4iISKzRtMEiIiJxSklADAjHOTWdpxMRkZg/HRAPdJ5ORETCQT0BIiISl+bNm8cll1xC48aNGTcuPpedURIQZhs3buSqq64iJSWF5s2bM2HCBK9DEpEYE2+nBAcOHEhiYiKpqalhq+PIkSPcfvvtvPfee6xatYrs7GxWrQr9jPORaEtZ6HRAmCUkJPDkk0/SunVr9uzZQ5s2bcjIyKBZs2ZehyYiIRCJCcPi7ZTggAEDuOOOO7j55pvDVkdOTg6NGzfmwgsvBKBPnz7MmjUr5P+bI9GWslASEGZJSUkkJSUBUKNGDVJSUti0aZOSAJFyIt4+oMH3LTo9PZ369eszZ86ckB+/Y8eObNiwIeTHDbRp0yYaNPjvhLPJycn885//DHk9kWhLWeh0QARt2LCB5cuX07ZtW69DEREptQkTJpCSkuJ1GGVS0ro5ZuZBJN5SEhAhe/fuJSsri/Hjx3POOed4HY6ISKnk5+fz7rvvMnjwYK9DKZPk5GQ2btxY9Dg/P5969ep5GJE3lAREwOHDh8nKyqJfv3706tUrLHU8/fTTNG/enNTUVPr27cuBAwfCUo9IrAj1wLdoHkgXScOGDePxxx+nQoXY/vj4xS9+wdq1a1m/fj2HDh1i+vTpXHfddV6HFXEaExBmzjkGDRpESkoK99xzT1jq2LRpE8888wyrVq3i7LPP5oYbbmD69OkMGDAgLPWJxIJ4PFcfbnPmzCExMZE2bdqwcOFCr8Mpk4SEBCZOnEjXrl05cuQIAwcOpHnz5l6HFXGxncrFgCVLljBt2jQWLFhAWloaaWlpzJ0b+qUOCgsL+emnnygsLGT//v1x2a0lsSHeLncrT5YsWcLs2bNp1KgRffr0YcGCBfz2t78NeT19+/alffv2rFmzhuTkZCZPnhzyOgCuvfZavv32W7777jtGjRoVljoi1ZbSUk9AmHXo0KHEASihVL9+fYYPH07Dhg05++yz6dKlC126dAlrnSKlpW/ooTFw4MCib+Z5eXkA3HfffbzzzjtUrlyZiy66iJdffplatWqFrM6xY8cyduxYABYuXMgTTzzB3/72t5Ad/5js7OyQH9Mr0d4W9QSUAzt37mTWrFmsX7+ezZs3s2/fvrD8YYpIcEqaIOaBBx6gZcuWpKWl0aVLFzZv3lymOgYMGMC8efOOK8vIyCAvL4+VK1dy8cUXF31gi5yMkoByYP78+VxwwQXUrVuXSpUq0atXLz799FOvwxKJWyV9QN93332sXLmS3NxcevTowcMPP1ymOjp27Ejt2rWPK+vSpQsJCb4O3nbt2pGfn1+mOk6lU6dOYZkjQCJLSUA50LBhQz7//HP279+Pc46PPvoo5q/hFYllJX1AB14avG/fvrBfkz5lyhSuueaasNYhsU9jAsqBtm3b0rt3b1q3bk1CQgKtWrViyJAhXoclIsWMGjWKV199lZo1a/Lxxx+HrZ4xY8aQkJBAv379wlaHlA/qCSgnRo8ezTfffENeXh7Tpk2jSpUqXockIsWMGTOGjRs30q9fPyZOnBiWOqZOncqcOXP4+9//Hpcz4MmZURIgInGjpAF7K1asoH379rRo0YJf/epX7N69O+xx3Hjjjbz55pshP+68efN47LHHmD17NlWrVg358aX8URIgInGjpAF7gwcPZty4cXz11VdkZmby5z//OSx1r127tuj+7Nmzadq0aZmOV9L153fccQd79uwhIyODtLQ0fv/735c1bCnnNCZARDy3ceNGbr75Zn744QcqVKjAkCFDGDp0KDNmzOChhx5i9erV5OTkkJ6eXqZ6SlrRbc2aNXTs2BHwXWLXtWtXHnnkkTLV07dvXxYuXMj27dtJTk5m9OjRzJ07lzVr1lChQgXOP/98nn/++TLVUdL154MGDSrTMSX+KAkQEc8lJCTw5JNP0rp1a/bs2UObNm3IyMggNTWVt956i1tvvTVsdaempjJ79mx69uzJjBkzjltUprT0AS2xQqcDRMRzSUlJtG7dGoAaNWqQkpLCpk2bSElJ4ZJLLglr3VOmTGHSpEm0adOGPXv2ULly5bDWJxJN1BMgIlFlw4YNLF++nLZt20akvqZNm/LBBx8A8O233/Luu+9GpF6RaKCeACmihV3Ea3v37iUrK4vx48cfN7lOOG3duhWAo0eP8qc//UmD6SSuqCdAimhhF/HS4cOHycrKol+/fvTq1SssdZQ0YG/v3r1MmjQJgF69enHLLbeEpW6RaKQkQEQ855xj0KBBpKSkcM8994StnpOt6DZ06NCw1SkSzZQEiIjnlixZwrRp02jRogVpaWkAPProoxw8eJA777yTbdu20b17d9LS0nj//fc9jlak/FASICKe69ChA865ErdlZmZGOBqR+KGBgSJSJNQDOTUwVCS6qSdARIpocKhIfIn6ngAze8jMNplZrv92bcC2/zWzdWa2xsy6ehmniIhIrImVnoCnnXNPBBaYWTOgD9AcqAfMN7OLnXNHvAiwvDpw4AAdO3bk4MGDFBYW0rt3b0aPHs0VV1zBnj17AN911pdddhlvv/22x9GKiMiZiJUkoCQ9genOuYPAejNbB1wGfOZtWOVLlSpVWLBgAdWrV+fw4cN06NCBa665hsWLFxftk5WVRc+ePT2MUkRESiPqTwf43WFmK81sipmd6y+rDwSu9JHvLzuOmQ0xs6VmtnTbtm2RiLVcMTOqV68O+CZzOXz4MGZWtH3Pnj0sWLCAX//6116FKCIipRQVSYCZzTezvBJuPYHngIuANGAL8OSxp5VwqBOuMXLOveicS3fOpdetWzdsbSjPjhw5QlpaGomJiWRkZBw3p/vMmTPp3LlzxKZ4FRGR0ImK0wHOuV8Gs5+ZvQTM8T/MBxoEbE4GNoc4NAEqVqxIbm4uu3btIjMzk7y8PFJTUwHfDGyDBw/2OEIRESmNqOgJOBUzSwp4mAnk+e/PBvqYWRUzuwBoAuREOr54UqtWLTp16sS8efMA2LFjBzk5OXTv3t3jyEREpDSiPgkAHjezr8xsJXAVcDeAc+5r4B/AKmAecLuuDAi9bdu2sWvXLgB++ukn5s+fT9OmTQGYMWMGPXr04KyzzvIyxLjg9SQ+R44coVWrVvTo0eO48jvvvLNozIiIxJ6oOB1wKs65m06xbQwwJoLhxJ0tW7bQv39/jhw5wtGjR7nhhhuKPgimT5/OyJEjPY4wPng9ic+ECRNISUlh9+7dRWVLly4tShBFJDZFfRIg3mrZsiXLly8vcdvChQsjG4x4Ij8/n3fffZdRo0bx1FNPAb6egfvuu4/XXnuNmTNnehyhiJRWLJwOEBEPDRs2jMcff5wKFf7772LixIlcd911JCUlneKZIhLtlASIyEnNmTOHxMRE2rRpU1S2efNmZsyYwZ133ulhZCISCjodICIntWTJEmbPns3cuXM5cOAAu3fvpnnz5lSpUoXGjRsDsH//fho3bsy6des8jlZEzpR6AkTkpMaOHUt+fj4bNmxg+vTpXH311ezcuZMffviBDRs2sGHDBqpWraoEQCRGKQkQERGJUzodIFIG1apVY9++fSE/ZjTq1KkTnTp1OqF87969kQ9GREJCSYBEXKg/OL380PT6+v1GjRpRo0YNKlasSEJCAkuXLuWhhx7ipZde4thaGY8++ijXXnutp3GKSHRSEiAR5/UHZ3nz8ccfU6dOnePK7r77br3OInJaGhMgIiISp5QEiMQwM6NLly60adOGF198sah84sSJtGzZkoEDB7Jz504PIxSRaKYkQCSGLVmyhGXLlvHee+8xadIkFi1axG233cZ3331Hbm4uSUlJ3HvvvV6HKSJRSkmASAyrV68eAImJiWRmZpKTk8N5551HxYoVqVChAr/73e/IydEK2yJSMiUBIjFq37597Nmzp+j+Bx98QGpqKlu2bCnaZ+bMmaSmpnoVoohEOV0dIBKjfvzxRzIzMwEoLCzkxhtvpFu3btx0003k5uZiZjRq1IgXXnjB40hFJFopCZCosGvXLgYPHkxeXh5mxpQpU2jfvj3PPvssEydOJCEhge7du/P44497HWpQSmrP+++/H9Lr9y+88EJWrFhxQvm0adNKfUwRiS9KAiQqDB06lG7duvHGG29w6NAh9u/fz8cff8ysWbNYuXIlVapUYevWrV6HGbSS2vP+++/r+n0RiSpKAsRzu3fvZtGiRbzyyisAVK5cmcqVK/Pcc88xcuRIqlSpAvgGv8WCk7VHRCTaaGCgeO7777+nbt263HLLLbRq1YrBgwezb98+vv32WxYvXkzbtm258sor+eKLL4I+ZjimEg72mCdrD+j6fZFoNnPmTMyMb775JiTHW7RoEa1btyYhIYE33ngjJMcMNXPOeR1DxKSnp7ulS5d6HYYUs3TpUtq1a8eSJUto27YtQ4cO5ZxzzmHmzJlcffXVTJgwgS+++ILf/OY3fP/995iZ1yGf0snac8cdd1CnTh3MjAceeIAtW7YwZcoUr8MVEb8bbriBLVu20LlzZx566KEyH2/Dhg3s3r2bJ554guuuu47evXuXPchSMLMvnXPpJW1TT4B4Ljk5meTkZNq2bQtA7969WbZsGcnJyfTq1Qsz47LLLqNChQps377d42hP72Tt0fX7ItFr7969LFmyhMmTJzN9+vSQHLNRo0a0bNmSChWi96M2eiOTuPHzn/+cBg0asGbNGgA++ugjmjVrxq9//WsWLFgAwLfffsuhQ4dOWCgnGp2sPbp+XyR6vf3223Tr1o2LL76Y2rVrs2zZshL3u+KKK0hLSzvhNn/+/AhHHBoaGChR4dlnn6Vfv34cOnSICy+8kJdffplq1aoxcOBAUlNTqVy5MlOnTo36UwHHlNSeu+66S9fvi0Sp7Oxshg0bBkCfPn3Izs6mdevWJ+y3ePHiSIcWVhoTICIicW3Hjh0kJyeTmJiImXHkyBHMjH/9618nfPG44oorimbqDPTEE0/wy1/+ssTjDxgwgB49ekTlmAD1BIiISFx74403uPnmm4/rnbvyyiv55JNPuOKKK47bt7z1BGhMgIiIxLXs7OyiKbiPycrK4rXXXivTcb/44guSk5OZMWMGt956K82bNy/T8cJBpwMkrjz99NP89a9/xcxo0aIFL7/8Mlu2bKFPnz785z//oXXr1kybNk2T+4hIuaFLBEWATZs28cwzz7B06VLy8vI4cuQI06dPZ8SIEdx9992sXbuWc889l8mTJ3sdqohIRCgJkLhSWFjITz/9RGFhIfv37ycpKYkFCxYUDdjp378/b7/9tsdRiohEhpIAiRv169dn+PDhNGzYkKSkJGrWrEmbNm2oVasWCQm+MbLJycls2rTJ40hFRCIjKpIAM7vezL42s6Nmll5s2/+a2TozW2NmXQPKu/nL1pnZyMhHLbFm586dzJo1i/Xr17N582b27dvHe++9d8J+sTIXgYhIWUVFEgDkAb2ARYGFZtYM6AM0B7oBfzGzimZWEZgEXAM0A/r69xU5qfnz53PBBRdQt25dKlWqRK9evfj000/ZtWsXhYWFAOTn51OvXj2PIxURiYyoSAKcc6udc2tK2NQTmO6cO+icWw+sAy7z39Y55753zh0Cpvv3FTmphg0b8vnnn7N//36cc0XT+V511VVFK3xNnTqVnj31qyQi8SEqkoBTqA9sDHic7y87WbnISbVt25bevXvTunVrWrRowdGjRxkyZAiPPfYYTz31FI0bN2bHjh0MGjTI61BFRCIiYjMGmtl84OclbBrlnJt1sqeVUOYoOXkpccIDMxsCDAHfN0GJb6NHj2b06NHHlV144YVa0U9E4lLEkgDnXMmTKp9aPtAg4HEysNl//2Tlxet9EXgRfJMFlSIGERGRcinaTwfMBvqYWRUzuwBoAuQAXwBNzOwCM6uMb/DgbA/jFBERiTlRsYCQmWUCzwJ1gXfNLNc519U597WZ/QNYBRQCtzvnjvifcwfwPlARmOKc+9qj8EVERGKS1g4QEREpx7R2gIiIiJxASYCIiEicUhIgIiISp5QEiIiIxCklASIiInFKSYCIiEicUhIgIiISp+JqngAz2wb8q1hxHWC7B+GES3lqj9oSvcpTe8pTW6B8tUdtCY3znXN1S9oQV0lAScxs6ckmUYhF5ak9akv0Kk/tKU9tgfLVHrUl/HQ6QEREJE4pCRAREYlTSgL8ywyXI+WpPWpL9CpP7SlPbYHy1R61JczifkyAiIhIvFJPgIiISJyKmyTAzLqZ2RozW2dmI0vYXsXMXvdv/6eZNYp8lMEJoi0dzWyZmRWaWW8vYjwTQbTnHjNbZWYrzewjMzvfiziDEURbfm9mX5lZrpl9YmbNvIgzWKdrT8B+vc3MmVnUjX4+Joj3ZoCZbfO/N7lmNtiLOIMRzPtiZjf4/26+NrPXIh3jmQjivXk64H351sx2eRFnMIJoS0Mz+9jMlvv/p13rRZxFnHPl/gZUBL4DLgQqAyuAZsX2+R/gef/9PsDrXsddhrY0AloCrwK9vY45BO25Cqjqv39bjL835wTcvw6Y53XcZWmPf78awCLgcyDd67jL8N4MACZ6HWuI2tIEWA6c63+c6HXcZf09C9j/TmCK13GX4b15EbjNf78ZsMHLmOOlJ+AyYJ1z7nvn3CFgOtCz2D49gan++28Anc3MIhhjsE7bFufcBufcSuCoFwGeoWDa87Fzbr//4edAcoRjDFYwbdkd8LAaEM2DcoL5uwF4BHgcOBDJ4M5QsG2JBcG05XfAJOfcTgDn3NYIx3gmzvS96QtkRySyMxdMWxxwjv9+TWBzBOM7QbwkAfWBjQGP8/1lJe7jnCsECoCfRSS6MxNMW2LJmbZnEPBeWCMqvaDaYma3m9l3+D4474pQbKVx2vaYWSuggXNuTiQDK4Vgf8+y/F20b5hZg8iEdsaCacvFwMVmtsTMPjezbhGL7swF/T/AfyrwAmBBBOIqjWDa8hDwWzPLB+bi69nwTLwkASV9oy/+DSyYfaJBrMQZrKDbY2a/BdKBP4c1otILqi3OuUnOuYuAEcD9YY+q9E7ZHjOrADwN3BuxiEovmPfmHaCRc64lMJ//9gxGm2DakoDvlEAnfN+c/2pmtcIcV2mdyf+0PsAbzrkjYYynLIJpS1/gFedcMnAtMM3/t+SJeEkC8oHArD6ZE7tgivYxswR83TT/iUh0ZyaYtsSSoNpjZr8ERgHXOecORii2M3Wm78104NdhjahsTteeGkAqsNDMNgDtgNlROjjwtO+Nc25HwO/WS0CbCMV2poL9fzbLOXfYObceWIMvKYhGZ/J304foPRUAwbVlEPAPAOfcZ8BZ+NYV8ES8JAFfAE3M7AIzq4zvF2l2sX1mA/3993sDC5x/5EaUCaYtseS07fF3Ob+ALwGI5nObwbQl8B9xd2BtBOM7U6dsj3OuwDlXxznXyDnXCN94jeucc0u9CfeUgnlvkgIeXgesjmB8ZyKY/wFv4xtQi5nVwXd64PuIRhm8oP6nmdklwLnAZxGO70wE05Z/A50BzCwFXxKwLaJRBvJ6NGWkbvi6Xb7FN3JzlL/sYXz/tMD3RswA1gE5wIVex1yGtvwCX0a6D9gBfO11zGVsz3zgRyDXf5vtdcxlaMsE4Gt/Oz4Gmnsdc1naU2zfhUTp1QFBvjdj/e/NCv9709TrmMvQFgOeAlYBXwF9vI65rL9n+M6lj/M61hC8N82AJf7fs1ygi5fxasZAERGROBUvpwNERESkGCUBIiIicUpJgIiISJxSEiAiIhKnlASIiIjEKSUBImXkXz0v6ldrDGRmc8zsFa/j8JKZLTSziV7HIeIlJQESN8zsFf8HdvHb52fw/JLmyE/CN+VsWJnZBjMbHu56/HV1KvYabTOz98zs0kjUHyG9gP899iBUr6+ZVTWzR/1LyR4ws+3+Ofz7lvXYIqGW4HUAIhE2H7ipWNmhshzQOfdDWZ4f5Zrjmz67IfAMMM/MmjrnCorvaGaVnW/ltJjgnAvXtODPA5cDQ4E8oDbQ1v8zLGLttZco4vXsSrrpFqkb8Aow5zT73Ipvtq8D+KbyfB9fsvwQvoVAAm+d/M9xQG///Ub+x32A/wN+wreue0t88+x/im8mx0+ACwLqvQiYBfzg374M6BGwfWHx+gO2/X/+uvYDm4DngHMCtlf1t30vvpkX/wjMwbeIycleh07+euoElF3uL+vqf7zB/7pMAXYBM/zlLfAlWz/hSyBeAWoWfx/wLZ70oz+ul4GzA/Yx4A/4Zl37Cd+sd78N2H7sdc4CPvS3fRWQEbBPJXyJy2bgIL7V3cYVe00nnuz1xbfU8+5j723A8zKAw8B5J3ntdgGDT/N7ZvgWXlrrjy0fGBuwPdjXcIT/uVv95ZWBx/jvjKFfHHu/dNOtpJtOB4j4+Re+mQSMBi4BfgnM829+At+iH/Pxdf8n4ftAP5nR+P4Zt8L3ofAa8Cy+RZAuwzdN9TMB+1fHt0RyBnAp8Cbwlpk19W/vhe8f+8MB9WNmLYAP8M1Pfql/vzR8H8zHPOE/bha+OctbAR2DeU2K+cn/s1JA2T3AN/hWd/yjmVXF95rt9bczE1+SEhgPwJX+eDv74+qC7/U65k/4Flq5Hd80q2OBF8yse7HjjMH3Ol6K7wNvuplV92+7y19/H3yL5/wG30I6JTnh9XXO7cO3WM3AYvsOxJdM/niSY/0AdDOzmifZDvAo8IC/Xc2B6/EvQXuGr2FLoBv+uejxJVNXAjfiSySmAu+Us9M4EkpeZyG66RapG75vT4X4/rkG3h7zb+8FFAA1TvH8E3oSKLkn4NaA7T38Zb0CygYAe08T7+fA/QGPNwDDi+3zKjC5WFmav75EfMnFQaBfwPbq+BKTV05RdycCegKAn+HrqdgNJAbE806x5/2u+GsYcKzGAa/jLqB6wD6/9cdZzX/7Cbii2LHHA3NP8TrX95d18D9+BvgIfNOjl9DGhfh7Ak7x+qb7f2fq+x+f64+tR0nH9O/TEd8H+mF8PToTOb6Hojq+nqbfn+T5wb6G24AqAftcBBwFGhY73tvAX7z++9MtOm8aEyDxZhEwpFjZLv/PD4F/AevN7H1837Dfcs7tKUU9KwPuH/vG+FWxsmpmVtU5t9/MqgEP4ksYkvB92z6r2HFK0gZobGa/CSg7tqb5Rfi6ySsTsPKac26vmQXGciobzAx8H8xrgevd8Ss5Fl8xMAVYWew1+xTfh1MzfAt04d9nb8A+n/njvAiogq/t88wscHGTSvg+qAMFvj7HlmxN9P98Bd97+q2ZfQDMBd5zzh09WWOLc84t9b9W/fF9e78R2Imv1+Zkz1lkZhfiW1r5cuBq4AMze9E5dyu+16EKvgSlJMG+hnnu+GW1W+N771f537NjqgALgmiuxCElARJv9jvn1pW0wTm3x+z/b+9+QuMowziOf39RVNRe1EMpgj0IiuhFKRTRQsQihRb05kmwCF48SI2CYFNo0f4xIuJB0xiR0p5CLT16sTa9FCmVCrYYfY97pQAAA6BJREFUteZS/BO1NMVKTOPj4XmXTDezyaZJKTq/D4TN7MzuvPvusM/z/pkZPUy25NaTM8ffkrQmIjrd37yT6epbz/Nca0hugOzW7SOD7SWylX/TAvvpAT4C3q1Zd44c1liKXnJMeiIiJmvW/9m2LGY/W7tu71bWqpNN5G1Xq6Y7LUdElODXU5ZPSlpN1usTZNf4KUnrF5MIkPX7MpkEbCZ7UGbme0FETAPHyt8uSW8AOyTtZDZJ66TbOmyv+56yfg1z6+kvzGo4CTCriIjLZKvpc0nbgF/J1vle8iyCG67Rrh8D9kXEQQBJt5Ct4rHKNnX7P0nejrg2sZH0PRkQ1lLuJ196HR4kJ90t5MeI+G0Rn+M0sFnSikpL9lEyQJ2pbPeQpNsix90p5fu7lKmHHBq4JyKW1IItZRgBRsp1EY4D93JlvbZ0+n73A29LeolsbT97FUU5XR5vL/9PkeP433XYtps6bPcVmUCsjIgjV1FGayAnAdY0N0ta2fbcTERMSNpIBt5RsvXbC6xg9od3HNgg6T7gd+BCafEthzHgGUmHyaC9jewSrxoHHpe0H5gqwXk3cFzSh8AgcBG4H9gUES+Wrv9hYLekCbLLvJ9rl8wcICdF7pPUT46hD5LDKtVE5UbgY0nbgVXALmColRRIGgAGlE37UTJ4rgX+iYi93RRE0hbgJ/Ke7dNkV/4kOQGwzjhz65eIuCBpBHgHGI2IusBd3e8X5ITCE+Rx8gDZi/AtcCYiZiS9B+yUNFU+353AIxHxAd3X4RUiYkzSAeATSa+QCeId5HyCsxHx6XzltmZyEmBN8yQZGKrOAXeTcwOeJoPkrWSr9IWIOFa2GyJ/UE+QQamXnFy2HLYAw2T38XlyElx7EtBPBoMfyHFeRcTXktaRs+mPksH9LHCo8ro+ckz/EDnM8H5ZXnZlfsNTpfxfkhPgDpPnzFcdBb4BjpB1fZA8JbBlKzlvoo885XGSDOZ7FlGci8Cr5JkBQbaUN0TEpQ7bz6nfyrph4LnyuJDPyGtRvEkeJz+TcxO2V4YRXie/563ksfcLOfyzmDqs8zx5Bsqe8r5/lPdwz4DVUkS3w3RmZktXuuXvioiN17ss3SoTLweBVfMkEWb/Oe4JMDProJyzv5q8wNKQEwD7v/HFgszMOnsNOEV2q++4zmUxW3YeDjAzM2so9wSYmZk1lJMAMzOzhnISYGZm1lBOAszMzBrKSYCZmVlDOQkwMzNrqH8BCNYsna/RSHgAAAAASUVORK5CYII=\n",
+      "text/plain": [
+       "<Figure size 576x432 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "fig, ax = plt.subplots(figsize=(8, 6))\n",
+    "\n",
+    "ax.set_ylim(-115, 295)\n",
+    "\n",
+    "ax.axhline(0, c='gray', linewidth=1)\n",
+    "\n",
+    "bars0 = ax.bar(bins[:-1] + 0.025, top0, width=0.04, facecolor='white')\n",
+    "bars1 = ax.bar(bins[:-1] + 0.025, -top1, width=0.04, facecolor='gray')\n",
+    "\n",
+    "for bars in (bars0, bars1):\n",
+    "    for bar in bars:\n",
+    "        bar.set_edgecolor(\"gray\")\n",
+    "\n",
+    "for x, y in zip(bins, top0):\n",
+    "    ax.text(x + 0.025, y + 10, str(y), ha='center', va='bottom')\n",
+    "\n",
+    "for x, y in zip(bins, top1):\n",
+    "    ax.text(x + 0.025, -y - 10, str(y), ha='center', va='top')\n",
+    "\n",
+    "ax.text(0.75, 260, \"A = 0\")\n",
+    "ax.text(0.75, -90, \"A = 1\")\n",
+    "\n",
+    "ax.set_ylabel(\"No. Subjects\", fontsize=14)\n",
+    "ax.set_xlabel(\"Estimated Propensity Score\", fontsize=14);"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                  mean propensity\n",
+      "    non-quitters: 0.245\n",
+      "        quitters: 0.312\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('                  mean propensity')\n",
+    "print('    non-quitters: {:>0.3f}'.format(propensity0.mean()))\n",
+    "print('        quitters: {:>0.3f}'.format(propensity1.mean()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Section 15.3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### Program 15.3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "\"only individual 22005 had an estimated $\\pi(L)$ of 0.6563\", pg 186"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>seqn</th>\n",
+       "      <th>propensity</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1088</th>\n",
+       "      <td>22005</td>\n",
+       "      <td>0.656281</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       seqn  propensity\n",
+       "1088  22005    0.656281"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nhefs_all[['seqn', 'propensity']].loc[abs(propensity - 0.6563) < 1e-4]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Create the deciles and check their counts"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "nhefs_all['decile'] = pd.qcut(nhefs_all.propensity, 10, labels=list(range(10)))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    163\n",
+       "1    163\n",
+       "2    163\n",
+       "3    163\n",
+       "4    163\n",
+       "5    162\n",
+       "6    163\n",
+       "7    163\n",
+       "8    163\n",
+       "9    163\n",
+       "Name: decile, dtype: int64"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nhefs_all.decile.value_counts(sort=False)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Now create a model with interaction between `qsmk` and $L$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "model = sm.OLS.from_formula(\n",
+    "    'wt82_71 ~ qsmk*C(decile)', \n",
+    "    data=nhefs_all\n",
+    ")\n",
+    "res = model.fit()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "           <td></td>              <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th>           <td>    3.9952</td> <td>    0.630</td> <td>    6.338</td> <td> 0.000</td> <td>    2.759</td> <td>    5.232</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.1]</th>      <td>   -1.0905</td> <td>    0.916</td> <td>   -1.190</td> <td> 0.234</td> <td>   -2.888</td> <td>    0.707</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.2]</th>      <td>   -1.3831</td> <td>    0.918</td> <td>   -1.506</td> <td> 0.132</td> <td>   -3.184</td> <td>    0.418</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.3]</th>      <td>   -0.5205</td> <td>    0.926</td> <td>   -0.562</td> <td> 0.574</td> <td>   -2.337</td> <td>    1.295</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.4]</th>      <td>   -1.8964</td> <td>    0.940</td> <td>   -2.017</td> <td> 0.044</td> <td>   -3.741</td> <td>   -0.052</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.5]</th>      <td>   -2.1482</td> <td>    0.954</td> <td>   -2.252</td> <td> 0.024</td> <td>   -4.019</td> <td>   -0.277</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.6]</th>      <td>   -2.4352</td> <td>    0.949</td> <td>   -2.566</td> <td> 0.010</td> <td>   -4.297</td> <td>   -0.574</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.7]</th>      <td>   -3.7105</td> <td>    0.974</td> <td>   -3.810</td> <td> 0.000</td> <td>   -5.621</td> <td>   -1.800</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.8]</th>      <td>   -4.8907</td> <td>    1.034</td> <td>   -4.731</td> <td> 0.000</td> <td>   -6.918</td> <td>   -2.863</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.9]</th>      <td>   -4.4996</td> <td>    1.049</td> <td>   -4.288</td> <td> 0.000</td> <td>   -6.558</td> <td>   -2.441</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk</th>                <td>   -0.0147</td> <td>    2.389</td> <td>   -0.006</td> <td> 0.995</td> <td>   -4.700</td> <td>    4.671</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.1]</th> <td>    4.1634</td> <td>    2.897</td> <td>    1.437</td> <td> 0.151</td> <td>   -1.520</td> <td>    9.847</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.2]</th> <td>    6.5591</td> <td>    2.884</td> <td>    2.275</td> <td> 0.023</td> <td>    0.903</td> <td>   12.215</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.3]</th> <td>    2.3570</td> <td>    2.808</td> <td>    0.839</td> <td> 0.401</td> <td>   -3.151</td> <td>    7.865</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.4]</th> <td>    4.1450</td> <td>    2.754</td> <td>    1.505</td> <td> 0.132</td> <td>   -1.257</td> <td>    9.547</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.5]</th> <td>    4.5580</td> <td>    2.759</td> <td>    1.652</td> <td> 0.099</td> <td>   -0.853</td> <td>    9.969</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.6]</th> <td>    4.3306</td> <td>    2.776</td> <td>    1.560</td> <td> 0.119</td> <td>   -1.115</td> <td>    9.776</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.7]</th> <td>    3.5847</td> <td>    2.744</td> <td>    1.307</td> <td> 0.192</td> <td>   -1.797</td> <td>    8.966</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.8]</th> <td>    2.3155</td> <td>    2.700</td> <td>    0.858</td> <td> 0.391</td> <td>   -2.981</td> <td>    7.612</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk:C(decile)[T.9]</th> <td>    2.2549</td> <td>    2.687</td> <td>    0.839</td> <td> 0.402</td> <td>   -3.016</td> <td>    7.526</td>\n",
+       "</tr>\n",
+       "</table>"
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.table.SimpleTable'>"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "res.summary().tables[1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "To get the effect estimates, we'll use t-tests with contrast DataFrames, like we did in Program 15.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "           estimate    95% C.I.\n",
+      "\n",
+      "decile 0     -0.0    (-4.7, 4.7)\n",
+      "decile 1      4.1    ( 0.9, 7.4)\n",
+      "decile 2      6.5    ( 3.4, 9.7)\n",
+      "decile 3      2.3    (-0.6, 5.2)\n",
+      "decile 4      4.1    ( 1.4, 6.8)\n",
+      "decile 5      4.5    ( 1.8, 7.2)\n",
+      "decile 6      4.3    ( 1.5, 7.1)\n",
+      "decile 7      3.6    ( 0.9, 6.2)\n",
+      "decile 8      2.3    (-0.2, 4.8)\n",
+      "decile 9      2.2    (-0.2, 4.7)\n"
+     ]
+    }
+   ],
+   "source": [
+    "# start with empty DataFrame\n",
+    "contrast = pd.DataFrame(\n",
+    "    np.zeros((2, res.params.shape[0])),\n",
+    "    columns=res.params.index\n",
+    ")\n",
+    "\n",
+    "# modify the constant entries\n",
+    "contrast['Intercept'] = 1\n",
+    "contrast['qsmk'] = [1, 0]\n",
+    "\n",
+    "# loop through t-tests, modify the DataFrame for each decile,\n",
+    "# and print out effect estimate and confidence intervals\n",
+    "print('           estimate    95% C.I.\\n')\n",
+    "for i in range(10):\n",
+    "    if i != 0:\n",
+    "        # set the decile number\n",
+    "        contrast['C(decile)[T.{}]'.format(i)] = [1, 1]\n",
+    "        contrast['qsmk:C(decile)[T.{}]'.format(i)] = [1, 0]\n",
+    "    \n",
+    "    ttest = res.t_test(contrast.iloc[0] - contrast.iloc[1])\n",
+    "    est = ttest.effect[0]\n",
+    "    conf_ints = ttest.conf_int(alpha=0.05)\n",
+    "    lo, hi = conf_ints[0, 0], conf_ints[0, 1]\n",
+    "\n",
+    "    print('decile {}    {:>5.1f}    ({:>4.1f},{:>4.1f})'.format(i, est, lo, hi))\n",
+    "    \n",
+    "    if i != 0:\n",
+    "        # reset to zero\n",
+    "        contrast['C(decile)[T.{}]'.format(i)] = [0, 0]\n",
+    "        contrast['qsmk:C(decile)[T.{}]'.format(i)] = [0, 0]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "We can compare the estimates above to the estimate we get from a model without interaction between `qsmk` and $L$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "model = sm.OLS.from_formula(\n",
+    "    'wt82_71 ~ qsmk + C(decile)', \n",
+    "    data=nhefs_all\n",
+    ")\n",
+    "res = model.fit()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "         <td></td>           <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th>      <td>    3.7505</td> <td>    0.609</td> <td>    6.159</td> <td> 0.000</td> <td>    2.556</td> <td>    4.945</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.1]</th> <td>   -0.7391</td> <td>    0.861</td> <td>   -0.858</td> <td> 0.391</td> <td>   -2.428</td> <td>    0.950</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.2]</th> <td>   -0.6182</td> <td>    0.861</td> <td>   -0.718</td> <td> 0.473</td> <td>   -2.307</td> <td>    1.071</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.3]</th> <td>   -0.5204</td> <td>    0.858</td> <td>   -0.606</td> <td> 0.544</td> <td>   -2.204</td> <td>    1.163</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.4]</th> <td>   -1.4884</td> <td>    0.859</td> <td>   -1.733</td> <td> 0.083</td> <td>   -3.173</td> <td>    0.197</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.5]</th> <td>   -1.6227</td> <td>    0.868</td> <td>   -1.871</td> <td> 0.062</td> <td>   -3.324</td> <td>    0.079</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.6]</th> <td>   -1.9853</td> <td>    0.868</td> <td>   -2.287</td> <td> 0.022</td> <td>   -3.688</td> <td>   -0.282</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.7]</th> <td>   -3.4447</td> <td>    0.875</td> <td>   -3.937</td> <td> 0.000</td> <td>   -5.161</td> <td>   -1.729</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.8]</th> <td>   -5.1544</td> <td>    0.885</td> <td>   -5.825</td> <td> 0.000</td> <td>   -6.890</td> <td>   -3.419</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>C(decile)[T.9]</th> <td>   -4.8403</td> <td>    0.883</td> <td>   -5.483</td> <td> 0.000</td> <td>   -6.572</td> <td>   -3.109</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk</th>           <td>    3.5005</td> <td>    0.457</td> <td>    7.659</td> <td> 0.000</td> <td>    2.604</td> <td>    4.397</td>\n",
+       "</tr>\n",
+       "</table>"
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.table.SimpleTable'>"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "res.summary().tables[1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "         estimate   95% C.I.\n",
+      "effect      3.5    (2.6, 4.4)\n"
+     ]
+    }
+   ],
+   "source": [
+    "est = res.params.qsmk\n",
+    "conf_ints = res.conf_int(alpha=0.05, cols=None)\n",
+    "lo, hi = conf_ints[0]['qsmk'], conf_ints[1]['qsmk']\n",
+    "\n",
+    "print('         estimate   95% C.I.')\n",
+    "print('effect    {:>5.1f}    ({:>0.1f}, {:>0.1f})'.format(est, lo, hi))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### Program 15.4"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Now we will do \"outcome regression $\\mathrm{E}[Y|A, C=0, p(L)]$ with the estimated propensity score $p(L)$ as a continuous covariate rather than as a set of indicators\" (pg 187)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "nhefs['propensity'] = propensity[~nhefs_all.wt82_71.isnull()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table class=\"simpletable\">\n",
+       "<tr>\n",
+       "       <td></td>         <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  \n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>Intercept</th>  <td>    5.5945</td> <td>    0.483</td> <td>   11.581</td> <td> 0.000</td> <td>    4.647</td> <td>    6.542</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>qsmk</th>       <td>    3.5506</td> <td>    0.457</td> <td>    7.765</td> <td> 0.000</td> <td>    2.654</td> <td>    4.448</td>\n",
+       "</tr>\n",
+       "<tr>\n",
+       "  <th>propensity</th> <td>  -14.8218</td> <td>    1.758</td> <td>   -8.433</td> <td> 0.000</td> <td>  -18.269</td> <td>  -11.374</td>\n",
+       "</tr>\n",
+       "</table>"
+      ],
+      "text/plain": [
+       "<class 'statsmodels.iolib.table.SimpleTable'>"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model = sm.OLS.from_formula('wt82_71 ~ qsmk + propensity', data=nhefs)\n",
+    "res = model.fit()\n",
+    "res.summary().tables[1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "From the coefficient on `qsmk` we can see the effect estimate is 3.6.\n",
+    "\n",
+    "We'll use bootstrap to get confidence intervals."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "def outcome_regress_effect(data):\n",
+    "    model = sm.OLS.from_formula('wt82_71 ~ qsmk + propensity', data=data)\n",
+    "    res = model.fit()\n",
+    "    \n",
+    "    data_qsmk_1 = data.copy()\n",
+    "    data_qsmk_1['qsmk'] = 1\n",
+    "    \n",
+    "    data_qsmk_0 = data.copy()\n",
+    "    data_qsmk_0['qsmk'] = 0\n",
+    "    \n",
+    "    mean_qsmk_1 = res.predict(data_qsmk_1).mean()\n",
+    "    mean_qsmk_0 = res.predict(data_qsmk_0).mean()\n",
+    "    \n",
+    "    return mean_qsmk_1 - mean_qsmk_0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "def nonparametric_bootstrap(data, func, n=1000):\n",
+    "    estimate = func(data)\n",
+    "    \n",
+    "    n_rows = data.shape[0]\n",
+    "    indices = list(range(n_rows))\n",
+    "    \n",
+    "    b_values = []\n",
+    "    for _ in tqdm(range(n)):\n",
+    "        data_b = data.sample(n=n_rows, replace=True)\n",
+    "        b_values.append(func(data_b))\n",
+    "    \n",
+    "    std = np.std(b_values)\n",
+    "    \n",
+    "    return estimate, (estimate - 1.96 * std, estimate + 1.96 * std)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 2000/2000 [00:29<00:00, 67.98it/s]\n"
+     ]
+    }
+   ],
+   "source": [
+    "data = nhefs[['wt82_71', 'qsmk', 'propensity']]\n",
+    "\n",
+    "info = nonparametric_bootstrap(\n",
+    "    data, outcome_regress_effect, n=2000\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "         estimate   95% C.I.\n",
+      "effect      3.6    (2.6, 4.5)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('         estimate   95% C.I.')\n",
+    "print('effect    {:>5.1f}    ({:>0.1f}, {:>0.1f})'.format(info[0], info[1][0], info[1][1]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## End to End"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 用类组织本章的代码\n",
+    "\n",
+    "结果回归和倾向得分分析的各种版本是因果推断最常用的参数方法。那么本类主要目的是用于展示这两种因果效应估计方法的实现。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": [
+    "%matplotlib inline\n",
+    "\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import statsmodels.api as sm\n",
+    "import matplotlib.pyplot as plt\n",
+    "from tqdm import tqdm\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "这是一个结果回归和倾向得分因果效应估计方法的展示类！\n",
+      "WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero\n",
+      "我们的展示数据是 NHEFS with shape (1566, 64)\n",
+      "WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "  2%|▏         | 4/200 [00:00<00:05, 33.17it/s]"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                  mean propensity\n",
+      "    non-quitters: 0.245\n",
+      "        quitters: 0.312\n",
+      "\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 200/200 [00:05<00:00, 33.52it/s]"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "         estimate   95% C.I.\n",
+      "effect      3.6    (2.6, 4.5)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "3.550595680031253"
+      ]
+     },
+     "execution_count": 91,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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lv04BRgoItVF5BqgOZBetpCVUkq5w92zbm4C7gK+FZFMu+wJIFlE4rG6ZbKBewGMMd+JyHvAZqwzdu7XM26UUqp8uZXojTGf47zfPfUiyzwPPO9mXEoppbxEb4GglFJBThO9UkoFOU30SikV5DTRK6VUkNNEr5RSQU4TfSWXk5ND165diY6OJiYmhmnTpgHwyy+/kJiYSPPmzUlMTOTgwYMALF26lLi4OOLj40lISODzzz/3Z/hKKRdooq/kQkNDmTx5Mlu2bGHdunXMmDGDzZs3M2nSJG655Ra2b9/OLbfcwqRJkwC45ZZb2LhxI5mZmcyZM4cRI0b4+RUopS5FE30lFx4eTps2bQCoVasW0dHR7N69m6VLlzJ48GAABg8ezIcffghAzZo1sS6QhoKCguLHSqnApYleFcvOzmbDhg20b9+evXv3Eh5u3dkiPDycffv2Fc+3ZMkSoqKi6NWrF3PmzPFXuEopF2miVwAcO3aMfv36MXXqVGrXrn3ReZOSkvj+++/58MMPeeqpp8opQqWUpzTRK86cOUO/fv0YNGgQffv2BaBBgwbk5eUBkJeXR1hY2AXLde7cmR9++IH9+/eXa7xKKfdooi8nw4YNIywsjNjY2OKyjRs30rFjR1q2bMltt93GkSNHAFixYgVt27alZcuWtG3blrS0NJ/FZYxh+PDhREdH8/DDDxeX33777cybNw+AefPm0adPHwB27NiBMdaQAuvXr+f06dP85je/8Vl8Sqmy00RfToYMGcLy5cvPKxsxYgSTJk3i22+/JSkpiZdffhmAq666iv/85z98++23zJs3j7vuustnca1du5b58+eTlpZGfHw88fHxpKam8vjjj7NixQqaN2/OihUrePzxxwH44IMPiI2NJT4+nvvvv593331XD8gqFeDcvU2x8lDnzp3Jzs4+r2zr1q107twZgMTERLp3786zzz5L69ati+eJiYnh5MmTnDp1iurVq3s9rk6dOhXvoZe0atWqC8rGjRvHuHHjvB6HUsp3dI/ej2JjY0lJSQFg0aJF5OTkXDDPBx98QOvWrX2S5JVSlYMmej+aM2cOM2bMoG3bthw9epRq1aqdN/27775j3LhxvP76636KUCkVDLTrxo+ioqL45JNPANi2bRsfffRR8bTc3FySkpJ46623uO666/wVolIqCOgevR8VXYR07tw5nnvuOe677z4ADh06RK9evZg4cSI33XSTP0NUSgUBtxO9iDQWkU9FZIuIfCciD9nl9URkhYhst/9faZeLiPxDRHaIyCYRaePtF1ERJCcn07FjR7Zu3UpERASzZ89mwYIFXH/99URFRdGwYUOGDh0KwPTp09mxYwfPPvts8ZkwjlemKqWUOzzpuikEHjHGrBeRWsA3IrICGAKsMsZMEpHHgceBccCtQHP7rz3wL/t/pbJgwQKn5Q899NAFZX/961/561//6uuQik2dOpXDhw97tGydOnUYM2aMlyNSSnmT24neGJMH5NmPj4rIFqAR0AfoYs82D1iNlej7AG8Z6xy+dSJSV0TC7XpUADh8+DBPP/20R8s+88wzXo5GKeVtZeqjF5FIoDXwFdCgKHnb/4uumW8EOJ43mGuXlaxrpIhkiEhGfn5+WcJSfuTsCuA//elPxV1QkZGRxMfHA+V7BbBSlZnHZ92ISE3gA2CMMebIRa6OdDbhgit0jDEzgZkACQkJzq/gUQFvyJAhjB49mrvvvru47N133y1+/Mgjj1CnTh3g1yuAGzZsSFZWFt27d2f37t3lHrNSwc6jRC8iVbGS/NvGmMV28d6iLhkRCQeKjh7mAo0dFo8A9ngasApszq4ALmKM4b333ivecy/PK4CVqsw8OetGgNnAFmPM3x0mpQCD7ceDgaUO5XfbZ990AA5r/3zl9Nlnn9GgQQOaN29+wTS9Algp3/Fkj/4m4C7gWxHJtMueACYB74nIcOAn4I/2tFSgJ7ADOA4MLVPEFVRZzmyB4Di7ZcGCBSQnJ19QXnQFcNHFY0op7/LkrJvPcd7vDnCLk/kNcL+77QSbspzZAhX/7JbCwkIWL17MN998c165XgGslO/plbGqXKxcuZKoqCgiIiKKy/QKYKXKhyZ65VXOrgAGWLhw4QXdNnoFsFLlQ29qpryqtCuA586de0FZeV8BrFRlpXv0SikV5DTRK6VUkNNEr5RSQU4TvVJKBTlN9EopFeQ00SulVJDT0yuVV+mtHpQKPJrolVdV9ls9KBWItOtGKaWCnCZ6pZQKcprolVIqyGmiV0qpIKeJXimlgpwmeqWUCnKejBk7R0T2iUiWQ9l4EdktIpn2X0+HaX8RkR0islVEunsrcKWUUq7xZI9+LtDDSfkUY0y8/ZcKICItgIFAjL3MP0WkiqfBKqWUcp/bid4Yswb4xcXZ+wALjTGnjDG7sAYIb+dum0oppTznzT760SKyye7audIuawTkOMyTa5ddQERGikiGiGTk5+d7MSzPDRs2jLCwMGJjY4vLHn30UaKiooiLiyMpKYlDhw4BkJ6eXjwcXqtWrViyZIm/wlZKqfN4K9H/C7gOiAfygMl2uTiZ1zirwBgz0xiTYIxJqF+/vpfCKpshQ4awfPny88oSExPJyspi06ZNXH/99UycOBGA2NhYMjIyyMzMZPny5dx7770UFhb6I2yllDqPVxK9MWavMeasMeYcMItfu2dygcYOs0YAe7zRZnno3Lkz9erVO6+sW7duhIZatwjq0KEDubm5AFxxxRXF5SdPnkTE2XecUkqVP68kehEJd3iaBBSdkZMCDBSR6iJyDdAcSPdGm4Fgzpw53HrrrcXPv/rqK2JiYmjZsiWvvfZaceJXSil/cjsTicgCoAtwlYjkAk8DXUQkHqtbJhu4F8AY852IvAdsBgqB+40xZ70Tun89//zzhIaGMmjQoOKy9u3b891337FlyxYGDx7MrbfeymWXXebHKJVSyoNEb4xJdlI8+yLzPw887247gWzevHksW7aMVatWOe2iiY6OpkaNGmRlZZGQkOCHCJVS6ld6Zaybli9fzosvvkhKSgpXXHFFcfmuXbuKD77++OOPbN26lcjISD9FqZRSv9JO5ItITk5m9erV7N+/n4iICJ555hkmTpzIqVOnSExMBKwDsq+99hqff/45kyZNomrVqoSEhPDPf/6Tq666ys+vQCmlNNFf1IIFCy4oGz58uNN577rrLu666y5fh6SUUm7TrhullApymuiVUirIaaJXSqkgp4leKaWCnCZ6VWFMmzaN2NhYYmJimDp1KgCZmZl06NCB+Ph4EhISSE8PmguvlfIaTfSqQsjKymLWrFmkp6ezceNGli1bxvbt23nsscd4+umnyczMZMKECTz22GP+DlWpgKOnV17E1KlTOXz4sMfL16lThzFjxngxospry5YtdOjQofgitd/97ncsWbIEEeHIkSMAHD58mIYNG/ozTKUCkib6izh8+DBPP/20x8s/88wzXoymcouNjeXJJ5/kwIEDXH755aSmppKQkMDUqVPp3r07Y8eO5dy5c3zxxRf+DlWpgKNdN6pCiI6OZty4cSQmJtKjRw9atWpFaGgo//rXv5gyZQo5OTlMmTKl1AvalKrMNNGrCmP48OGsX7+eNWvWUK9ePZo3b868efPo27cvAH/84x/1YKxSTmiiVxXGvn37APjpp59YvHgxycnJNGzYkP/9738ApKWl0bx5c3+GqFRA0j56VWH069ePAwcOULVqVWbMmMGVV17JrFmzeOihhygsLOSyyy5j5syZ/g5TqYCjiV5VGJ999tkFZZ06deKbb77xQzRKVRzadaOUUkFOE71SSgU5txO9iMwRkX0ikuVQVk9EVojIdvv/lXa5iMg/RGSHiGwSkTbeDF4ppdSlebJHPxfoUaLscWCVMaY5sMp+DnAr0Nz+Gwn8y7MwlVJKecrtRG+MWQP8UqK4DzDPfjwP+IND+VvGsg6oKyLhngarlFLKfd7qo29gjMkDsP+H2eWNgByH+XLtsguIyEgRyRCRjPz8fC+FpZRSytenV4qTMuNsRmPMTGAmQEJCgtN5VOWiN5VTyju8lej3iki4MSbP7prZZ5fnAo0d5osA9nipTRXk9KZySnmHt7puUoDB9uPBwFKH8rvts286AIeLuniUUkqVD7f36EVkAdAFuEpEcoGngUnAeyIyHPgJ+KM9eyrQE9gBHAeGeiFmpZRSbnA70RtjkkuZdIuTeQ1wv7ttKKWU8h69MlZVSocOHaJ///5ERUURHR3Nl19+yaJFi4iJiSEkJISMjAx/h6iU1+hNzVSl9NBDD9GjRw/ef/99Tp8+zfHjx6lbty6LFy/m3nvv9Xd4SnmVJnpV6Rw5coQ1a9Ywd+5cAKpVq0a1atWoW7eufwNTyke060ZVOjt37qR+/foMHTqU1q1bM2LECAoKCvwdllI+o4leVTqFhYWsX7+eUaNGsWHDBmrUqMGkSZP8HZZSPqOJXlU6ERERRERE0L59ewD69+/P+vXr/RyVUr6jiV5VOldffTWNGzdm69atAKxatYoWLVr4OSqlfEcTvaqUXn31VQYNGkRcXByZmZk88cQTLFmyhIiICL788kt69epF9+7d/R2mUl6hZ92oSik+Pv6Cc+WTkpJISkryU0RK+Y7u0SulVJDTRK+UUkFOE71SXnD27Flat25N7969AZg+fTrNmjVDRNi/f7+fo1OVnSZ6pbxg2rRpREdHFz+/6aabWLlyJU2bNvVjVEpZNNErVUa5ubl89NFHjBgxorisdevWREZG+i8opRzoWTeq0ijL0IQXG5ZwzJgxvPTSSxw9erQs4SnlM5roVaVRlqEJSxuWcNmyZYSFhdG2bVtWr15dhuiU8h3tulGqDNauXUtKSgqRkZEMHDiQtLQ07rzzTn+HpdR5vJroRSRbRL4VkUwRybDL6onIChHZbv+/0pttKuVPEydOJDc3l+zsbBYuXMjNN9/Mv//9b3+HpdR5fLFH39UYE2+MSbCfPw6sMsY0B1bZz5UKav/4xz+IiIggNzeXuLi48w7UKlXeyqOPvg/WYOIA84DVwLhyaFepctWlSxe6dOkCwIMPPsiDDz7o34CUsnl7j94An4jINyIy0i5rYIzJA7D/hzlbUERGikiGiGTk5+d7OSylAl9OTg5du3YlOjqamJgYpk2bBsBTTz1FXFwc8fHxdOvWjT179vg5UlXReDvR32SMaQPcCtwvIp1dXdAYM9MYk2CMSahfv76Xw1Iq8IWGhjJ58mS2bNnCunXrmDFjBps3b+bRRx9l06ZNZGZm0rt3byZMmODvUFUF49VEb4zZY//fBywB2gF7RSQcwP6/z5ttKhUswsPDadOmDQC1atUiOjqa3bt3U7t27eJ5CgoKEBF/hagqKK/10YtIDSDEGHPUftwNmACkAIOBSfb/pd5qU6lglZ2dzYYNG4pHwXryySd56623qFOnDp9++qmfo1MVjTf36BsAn4vIRiAd+MgYsxwrwSeKyHYg0X6ulCrFsWPH6NevH1OnTi3em3/++efJyclh0KBBTJ8+3c8RqorGa3v0xpidQCsn5QeAW7zVjquGDRtWfNViVlYWYB3UWrp0KSEhIYSFhTF37lwaNmxY3qGpIOCr2ymcOXOGfv36MWjQIPr27XvB9DvuuINevXqVeqWuUs4E7S0QhgwZwujRo7n77ruLyx599FGeffZZwDrPecKECbz22mv+ClFVYL64nYIxhuHDhxMdHc3DDz9cXL59+3aaN28OQEpKClFRUR61qyqvoE30nTt3Jjs7+7wyPailAtnatWuZP38+LVu2JD4+HoAXXniB2bNns3XrVkJCQmjatKnunCi3BW2iL40e1FKBqlOnThhjLijv2bOnV+qfNm0as2bNwhjDPffcU2r3kQo+le6mZnpQS1VGWVlZzJo1i/T0dDZu3MiyZcvYvn27v8NS5aTSJfoid9xxBx988IG/w1CqXGzZsoUOHTpwxRVXEBoayu9+9zuWLFnicX2RkZHFXUwJCQmXXkD5VaVK9I57MHpQS1UmsbGxrFmzhgMHDnD8+HFSU1PJyckpU52ffvopmZmZZGRkeFzHyZMnadeuHa1atSImJsbjA9zq4oI20ScnJ9OxY0e2bt1KREQEs2fP5vHHHyc2Npa4uDg++eST4nuJKBXsoqOjGTduHImJifTo0YNWrVoRGur/Q3TVq1cnLS2NjRs3kpmZyfLly1m3bl2Z6ly+fDk33HADzZo1Y9Kksl22E6h1ucv/W9pHFixYcEHZ8OHD/RCJUoFh+PDhxZ+BJ554goiICI/rEhG6deuGiHDvvfcycuTISy9USpsJMe8AABa5SURBVD01a9YErGsIzpw5U6az4c6ePcv999/PihUriIiI4MYbb+T222+nRYsWQVOXJ4J2j14pdb59+6zbTP30008sXryY5ORkj+tau3Yt69ev5+OPP2bGjBmsWbPG47rOnj1LfHw8YWFhJCYmFt/2wRPp6ek0a9aMa6+9lmrVqjFw4ECWLvXsriuBWpcngnaPXqmKoixX2cLFr7R11K9fPw4cOEDVqlWZMWMGV17p+WBvRVeUh4WFkZSURHp6Op07u3yz2vNUqVKFzMxMDh06RFJSEllZWcTGxnpU1+7du2ncuHHx84iICL766qugqssTmuiV8rOyXGULpV9pW9Jnn33mcRuOCgoKOHfuHLVq1aKgoIBPPvmEv/3tb2Wut27dunTp0oXly5d7nOidXYfgaVdQoNblCe26UUq5Ze/evXTq1IlWrVrRrl07evXqRY8ePTyqKz8/n0OHDgFw4sQJVq5cWaaz4SIiIs47myg3N9fj+1kFal2e0D16pZRbrr32WjZu3OiVuvLy8hg8eDBnz57l3LlzDBgwgN69e3tc34033sj27dvZtWsXjRo1YuHChbzzzjtBVZcnNNErpfwmLi6ODRs2eK2+0NBQpk+fTvfu3Tl79izDhg0jJiYmqOryqP1ya6mc+Or2sUqpiqFnz55euz9QoNblrqBL9L64faxSSlVkQZfolars9FetKkkTvVJBRn/VqpLKJdGLSA9gGlAFeMMYo+PGKlUB6K+D4ODzRC8iVYAZWAOD5wJfi0iKMWazr9tWSpWNN38d6JeG/4izK7a82oBIR2C8Maa7/fwvAMaYiaUtc8011xhP31w//vgjTZs29cqyZamr5PLerKus9QVqXSWX13VWsWPzZV3KuaFDh35jjLlggIDy6LppBDje+DoXuOCuRSIyEhgJ0KhRozI1+OOPP5Zp+YpQl7frqwx1ebu+QK3L2/UFYl0///wzp06d8nj56tWrc/XVV3ulPl/W5S3lkeid3dDhgp8RxpiZwEyAhIQEM2TIEI8ae+WVVygoKPBo2Ro1auDYrjcOTBXV5826vFFfoNblWJ+uM//UVxHqUs4NHTrUaXl5JPpcoLHD8whgj68aGzt2rK+qVkqVQY0aNcq0E6Y8Vx6J/muguYhcA+wGBgJ3lEO7SqkAojth/uPzu1caYwqB0cB/gS3Ae8aY73zdrjeUdS9C90KUUoGgXM6jN8akAqnl0ZY36R6IUioY6P3olVKlKsuvUn/8oh02bBhhYWEeD1xSkjcH9PZ2bO6oFLdAyMnJ4e677+bnn38mJCSEkSNH8tBDD/k7LKV8wpsHPSvar9ohQ4YwevRo7r777jLX5e0Bvb0Zm7sqRaIPDQ1l8uTJtGnThqNHj9K2bVsSExPLbQR2pcpTRUvOYCXVhIQEGjVqxLJlyzyup3PnzmRnZ3slJscBvYHiAb09zRvejM1dlaLrJjw8nDZt2gBQq1YtoqOj2b17t5+jUkoVmTZtGtHR0f4O4zzOBvSuqHmjUiR6R9nZ2WzYsIH27S+4ONdlU6ZMISYmhtjYWJKTkzl58qQXI1SVTWU/uys3N5ePPvqIESNG+DuU8/h7QG9vqhRdN0WOHTtGv379mDp1KrVr1/aojt27d/OPf/yDzZs3c/nllzNgwAAWLlyoV+1VMpW5H9zbxowZw0svvcTRo0f9Hcp5/D2gtzdVmkR/5swZ+vXrx6BBg+jbt2+Z6iosLOTEiRNUrVqV48ePV9iNrzxX2ZLzsGHDWLZsGWFhYWRlZQHw6KOP8p///Idq1apx3XXX8eabb1K3bl236i2qs23btqxevdoHkXvO3wN6e1Ol6LoxxjB8+HCio6N5+OGHy1RXo0aNGDt2LE2aNCE8PJw6derQrVs3L0WqlPc4O53vqaeeIi4ujvj4eLp168aePa7djWTIkCEsX778vLLExESysrLYtGkT119/PRMnlnpD2lKtXbuWlJQUIiMjGThwIGlpadx5551u11MkOTmZjh07snXrViIiIpg9e7bHdTkO6B0dHc2AAQPKNKC3N2NzV6VI9GvXrmX+/PmkpaURHx9PfHw8qameXb918OBBli5dyq5du9izZw8FBQX8+9//9nLESpWds+T86KOPsmnTJjIzM+nduzcTJkxwqa7OnTtTr16988q6detGaKjVKdChQwdyc3PdjnHixInk5uaSnZ3NwoULufnmm8v0eVqwYAF5eXmcOXOG3Nxchg8f7nFdYA3ovW3bNn744QeefPLJMtXl7djcUSm6bjp16uT0wIonVq5cyTXXXEP9+vUB6Nu3L1988UWZ9kKU8gVnp/M5HpsqKCjw2sHFOXPm8Kc//ckrdSnvqxR79N7UpEkT1q1bx/HjxzHGsGrVqoA7LUxVXM66WzZu3EjHjh1p2bIlt912G0eOHClTG08++SSNGzfm7bffdnmP/mKef/55QkNDGTRoUJnq6dKlS5nOoVel00Tvpvbt29O/f3/atGlDy5YtOXfuHCNHjvR3WMpPcnJy6Nq1K9HR0cTExDBt2jQAFi1aRExMDCEhIWRkZLhcn7PulhEjRjBp0iS+/fZbkpKSePnll8sU8/PPP09OTg6DBg1i+vTpZapr3rx5LFu2jLfffrvCnnpYGWii98AzzzzD999/T1ZWFvPnz6d69er+Dkn5SdFV11u2bGHdunXMmDGDzZs3Exsby+LFi+ncubNb9TnrC9+6dWtxPYmJiXzwwQdeif2OO+4oU13Lly/nxRdfJCUlhSuuuMIrMSnf0ERfTir7RTHBqrSrrqOjo7nhhhu80kZsbCwpKSmA9UvB8dxud23fvr34cUpKClFRUS4t5+yMkdGjR3P06FESExOJj4/nvvvu8zgu5VuV4mBsIKhs511XRt646tqZOXPm8OCDDzJhwgRuv/12qlWr5tJyycnJrF69mv379xMREcEzzzxDamoqW7duJSQkhKZNm/Laa6+5VNeCBQsuKCvPs0ZU2WiiV8oLvHHVdWmioqL45JNPANi2bRsfffSRS8tpclZFtOtGqTLy5lXXzuzbtw+Ac+fO8dxzz2kXiXKbVxK9iHQRkcMikmn//c1hWg8R2SoiO0TkcW+0p5QnfDGIhjevugbnfeELFizg+uuvJyoqioYNGzJ06NAyt6MqF2923XxmjOntWCAiVYAZQCKQC3wtIinGmM1ebFcpl/jiOEnRVdctW7YkPj4egBdeeIFTp07xwAMPkJ+fT69evYiPj+e///3vJetz1t0C6EA5qkx83UffDthhjNkJICILgT6AJnoVFC521XVSUlI5R6OUc97so+8oIhtF5GMRKbrzTyPA8VywXLvsAiIyUkQyRCQjPz/fi2EFnpMnT9KuXTtatWpFTEwMTz/9NAC//e1vi+/F07BhQ/7whz/4OVKlVDDw1h79eqCpMeaYiPQEPgSaA84ulXO6+2OMmQnMBEhISPDOjWkCVPXq1UlLS6NmzZqcOXOGTp06ceutt/LZZ58Vz9OvXz/69OnjxyiVUsHC4z16Ebm/6OArUNMYcwzAGJMKVBWRq7D24Bs7LBYBuHZf1CAmItSsWROwztg4c+bMeZePHz16lLS0NN2jV0p5hceJ3hgzwxgTb4yJB86JnalEpJ1d7wHga6C5iFwjItWAgUCKF+Ku8M6ePUt8fDxhYWEkJiaed5HNkiVLuOWWW7x+PnZF4+uric+ePUvr1q3p3fu8cwh44IEHir+IlQoG3uq66Q+MEpFC4AQw0FhHqApFZDTwX6AKMMcY852X2qzQqlSpQmZmJocOHSIpKYmsrKziOxYuWLAg4MbP9AdfX01cNCC1490gMzIyOHTokE/bVaq8eeVgrDFmujEmxhjTyhjTwRjzhcO0VGPM9caY64wxz3ujvWBSt25dunTpUnzHwgMHDpCenk6vXr38HFlwczYg9dmzZ3n00Ud56aWX/BiZUt6nV8b6QX5+fvFe44kTJ1i5cmXxzaUWLVpE7969ueyyy/wZYtArGpA6JOTXj8D06dO5/fbbCQ8P92NkSnmfJno/yMvLo2vXrsTFxXHjjTeSmJhY3E+8cOFCkpOT/RxhcHMckLrInj17WLRoEQ888IAfI1PKN/SmZn4QFxfHhg0bnE5bvXp1+QbjZTVq1KCgoKBMy/ta0YDUqampnDx5kiNHjhATE0P16tVp1qwZAMePH6dZs2bs2LHD5/Eo5Wua6CuosiRUXyZTXx5AjYyMpFatWlSpUoXQ0FAyMjIYP348s2bNKh7D94UXXqBnz54XrWfixIlMnDgRsL5YX3nllQuGsKtZs6YmeRU0NNFXUJX1/vaffvopV1111Xllf/7znyvt+lDKFZroVaXWpUsXunTpckH5sWPHyj8YpXxED8aqCkNE6NatG23btmXmzJnF5dOnTycuLo5hw4Zx8OBBP0aoVGDSRK8qjLVr17J+/Xo+/vhjZsyYwZo1axg1ahQ//PADmZmZhIeH88gjj/g7TKUCjiZ65TOHDh2if//+REVFER0dzZdffsn48eNp1KhR8V06U1NTXa6vYcOGAISFhZGUlER6ejoNGjSgSpUqhISEcM8995Cenu6rl6NUhaWJPgg4S6gAr776KjfccAMxMTE89thj5R7XQw89RI8ePfj+++/ZuHEj0dHRgHXwNDMzk8zMzEueIVOkoKCAo0ePFj/+5JNPiI2NJS8vr3ieJUuWFN9GQin1Kz0YGwSKEur777/P6dOnOX78OJ9++ilLly5l06ZNVK9evXjcUWd8carmkSNHWLNmDXPnzgWgWrVqVKtWzaM2APbu3Vs8kEdhYSF33HEHPXr04K677iIzMxMRITIyktdff93jNpQKVlLa6Dj+lJCQYDIyMvwdRoVw5MgRWrVqxc6dO8+71fGAAQMYOXIkv//97/0SV2ZmJiNHjqRFixZs3LiRtm3bMm3aNF5++WXmzp1L7dq1SUhIYPLkyVx55ZV+iVGpYCMi3xhjEkqWa9dNBbdz507q16/P0KFDad26NSNGjKCgoIBt27bx2Wef0b59e373u9/x9ddfl2tchYWFrF+/nlGjRrFhwwZq1KjBpEmT9OCpUn6gib6CKy2hFhYWcvDgQdatW8fLL7/MgAEDSh3b1BciIiKIiIgovs9+//79Wb9+vR48VcoPNNFXcKUl1IiICPr27YuI0K5dO0JCQti/f3+5xXX11VfTuHFjtm7dCsCqVato0aKFHjxVyg/0YGwF55hQb7jhhuKEet1115GWlkaXLl3Ytm0bp0+fvuDWAb726quvMmjQIE6fPs21117Lm2++yYMPPqgHT5UqZ3owNghkZmYyYsSI8xJqjRo1GDZsGJmZmVSrVo1XXnmFm2+++ZJ1TZkyhTfeeAMRoWXLlrz55pvk5eUxcOBAfvnlF9q0acP8+fPLdAaNUso3SjsYq4leFdu9ezedOnVi8+bNXH755QwYMICePXuSmppK3759GThwIPfddx+tWrVi1KhR/g5XKVWCV866EZEoEflSRE6JyNgS03qIyFYR2SEijzuUXyMiX4nIdhF51x4kXAWowsJCTpw4QWFhIcePHyc8PJy0tDT69+8PwODBg/nwww/9HKVSyh3uHoz9BXgQeMWxUESqADOAW4EWQLKItLAnvwhMMcY0Bw4Cw8sUsfKZRo0aMXbsWJo0aUJ4eDh16tShbdu21K1bl9BQ63BOREQEu3fv9nOkSil3uJXojTH7jDFfA2dKTGoH7DDG7DTGnAYWAn3EuoLnZuB9e755wB/KGLPykYMHD7J06VJ27drFnj17KCgo4OOPP75gPscLs5RSgc9bp1c2AnIcnufaZb8BDhljCkuUX0BERopIhohk5Ofneyks5Y6VK1dyzTXXUL9+fapWrUrfvn354osvOHToEIWF1ibMzc0tvrmYUqpi8Faid7aLZy5SfmGhMTONMQnGmISiYeFU+WrSpAnr1q3j+PHjGGOKT9Xs2rUr779v/SibN28effr08XOkSil3XDLRi8j9IpJp/5W2K5cLNHZ4HgHsAfYDdUUktES5CkDt27enf//+tGnThpYtW3Lu3DlGjhzJiy++yN///neaNWvGgQMHGD5cD7MoVZF4dHqliIwHjhljXrGfhwLbgFuA3cDXwB3GmO9EZBHwgTFmoYi8BmwyxvzzYvXr6ZVKKeW+0k6vdOvKWBG5GsgAagPnRGQM0MIYc0RERgP/BaoAc4wx39mLjQMWishzwAZgdhleh1JKKTe5leiNMT9jdb84m5YKXDBckDFmJ9ZZOUoppfxAb2qmlFJBThO9UkoFuYC8142I5AM/2k+vwjp7JxAFamyBGhcEbmyBGhdobJ4I1LjAt7E1NcZccH56QCZ6RyKS4ewociAI1NgCNS4I3NgCNS7Q2DwRqHGBf2LTrhullApymuiVUirIVYREP9PfAVxEoMYWqHFB4MYWqHGBxuaJQI0L/BBbwPfRK6WUKpuKsEevlFKqDDTRK6VUkAuYRF/aUIQO06vbQxHusIcmjAyg2DqLyHoRKRSR/gEU18MisllENonIKhFpGkCx3Sci39p3Rf3cYUQyv8blMF9/ETEiUm6nwbmwzoaISL7D3WRHBEJc9jwD7PfadyLyTnnE5UpsIjLFYX1tE5FDARJXExH5VEQ22J/Pnj4NyBjj9z+sG6H9AFwLVAM2Yt0szXGe/wNesx8PBN4NoNgigTjgLaB/AMXVFbjCfjwqwNZZbYfHtwPLAyEue75awBpgHZAQQOtsCDC9POJxM67mWDcsvNJ+HhYosZWY/wGsGy76PS6sA7Kj7MctgGxfxhQoe/ROhyIsMU8frKEIwRqa8BYpnzHtLhmbMSbbGLMJOFcO8bgT16fGmOP203WUckM6P8V2xOFpDUoZkKa847I9C7wEnCyHmNyNrby5Etc9wAxjzEGwhhwNoNgcJQMLAiQug3UXYIA6+HicjkBJ9KUNReh0HmMNTXgYa6jCQIjNH9yNazhw4QCwvuFSbPagNj9gJdUHAyEuEWkNNDbGLCuHeBy5uj372T/13xeRxk6m+yOu64HrRWStiKwTkR7lEJersQFgd1teA6QFSFzjgTtFJBfrrr8P+DKgQEn0rgw56PKwhF7mr3YvxeW4ROROIAF42acROTTppOyC2IwxM4wx12GNWfBXn0d1ibhEJASYAjxSDrGU5Mo6+w8QaYyJA1by6y9cX3IlrlCs7psuWHvNb4hIXR/HBe59NgcC7xtjzvowniKuxJUMzDXGRAA9gfn2+88nAiXRlzYUodN57BGt6gC/BEhs/uBSXCLye+BJ4HZjzKlAis3BQuAPPo3Icqm4agGxwGoRyQY6ACnldED2kuvMGHPAYRvOAtoGQlz2PEuNMWeMMbuArViJPxBiKzKQ8um2AdfiGg68B2CM+RK4DOtmZ75RHgdNXDh4EQrsxPppVXTwIqbEPPdz/sHY9wIlNod551J+B2NdWWetsQ4KNQ/A7dnc4fFtQEYgxFVi/tWU38FYV9ZZuMPjJGBdgMTVA5hnP74Kq9viN4EQmz3fDUA29gWigRAXVjfqEPtxNNYXgc/i8/mLdmPl9MQad/YH4Em7bALWnihY33iLgB1AOnBtAMV2I9a3eAFwAPguQOJaCewFMu2/lABaZ9OA7+y4Pr1Ywi3PuErMW26J3sV1NtFeZxvtdRYVIHEJ8HdgM/AtMDBQ1pn9fDwwqbxicnGdtQDW2tsyE+jmy3j0FghKKRXkAqWPXimllI9ooldKqSCniV4ppYKcJnqllApymuiVUirIaaJXSqkgp4leKaWC3P8HtNU7Mf31h+MAAAAASUVORK5CYII=\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "class CH15(object):\n",
+    "    def __init__(self):\n",
+    "        print('这是一个结果回归和倾向得分因果效应估计方法的展示类！')\n",
+    "        self.data = self.get_data()\n",
+    "    \n",
+    "    def get_data(self):\n",
+    "        nhefs_all = pd.read_excel('NHEFS.xls')\n",
+    "        restriction_cols = [\n",
+    "            'sex', 'age', 'race', 'wt82', 'ht', 'school', 'alcoholpy', 'smokeintensity'\n",
+    "        ]\n",
+    "        missing = nhefs_all[restriction_cols].isnull().any(axis=1)\n",
+    "        nhefs = nhefs_all.loc[~missing]\n",
+    "        print(\"我们的展示数据是 NHEFS with shape\", nhefs.shape)\n",
+    "        return nhefs\n",
+    "    \n",
+    "    def outcome_regression(self):\n",
+    "        formula = (\n",
+    "            'wt82_71 ~ qsmk + qsmk:smokeintensity + sex + race + age + I(age**2) + C(education)'\n",
+    "            '        + smokeintensity + I(smokeintensity**2) + smokeyrs + I(smokeyrs**2)'\n",
+    "            '        + C(exercise) + C(active) + wt71 + I(wt71**2)'\n",
+    "        )\n",
+    "\n",
+    "        ols = sm.OLS.from_formula(formula, data=self.data) \n",
+    "        res = ols.fit()\n",
+    "        \n",
+    "        print('           estimate')\n",
+    "        print('alpha_1     {:>6.2f}'.format(res.params.qsmk))\n",
+    "        print('alpha_2     {:>6.2f}'.format(res.params['qsmk:smokeintensity']))\n",
+    "        \n",
+    "        est = res.params.qsmk\n",
+    "        conf_ints = res.conf_int(alpha=0.05, cols=None)\n",
+    "        lo, hi = conf_ints[0]['qsmk'], conf_ints[1]['qsmk']\n",
+    "\n",
+    "        print('           estimate   95% C.I.')\n",
+    "        print('alpha_1     {:>5.2f}    ({:>0.2f}, {:>0.2f})'.format(est, lo, hi))        \n",
+    "        \n",
+    "        return res.summary().tables[1]\n",
+    "    \n",
+    "    def ps_score(self):\n",
+    "        nhefs_all = pd.read_excel('NHEFS.xls')\n",
+    "        formula = (\n",
+    "            'qsmk ~ sex + race + age + I(age**2) + C(education)'\n",
+    "            '     + smokeintensity + I(smokeintensity**2) + smokeyrs + I(smokeyrs**2)'\n",
+    "            '     + C(exercise) + C(active) + wt71 + I(wt71**2)'\n",
+    "        )\n",
+    "        model = sm.Logit.from_formula(formula, data=nhefs_all) \n",
+    "        res = model.fit(disp=0)\n",
+    "        propensity = res.predict(nhefs_all)\n",
+    "        propensity0 = propensity[nhefs_all.qsmk == 0]\n",
+    "        propensity1 = propensity[nhefs_all.qsmk == 1]\n",
+    "        \n",
+    "        bins = np.arange(0.025, 0.85, 0.05)\n",
+    "        top0, _ = np.histogram(propensity0, bins=bins)\n",
+    "        top1, _ = np.histogram(propensity1, bins=bins)\n",
+    "        plt.ylim(-115, 295)\n",
+    "        plt.axhline(0, c='gray')\n",
+    "        plt.title(\"The distribution of PS for treatment and control\")\n",
+    "        bars0 = plt.bar(bins[:-1] + 0.025, top0, width=0.04, facecolor='white')\n",
+    "        bars1 = plt.bar(bins[:-1] + 0.025, -top1, width=0.04, facecolor='gray')\n",
+    "        for bars in (bars0, bars1):\n",
+    "            for bar in bars:\n",
+    "                bar.set_edgecolor(\"gray\")\n",
+    "\n",
+    "        for x, y in zip(bins, top0):\n",
+    "            plt.text(x + 0.025, y + 10, str(y), ha='center', va='bottom')\n",
+    "\n",
+    "        for x, y in zip(bins, top1):\n",
+    "            plt.text(x + 0.025, -y - 10, str(y), ha='center', va='top')\n",
+    "        print('                  mean propensity')\n",
+    "        print('    non-quitters: {:>0.3f}'.format(propensity0.mean()))\n",
+    "        print('        quitters: {:>0.3f}'.format(propensity1.mean()))\n",
+    "        print()\n",
+    "        return propensity\n",
+    "    \n",
+    "    def ps_stratification_standardization(self):\n",
+    "        dat = self.data\n",
+    "        propensity = self.ps_score()\n",
+    "        dat['propensity'] = propensity\n",
+    "        dat['decile'] = pd.qcut(dat.propensity, 10, labels=list(range(10)))\n",
+    "        model = sm.OLS.from_formula(\n",
+    "            'wt82_71 ~ qsmk + C(decile)', \n",
+    "            data=dat\n",
+    "        )\n",
+    "        res = model.fit()\n",
+    "        est = res.params.qsmk\n",
+    "        conf_ints = res.conf_int(alpha=0.05, cols=None)\n",
+    "        lo, hi = conf_ints[0]['qsmk'], conf_ints[1]['qsmk']\n",
+    "\n",
+    "        print('         estimate   95% C.I.')\n",
+    "        print('effect    {:>5.1f}    ({:>0.1f}, {:>0.1f})'.format(est, lo, hi))\n",
+    "        return est\n",
+    "    \n",
+    "    def ps_outcome_regression(self):\n",
+    "        nhefs = self.data\n",
+    "        propensity = self.ps_score()\n",
+    "        nhefs['propensity'] = propensity\n",
+    "        \n",
+    "        def outcome_regress_effect(data):\n",
+    "            model = sm.OLS.from_formula('wt82_71 ~ qsmk + propensity', data=data)\n",
+    "            res = model.fit()\n",
+    "\n",
+    "            data_qsmk_1 = data.copy()\n",
+    "            data_qsmk_1['qsmk'] = 1\n",
+    "            data_qsmk_0 = data.copy()\n",
+    "            data_qsmk_0['qsmk'] = 0\n",
+    "            mean_qsmk_1 = res.predict(data_qsmk_1).mean()\n",
+    "            mean_qsmk_0 = res.predict(data_qsmk_0).mean()\n",
+    "\n",
+    "            return mean_qsmk_1 - mean_qsmk_0\n",
+    "        \n",
+    "        # 通过重新采样狗仔置信区间\n",
+    "        def nonparametric_bootstrap(data, func, n=1000):\n",
+    "            estimate = func(data)\n",
+    "            n_rows = data.shape[0]\n",
+    "            indices = list(range(n_rows))\n",
+    "\n",
+    "            b_values = []\n",
+    "            for _ in tqdm(range(n)):\n",
+    "                data_b = data.sample(n=n_rows, replace=True)\n",
+    "                b_values.append(func(data_b))\n",
+    "\n",
+    "            std = np.std(b_values)\n",
+    "\n",
+    "            return estimate, (estimate - 1.96 * std, estimate + 1.96 * std)\n",
+    "    \n",
+    "        data = nhefs[['wt82_71', 'qsmk', 'propensity']]\n",
+    "        info = nonparametric_bootstrap(\n",
+    "            nhefs, outcome_regress_effect, n=200\n",
+    "        )\n",
+    "        print('         estimate   95% C.I.')\n",
+    "        print('effect    {:>5.1f}    ({:>0.1f}, {:>0.1f})'.format(info[0], info[1][0], info[1][1]))\n",
+    "        \n",
+    "        return info[0]\n",
+    "\n",
+    "        \n",
+    "g = CH15()\n",
+    "# g.ps_stratification_standardization()\n",
+    "g.ps_outcome_regression()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.4"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": true,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
