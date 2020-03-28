@@ -20,7 +20,7 @@ Welcome to Causal Inference: What If!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Part I 无模型因果推断:
+   :caption: Part I 无模型因果推断
    
    chapter1_gong
    chapter2_gong
@@ -28,10 +28,11 @@ Welcome to Causal Inference: What If!
    chapter4_gong
    chapter5_gong
    chapter6_gong
+   chapter7-10_gong
 
 .. toctree::
    :maxdepth: 2
-   :caption: Part II 有模型因果推断:
+   :caption: Part II 有模型因果推断
 
    chapter11-Why_models
    chapter12-IPW
@@ -44,7 +45,7 @@ Welcome to Causal Inference: What If!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Part III 复杂纵向数据因果推断:
+   :caption: Part III 复杂纵向数据因果推断
 
    ch19-time_varying
    ch20-treatment_confounder_feedback
