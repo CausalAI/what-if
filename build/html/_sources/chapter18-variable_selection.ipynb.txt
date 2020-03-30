@@ -12,12 +12,86 @@
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
+   "cell_type": "markdown",
    "metadata": {
     "Collapsed": "false"
    },
-   "outputs": [],
+   "source": [
+    "In the previous chapters, we have described several adjustment methods to estimate the causal effect of a treatment $A$ on an outcome $Y$ , including stratification and outcome regression, standardization and the parametric g-formula, IP weighting, and g-estimation. Each of these methods carry out the adjustment in different ways 但是所有这些方法都依赖于相同的条件: the set of adjustment variables $L$ must include sufficient information to achieve conditional exchangeability between the treated $A = 1$ and the untreated $A = 0$–or, equivalently, to block all backdoor paths between $A$ and $Y$ without opening other biasing paths.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "\n",
+    "- 那么，如何选择变量 $L$ 进行调整？\n",
+    "\n",
+    "This chapter offers some guidelines for variable selection when the goal of the data analysis is causal inference. Because the variable selection criteria for causal inference are not the same as for prediction, widespread procedures for variable selection in predictive analyses may not be directly transferable to causal analyses. 本章总结了因果分析中变量选择不正确的问题，并概述了一些实践指导。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.1 The structure of selection bias \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.2 Example s of selection bias "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.3 Selection bias and confoudning "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.4 Selection bias and censoring"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.5 How to adjust for selection bias"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 18.6 Selection without bias"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
    "source": []
   }
  ],

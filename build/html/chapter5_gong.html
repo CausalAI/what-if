@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul class="current">
@@ -101,8 +104,8 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch5 Interaction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#本章知识点">本章知识点</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#从仰望天空开始">从仰望天空开始</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#More-to-read">More to read</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
@@ -215,23 +218,32 @@
 </style>
 <div class="section" id="Ch5-Interaction">
 <h1>Ch5 Interaction<a class="headerlink" href="#Ch5-Interaction" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Table of Contents
+
+1. Interaction requires a joint intervention
+2. Indentifying interaction
+3. Counterfactual reponse types and interaction
+4. Sufficient causes
+5. Sufficient cause interaction
+6. Counterfactuals or sufficient-component causes?
+</pre></div>
+</div>
+<div class="section" id="本章知识点">
+<h2>本章知识点<a class="headerlink" href="#本章知识点" title="Permalink to this headline">¶</a></h2>
 <p>When joint interventions on two or more treatments are feasible, the identification of interaction allows one to implement the most effective interventions. Thus understanding the concept of interaction is key for causal inference.</p>
 <ul class="simple">
 <li><p>Interaction requires a joint intervention, We refer to interventions on two or more treatments as <strong>joint interventions</strong>.</p></li>
-<li><p>Identifying interaction. The three key identifying conditions were exchangeability, positivity, and consistency. we say that there is no interaction between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(E\)</span> on the additive scale when some conditions hold.</p></li>
+<li><p>Identifying interaction. The three key identifying conditions were exchangeability, positivity, and consistency. we say that there is no interaction between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(E\)</span> on the additive scale when some conditions hold. 也就是 <span class="math notranslate nohighlight">\(P(Y^{a=1}=1 | E=1)- P(Y^{a=0}=1 | E=1) \neq P(Y^{a=1}=1 | E=0) - P(Y^{a=0}=1 | E=0)\)</span></p></li>
 <li><p>Counterfactual response types and interaction. Individuals in the population have different response types. The meaning of the term “interaction” is clarified by the classification of individuals according to their counterfactual response types.</p></li>
 <li><p>Sufficient causes, a tool to conceptualize the causal mechanisms involved in the interaction between two treatments. This graphical representation of treatments exist in all settings. The graphical representation of sufficient-component causes is often referred to as “the causal pies.”</p></li>
 <li><p>Sifficient causes interaction. Sufficient cause interactions can be synergistic or antagonistic. 两种同时的治疗才能有疗效。</p></li>
 <li><p>Counterfactuals or sufficient-component causes? 我们选择 counterfactual framework.</p></li>
 </ul>
+</div>
 <div class="section" id="从仰望天空开始">
 <h2>从仰望天空开始<a class="headerlink" href="#从仰望天空开始" title="Permalink to this headline">¶</a></h2>
 <p>再次考虑一项随机实验，以回答因果问题“抬头仰望天空是否也会使其他行人抬头吗？”到目前为止，我们的兴趣仅限于单一治疗（looking up）对整个人群或其中一部分的因果作用。但是，许多因果问题实际上是关于两种或多种同时治疗的效果。例如，假设除了随机分配您的 looking up 之外，我们还随机分配您是穿着衣服还是赤身裸体站在街道上。现在，我们可以提出类似的问题：what is the causal effect of your looking up if you are dressed？And if you are naked？ 如果这两种因果效应不同，我们就说正在考虑的两种治疗方法（look up 和
 dressed）在交互的产生结果。</p>
-</div>
-<div class="section" id="More-to-read">
-<h2>More to read<a class="headerlink" href="#More-to-read" title="Permalink to this headline">¶</a></h2>
-<p>更多可以参考的内容。</p>
 </div>
 </div>
 

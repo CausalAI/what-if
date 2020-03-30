@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -113,20 +116,19 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch17 因果生存分析</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Section-17.1">Section 17.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#17.1-Hazards-and-risks">17.1 Hazards and risks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#17.2-From-hazards-to-risks">17.2 From hazards to risks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#17.3-Why-censoring-matter">17.3 Why censoring matter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#17.4-IP-weighting-of-marginal-structural-model">17.4 IP weighting of marginal structural model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#17.5-The-parametric-g-formula">17.5 The parametric g-formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#17.6-G-estimation-of-structural-nested-models">17.6 G-estimation of structural nested models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-17.1">Program 17.1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Survival-curve-plot">Survival curve plot</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-17.2">Section 17.2</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-17.2">Program 17.2</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-17.4">Section 17.4</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-17.3">Program 17.3</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-17.5">Section 17.5</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-17.4">Program 17.4</a></li>
 </ul>
 </li>
@@ -449,8 +451,35 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Ch17-因果生存分析">
 <h1>Ch17 因果生存分析<a class="headerlink" href="#Ch17-因果生存分析" title="Permalink to this headline">¶</a></h1>
 <p>Causal Survial Analysis</p>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>在前面的章节中，我们一直关注有关在特定时间点发生的治疗对结果影响的因果问题。例如，我们估计了1982年戒烟对体重增加的影响。但是，许多因果关系问题涉及到treatment effects on the time until the occurrence of an event of interest. 例如，我们可能想要估算the causal effect of smoking cessation on the time until death, whenever death occurs. 这是生存分析的一个例子。</p>
 <p>使用“生存”一词并不意味着所关注的事件必定是死亡。术语“生存分析”或等效术语 “failure time analysis” 适用于事件发生时间的任何分析，其中事件可能是死亡，婚姻，监禁，癌症，流感感染等。生存分析需要一些特殊的考虑和技巧，因为许多人的失败时间可能在研究结束后发生，因此未知。本章 outlines basic techniques for survival analysis in the simplified setting of time-fixed treatments.</p>
+<div class="section" id="17.1-Hazards-and-risks">
+<h3>17.1 Hazards and risks<a class="headerlink" href="#17.1-Hazards-and-risks" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="17.2-From-hazards-to-risks">
+<h3>17.2 From hazards to risks<a class="headerlink" href="#17.2-From-hazards-to-risks" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="17.3-Why-censoring-matter">
+<h3>17.3 Why censoring matter<a class="headerlink" href="#17.3-Why-censoring-matter" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="17.4-IP-weighting-of-marginal-structural-model">
+<h3>17.4 IP weighting of marginal structural model<a class="headerlink" href="#17.4-IP-weighting-of-marginal-structural-model" title="Permalink to this headline">¶</a></h3>
+<p>When the treated and the untreated are not exchangeable, a direct contrast of their survival curves cannot be endowed with a causal interpretation.</p>
+</div>
+<div class="section" id="17.5-The-parametric-g-formula">
+<h3>17.5 The parametric g-formula<a class="headerlink" href="#17.5-The-parametric-g-formula" title="Permalink to this headline">¶</a></h3>
+<p>In the previous section we estimated the survival curve under treatment and under no treatment in the entire study population via IP weighting. To do so, we adjusted for <span class="math notranslate nohighlight">\(L\)</span> and assumed exchangeability, positivity, and consistency. Another method to estimate the marginal survival curves under those assumptions is standardization based on parametric models, that is, the parametric g-formula.</p>
+</div>
+<div class="section" id="17.6-G-estimation-of-structural-nested-models">
+<h3>17.6 G-estimation of structural nested models<a class="headerlink" href="#17.6-G-estimation-of-structural-nested-models" title="Permalink to this headline">¶</a></h3>
+<p>The previous sections describe causal contrasts that compare survivals, or risks, under different levels of treatment <span class="math notranslate nohighlight">\(A\)</span>. The survival was computed from haz- ards estimated by logistic regression models. This approach is feasible when the analytic method is IP weighting of marginal structural models or the para- metric g-formula, but not when the method is g-estimation of structural nested models. As explained in Chapter 14, structural nested models are models for conditional causal
+contrasts (e.g., the difference or ratio of covariate-specific means under different treatment levels), not for the components of those con- trasts (e.g., each of the means under different treatment levels). Therefore we cannot estimate survivals or hazards using a structural nested model.</p>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -553,8 +582,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 (1629, 80)
 </pre></div></div>
 </div>
-<div class="section" id="Section-17.1">
-<h2>Section 17.1<a class="headerlink" href="#Section-17.1" title="Permalink to this headline">¶</a></h2>
 <p>Check the number that died during follow-up</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -741,9 +768,9 @@ first death: Jan 08, 1983
 log-rank test p-value: 0.005
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Survival-curve-plot">
-<h3>Survival curve plot<a class="headerlink" href="#Survival-curve-plot" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Survival curve plot</p></li>
+</ul>
 <p>This plot is constructed by iterating through months and measuring the fraction of longevity values greater than that month. Those fraction values are the survival curve values.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -797,7 +824,7 @@ log-rank test p-value: 0.005
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_28_0.png" src="_images/chapter17-因果生存分析_28_0.png" />
+<img alt="_images/chapter17-因果生存分析_35_0.png" src="_images/chapter17-因果生存分析_35_0.png" />
 </div>
 </div>
 <p>Hazard at 120 months for treated</p>
@@ -936,9 +963,6 @@ maximum difference between methods: 2.87e-04
 </div>
 <p>This difference is likely due to a propagation of rounding errors, and probably wouldn’t be visible on the plot</p>
 </div>
-</div>
-<div class="section" id="Section-17.2">
-<h2>Section 17.2<a class="headerlink" href="#Section-17.2" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-17.2">
 <h3>Program 17.2<a class="headerlink" href="#Program-17.2" title="Permalink to this headline">¶</a></h3>
 <p>Create the person-time format</p>
@@ -1092,7 +1116,7 @@ Optimization terminated successfully.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_54_0.png" src="_images/chapter17-因果生存分析_54_0.png" />
+<img alt="_images/chapter17-因果生存分析_60_0.png" src="_images/chapter17-因果生存分析_60_0.png" />
 </div>
 </div>
 <p>Create the model-based survival curves, and recreate Figure 17.2</p>
@@ -1128,7 +1152,7 @@ Optimization terminated successfully.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_58_0.png" src="_images/chapter17-因果生存分析_58_0.png" />
+<img alt="_images/chapter17-因果生存分析_64_0.png" src="_images/chapter17-因果生存分析_64_0.png" />
 </div>
 </div>
 <p>“These curves are a smooth version of those in Figure 17.1”, pg 213</p>
@@ -1158,13 +1182,10 @@ Optimization terminated successfully.
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_60_0.png" src="_images/chapter17-因果生存分析_60_0.png" />
+<img alt="_images/chapter17-因果生存分析_66_0.png" src="_images/chapter17-因果生存分析_66_0.png" />
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="Section-17.4">
-<h2>Section 17.4<a class="headerlink" href="#Section-17.4" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-17.3">
 <h3>Program 17.3<a class="headerlink" href="#Program-17.3" title="Permalink to this headline">¶</a></h3>
 <p>“The estimation of IP weighted survival curves has two steps”</p>
@@ -1422,7 +1443,7 @@ Stabilized weights
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_79_0.png" src="_images/chapter17-因果生存分析_79_0.png" />
+<img alt="_images/chapter17-因果生存分析_84_0.png" src="_images/chapter17-因果生存分析_84_0.png" />
 </div>
 </div>
 <p>Plot the curves on top of the curves from the previous model, to see how they’ve changed</p>
@@ -1451,7 +1472,7 @@ Stabilized weights
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_81_0.png" src="_images/chapter17-因果生存分析_81_0.png" />
+<img alt="_images/chapter17-因果生存分析_86_0.png" src="_images/chapter17-因果生存分析_86_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1600,9 +1621,6 @@ largest difference in survival probability
 </div>
 <p>The previous two confidence intervals differ from the book’s, but they also change from run to run</p>
 </div>
-</div>
-<div class="section" id="Section-17.5">
-<h2>Section 17.5<a class="headerlink" href="#Section-17.5" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-17.4">
 <h3>Program 17.4<a class="headerlink" href="#Program-17.4" title="Permalink to this headline">¶</a></h3>
 <p>The steps will be similar to Program 13.3, with calculation of survival curves similar to the previous program. However, survival curves will be estimated for each individual, and the final curves will be averages of those curves</p>
@@ -1836,7 +1854,7 @@ largest difference in survival probability
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_106_0.png" src="_images/chapter17-因果生存分析_106_0.png" />
+<img alt="_images/chapter17-因果生存分析_110_0.png" src="_images/chapter17-因果生存分析_110_0.png" />
 </div>
 </div>
 <p>Plot these curves over the previous version, to see how they change</p>
@@ -1865,7 +1883,7 @@ largest difference in survival probability
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_108_0.png" src="_images/chapter17-因果生存分析_108_0.png" />
+<img alt="_images/chapter17-因果生存分析_112_0.png" src="_images/chapter17-因果生存分析_112_0.png" />
 </div>
 </div>
 <p>Looks like a pretty good match</p>
@@ -1905,7 +1923,7 @@ largest difference in survival probability
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter17-因果生存分析_111_1.png" src="_images/chapter17-因果生存分析_111_1.png" />
+<img alt="_images/chapter17-因果生存分析_115_1.png" src="_images/chapter17-因果生存分析_115_1.png" />
 </div>
 </div>
 <p>Apparently, there is a <em>lot</em> of variation between individuals</p>

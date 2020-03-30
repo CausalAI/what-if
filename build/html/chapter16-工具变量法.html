@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -112,14 +115,19 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch16 工具变量法</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#16.1-模型假设">16.1 模型假设</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#16.2-The-usal-IV-estimand">16.2 The usal IV estimand</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#16.1-模型假设">16.1 模型假设</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#16.2-The-usal-IV-estimand">16.2 The usal IV estimand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#16.3-A-fourth-identifying-condition:-homogeneity">16.3 A fourth identifying condition: homogeneity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#16.4-An-alternative-fourth-condition:-monotonicity">16.4 An alternative fourth condition: monotonicity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#16.5-The-three-instrumental-conditions-revisited">16.5 The three instrumental conditions revisited</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#16.6-Instrumental-variable-estimation-versus-other-methods">16.6 Instrumental variable estimation versus other methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.1">Program 16.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.2">Program 16.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.3">Program 16.3</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#16.5-The-three-instrumental-conditions-revisited">16.5 The three instrumental conditions revisited</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.4">Program 16.4</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-16.5">Program 16.5</a></li>
 </ul>
@@ -443,9 +451,133 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Ch16-工具变量法">
 <h1>Ch16 工具变量法<a class="headerlink" href="#Ch16-工具变量法" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>到目前为止，本书中描述的因果推论方法都基于一个不可检验的关键假设：all variables needed to adjust for confounding and selection bias have been identified and correctly measured. 如果这个假设是错误的，并且在一定程度上一直是这样，那么我们的因果估计中就会有剩余偏差。</p>
 <p>It turns out that there exist other methods Instrumental variable estimation is one of those methods. Economists and other social scientists reading this book can breathe now. We are finally going to describe a very common method in their fields, a method that is unlike any other we have discussed so far.</p>
 <p>事实证明，存在其他方法可以that can validly estimate causal effects under an alternative set of assumptions that do not require measuring all adjustment factors. 工具变量估计是这些方法之一。读这本书的经济学家和其他社会科学家 can breathe now. 我们最终将在他们的领域中描述一种非常通用的方法，该方法与我们迄今为止讨论的任何其他方法都不相同。</p>
+<div class="section" id="16.1-模型假设">
+<h3>16.1 模型假设<a class="headerlink" href="#16.1-模型假设" title="Permalink to this headline">¶</a></h3>
+<p>The three intrumental conditions.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Estimand</span> <span class="pre">expression:</span> <span class="pre">Expectation(Derivative(y,</span> <span class="pre">[Z0,</span> <span class="pre">Z1])*Derivative([v0],</span> <span class="pre">[Z0,</span> <span class="pre">Z1])**(-1))</span> <span class="pre">Estimand</span> <span class="pre">assumption</span> <span class="pre">1,</span> <span class="pre">As-if-random:</span> <span class="pre">If</span> <span class="pre">U→→y</span> <span class="pre">then</span> <span class="pre">¬(U</span> <span class="pre">→→{Z0,Z1})</span> <span class="pre">Estimand</span> <span class="pre">assumption</span> <span class="pre">2,</span> <span class="pre">Exclusion:</span> <span class="pre">If</span> <span class="pre">we</span> <span class="pre">remove</span> <span class="pre">{Z0,Z1}→{v0},</span> <span class="pre">then</span> <span class="pre">¬({Z0,Z1}→y)</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dowhy</span> <span class="k">import</span> <span class="n">CausalModel</span>
+<span class="kn">import</span> <span class="nn">dowhy.datasets</span>
+
+<span class="c1"># Load some sample data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">dowhy</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">linear_dataset</span><span class="p">(</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">num_common_causes</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">num_instruments</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">num_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">treatment_is_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Create a causal model from the data and given graph.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">CausalModel</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;df&quot;</span><span class="p">],</span>
+    <span class="n">treatment</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;treatment_name&quot;</span><span class="p">],</span>
+    <span class="n">outcome</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;outcome_name&quot;</span><span class="p">],</span>
+    <span class="n">graph</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gml_graph&quot;</span><span class="p">])</span>
+
+<span class="c1"># Identify causal effect and return target estimands</span>
+<span class="n">identified_estimand</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">identify_effect</span><span class="p">(</span><span class="n">proceed_when_unidentifiable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">identified_estimand</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO:dowhy.causal_model:Model to find the causal effect of treatment [&#39;v0&#39;] on outcome [&#39;y&#39;]
+INFO:dowhy.causal_identifier:Common causes of treatment and outcome:[&#39;Unobserved Confounders&#39;, &#39;W3&#39;, &#39;W0&#39;, &#39;W2&#39;, &#39;W1&#39;, &#39;W4&#39;]
+WARNING:dowhy.causal_identifier:If this is observed data (not from a randomized experiment), there might always be missing confounders. Causal effect cannot be identified perfectly.
+INFO:dowhy.causal_identifier:Continuing by ignoring these unobserved confounders because proceed_when_unidentifiable flag is True.
+INFO:dowhy.causal_identifier:Instrumental variables for treatment and outcome:[&#39;Z0&#39;, &#39;Z1&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Estimand type: nonparametric-ate
+### Estimand : 1
+Estimand name: backdoor
+Estimand expression:
+  d
+─────(Expectation(y|W3,W0,W2,W1,W4))
+d[v₀]
+Estimand assumption 1, Unconfoundedness: If U→{v0} and U→y then P(y|v0,W3,W0,W2,W1,W4,U) = P(y|v0,W3,W0,W2,W1,W4)
+### Estimand : 2
+Estimand name: iv
+Estimand expression:
+Expectation(Derivative(y, [Z0, Z1])*Derivative([v0], [Z0, Z1])**(-1))
+Estimand assumption 1, As-if-random: If U→→y then ¬(U →→{Z0,Z1})
+Estimand assumption 2, Exclusion: If we remove {Z0,Z1}→{v0}, then ¬({Z0,Z1}→y)
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="k">import</span> <span class="n">Source</span>
+<span class="n">Source</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;dot_graph&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter16-工具变量法_5_0.svg" src="_images/chapter16-工具变量法_5_0.svg" /></div>
+</div>
+</div>
+<div class="section" id="16.2-The-usal-IV-estimand">
+<h3>16.2 The usal IV estimand<a class="headerlink" href="#16.2-The-usal-IV-estimand" title="Permalink to this headline">¶</a></h3>
+<p>The usual IV estimand for a dichotomous instrument.</p>
+<div class="math notranslate nohighlight">
+\[\frac{E[Y|Z=1] - E[Y|Z=0]}{E[A|Z=1] - E[A|Z=0]}\]</div>
+<p>在我们的例子中：</p>
+<p><code class="docutils literal notranslate"><span class="pre">Expectation(Derivative(y,</span> <span class="pre">[Z0,</span> <span class="pre">Z1])*Derivative([v0],</span> <span class="pre">[Z0,</span> <span class="pre">Z1])**(-1))</span></code></p>
+</div>
+<div class="section" id="16.3-A-fourth-identifying-condition:-homogeneity">
+<h3>16.3 A fourth identifying condition: homogeneity<a class="headerlink" href="#16.3-A-fourth-identifying-condition:-homogeneity" title="Permalink to this headline">¶</a></h3>
+<p>上述的三个条件 (i)-(iii) 并不能保证 that the IV estimand is the average causal effect of treatment <span class="math notranslate nohighlight">\(A\)</span> on <span class="math notranslate nohighlight">\(Y\)</span>. A fourth condition, effect homogeneity (iv), is needed. 在这里，我们按照历史出现的顺序阐述 four possible homogeneity conditions (iv).</p>
+<ul class="simple">
+<li><p>The most extreme, and oldest, version of homogeneity condition (iv) is constant effect of treatment <span class="math notranslate nohighlight">\(A\)</span> on outcome <span class="math notranslate nohighlight">\(Y\)</span> across individuals.</p></li>
+<li><p>A second, less extreme homogeneity condition (iv) for dichotomous <span class="math notranslate nohighlight">\(Z\)</span> and <span class="math notranslate nohighlight">\(A\)</span> is equality of the average causal effect of <span class="math notranslate nohighlight">\(A\)</span> on <span class="math notranslate nohighlight">\(Y\)</span> across levels of <span class="math notranslate nohighlight">\(Z\)</span> in both the treated and in the untreated.</p></li>
+<li><p>Additive structural mean models and IV estimation. This third homogeneity condition (iv) is often implausible because some unmeasured confounders may also be effect modifiers.</p></li>
+<li><p>Another type of homogeneity condition (iv) is that the <span class="math notranslate nohighlight">\(Z-A\)</span> association on the additive scale is constant across levels of the confounders <span class="math notranslate nohighlight">\(U\)</span>.</p></li>
+</ul>
+</div>
+<div class="section" id="16.4-An-alternative-fourth-condition:-monotonicity">
+<h3>16.4 An alternative fourth condition: monotonicity<a class="headerlink" href="#16.4-An-alternative-fourth-condition:-monotonicity" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="16.5-The-three-instrumental-conditions-revisited">
+<h3>16.5 The three instrumental conditions revisited<a class="headerlink" href="#16.5-The-three-instrumental-conditions-revisited" title="Permalink to this headline">¶</a></h3>
+<p>前面的部分讨论了相对优缺点 of choosing monotonicity or homogeneity as the condition (iv). Our discussion implicitly assumed that the proposed instrument <span class="math notranslate nohighlight">\(Z\)</span> was in fact an instrument.</p>
+</div>
+<div class="section" id="16.6-Instrumental-variable-estimation-versus-other-methods">
+<h3>16.6 Instrumental variable estimation versus other methods<a class="headerlink" href="#16.6-Instrumental-variable-estimation-versus-other-methods" title="Permalink to this headline">¶</a></h3>
+<p>IV估计在至少三个方面与所有先前讨论的方法不同:</p>
+<ul class="simple">
+<li><p>First, IV estimation requires modeling assumptions even if infinite data were available.</p></li>
+<li><p>Second, relatively minor violations of conditions (i)-(iv) for IV estimation may result in large biases of unpredictable or counterintuitive direction.</p></li>
+<li><p>Third, the ideal setting for the applicability of standard IV estimation is more restrictive than that for other methods.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -481,9 +613,6 @@ div.rendered_html tbody tr:hover {
 WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 </pre></div></div>
 </div>
-<div class="section" id="16.1-模型假设">
-<h2>16.1 模型假设<a class="headerlink" href="#16.1-模型假设" title="Permalink to this headline">¶</a></h2>
-<p>The three intrumental conditions.</p>
 <p>Create the instrument, <span class="math notranslate nohighlight">\(Z\)</span></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -552,9 +681,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 Pr[A=1|Z=1] − Pr[A=1|Z=0] =  6.3%
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="16.2-The-usal-IV-estimand">
-<h2>16.2 The usal IV estimand<a class="headerlink" href="#16.2-The-usal-IV-estimand" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-16.1">
 <h3>Program 16.1<a class="headerlink" href="#Program-16.1" title="Permalink to this headline">¶</a></h3>
 <p>Pg 196: For a dichotomous instrument <span class="math notranslate nohighlight">\(Z\)</span> that also meets condition (iv) from section 16.3,</p>
@@ -882,9 +1008,6 @@ best estimate: 2.396
 </pre></div></div>
 </div>
 </div>
-</div>
-<div class="section" id="16.5-The-three-instrumental-conditions-revisited">
-<h2>16.5 The three instrumental conditions revisited<a class="headerlink" href="#16.5-The-three-instrumental-conditions-revisited" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-16.4">
 <h3>Program 16.4<a class="headerlink" href="#Program-16.4" title="Permalink to this headline">¶</a></h3>
 <p>We’ll calculate the IV estimate using a few different cutoffs for <code class="docutils literal notranslate"><span class="pre">highprice</span></code></p>

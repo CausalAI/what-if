@@ -17,9 +17,89 @@
     "Collapsed": "false"
    },
    "source": [
+    "## 内容摘要"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
     "在前面的章节中，我们一直关注有关在特定时间点发生的治疗对结果影响的因果问题。例如，我们估计了1982年戒烟对体重增加的影响。但是，许多因果关系问题涉及到treatment effects on the time until the occurrence of an event of interest. 例如，我们可能想要估算the causal effect of smoking cessation on the time until death, whenever death occurs. 这是生存分析的一个例子。\n",
     "\n",
     "使用“生存”一词并不意味着所关注的事件必定是死亡。术语“生存分析”或等效术语 “failure time analysis” 适用于事件发生时间的任何分析，其中事件可能是死亡，婚姻，监禁，癌症，流感感染等。生存分析需要一些特殊的考虑和技巧，因为许多人的失败时间可能在研究结束后发生，因此未知。本章 outlines basic techniques for survival analysis in the simplified setting of time-fixed treatments.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.1 Hazards and risks"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.2 From hazards to risks"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.3 Why censoring matter"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.4 IP weighting of marginal structural model\n",
+    "\n",
+    "When the treated and the untreated are not exchangeable, a direct contrast of their survival curves cannot be endowed with a causal interpretation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.5 The parametric g-formula\n",
+    "\n",
+    "In the previous section we estimated the survival curve under treatment and under no treatment in the entire study population via IP weighting. To do so, we adjusted for $L$ and assumed exchangeability, positivity, and consistency. Another method to estimate the marginal survival curves under those assumptions is standardization based on parametric models, that is, the parametric g-formula.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "### 17.6 G-estimation of structural nested models\n",
+    "\n",
+    "\n",
+    "The previous sections describe causal contrasts that compare survivals, or risks, under different levels of treatment $A$. The survival was computed from haz- ards estimated by logistic regression models. This approach is feasible when the analytic method is IP weighting of marginal structural models or the para- metric g-formula, but not when the method is g-estimation of structural nested models. As explained in Chapter 14, structural nested models are models for conditional causal contrasts (e.g., the difference or ratio of covariate-specific means under different treatment levels), not for the components of those con- trasts (e.g., each of the means under different treatment levels). Therefore we cannot estimate survivals or hazards using a structural nested model."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Programs"
    ]
   },
   {
@@ -140,15 +220,6 @@
    ],
    "source": [
     "nhefs_all.shape"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {
-    "Collapsed": "false"
-   },
-   "source": [
-    "## Section 17.1"
    ]
   },
   {
@@ -426,10 +497,10 @@
   {
    "cell_type": "markdown",
    "metadata": {
-    "Collapsed": "true"
+    "Collapsed": "false"
    },
    "source": [
-    "### Survival curve plot\n",
+    "- Survival curve plot\n",
     "\n",
     "This plot is constructed by iterating through months and measuring the fraction of longevity values greater than that month. Those fraction values are the survival curve values."
    ]
@@ -698,15 +769,6 @@
    },
    "source": [
     "This difference is likely due to a propagation of rounding errors, and probably wouldn't be visible on the plot"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {
-    "Collapsed": "false"
-   },
-   "source": [
-    "## Section 17.2"
    ]
   },
   {
@@ -1041,15 +1103,6 @@
     "ax.set_ylabel('Survival probability', fontsize=14)\n",
     "ax.text(95, 0.88, 'A = 0')\n",
     "ax.text(95, 0.73, 'A = 1');"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {
-    "Collapsed": "false"
-   },
-   "source": [
-    "## Section 17.4"
    ]
   },
   {
@@ -1647,15 +1700,6 @@
    },
    "source": [
     "The previous two confidence intervals differ from the book's, but they also change from run to run"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {
-    "Collapsed": "false"
-   },
-   "source": [
-    "## Section 17.5"
    ]
   },
   {

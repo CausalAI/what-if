@@ -8,16 +8,23 @@ Welcome to Causal Inference: What If!
 
 编译和解读 by Heyang Gong
 
-原书地址: https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/
 
 该书对因果推理的概念和方法进行了全面的介绍。目前，这些材料大部分散布在多个学科的期刊中，或者仅限于技术文章。我们希望对因果推理感兴趣的人，例如流行病学家，统计学家，心理学家，经济学家，社会学家，政治学家，计算机科学家，都会对这本书感兴趣。这本书分为三个难度越来越大的部分：无模型的因果推理，有模型的因果推理，以及复杂纵向数据的因果推理。
+
+* 项目地址：https://github.com/CausalAI/what-if
+* blog 地址：https://causalai.github.io/what-if
+* 原书地址: https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/
+
 
 .. toctree::
    :maxdepth: 1
    :caption: Big Picuture:
    
    Intro
-
+   01-Part(I)仰望天空
+   02-Part(II)有模型因果推断
+   03-Part(III)g-estimation_methods
+ 
 .. toctree::
    :maxdepth: 1
    :caption: Part I 无模型因果推断
@@ -31,7 +38,7 @@ Welcome to Causal Inference: What If!
    chapter7-10_gong
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Part II 有模型因果推断
 
    chapter11-Why_models

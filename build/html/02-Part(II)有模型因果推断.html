@@ -1,0 +1,1583 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Part II: Causal Inference with Models &mdash; Causal inference: What if 教材解读 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/pyro.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Part III 时间变化干预的 G-估计" href="03-Part(III)g-estimation_methods.html" />
+    <link rel="prev" title="Part I: 仰望天空" href="01-Part(I)仰望天空.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/pyro_logo_wide.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Big Picuture:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Part II: Causal Inference with Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#一个简单例子">一个简单例子</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#数据集合介绍">数据集合介绍</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#EDA">EDA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter1_gong.html">Ch1 因果理论相关概念</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2_gong.html">Ch2 随机试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter7-10_gong.html">Ch7-10 因果推断的偏差</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter15-Outcome_regression_PS.html">Ch15 结果回归模型和倾向得分</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter17-因果生存分析.html">Ch17 因果生存分析</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter18-variable_selection.html">Ch18 因果变量选择</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Part III 复杂纵向数据因果推断</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ch19-time_varying.html">Ch19 Time-Varying Treatment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch20-treatment_confounder_feedback.html">Ch20 Treatment Confounder Feedback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch21-g_estimation.html">Ch21 G-estimation for Time-varing Treatments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ch22-target_trail_emulation.html">Ch22 Target Trail Emulation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Causal inference: What if 教材解读</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Part II: Causal Inference with Models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/02-Part(II)有模型因果推断.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Part-II:-Causal-Inference-with-Models">
+<h1>Part II: Causal Inference with Models<a class="headerlink" href="#Part-II:-Causal-Inference-with-Models" title="Permalink to this headline">¶</a></h1>
+<p>教材的第二部分快速解读.</p>
+<p>书的网址： <a class="reference external" href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/</a></p>
+<p><strong>Contents</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>11. Why model?
+12. IP wighting and marginal structural model
+13. Standardization and the parametric g-formula
+14. G-estimation of structural nested models
+15. Outcome regression and propensity scores
+16. Instrumental variable estimation
+17. Causal survival analysis
+18. Variable selection for causal inference
+</pre></div>
+</div>
+<p><strong>Big Picturce:</strong></p>
+<p>非参数模型 –&gt; parametric models –&gt; structural mean models</p>
+<ul class="simple">
+<li><p>Models for the marginal mean of a counterfactual outcome are referred to as marginal structural mean models.</p></li>
+<li><p>Effect modification and marginal structural models 在上面的模型增加新的变量 for effect modification</p></li>
+<li><p>Structural nested mean model 会有一个对比某个基准 potential outcome.</p></li>
+</ul>
+<p>In Part II of this book we have described two different types of models for causal inference:</p>
+<ul class="simple">
+<li><p>propensity models and</p></li>
+<li><p>structural models.</p></li>
+</ul>
+<p>Let us now compare them.</p>
+<ul class="simple">
+<li><p>Propensity models are models for the probability of treatment <span class="math notranslate nohighlight">\(A\)</span> given the variables <span class="math notranslate nohighlight">\(L\)</span> used to try to achieve conditional exchangeability.</p></li>
+<li><p>Structural models describe the relation between the treatment <span class="math notranslate nohighlight">\(A\)</span> and some component of the distribution (e.g., the mean) of the counterfactual outcome</p></li>
+</ul>
+<div class="section" id="一个简单例子">
+<h2>一个简单例子<a class="headerlink" href="#一个简单例子" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ls</span> <span class="n">causal_inference_python_code</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+chapter11.ipynb  chapter13.ipynb  chapter15.ipynb  codebook.xls
+chapter12.ipynb  chapter14.ipynb  chapter16.ipynb  README.md
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="section" id="数据集合介绍">
+<h3>数据集合介绍<a class="headerlink" href="#数据集合介绍" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;NHEFS.xls&#39;</span><span class="p">)</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>seqn</th>
+      <th>qsmk</th>
+      <th>death</th>
+      <th>yrdth</th>
+      <th>modth</th>
+      <th>dadth</th>
+      <th>sbp</th>
+      <th>dbp</th>
+      <th>sex</th>
+      <th>age</th>
+      <th>...</th>
+      <th>birthcontrol</th>
+      <th>pregnancies</th>
+      <th>cholesterol</th>
+      <th>hightax82</th>
+      <th>price71</th>
+      <th>price82</th>
+      <th>tax71</th>
+      <th>tax82</th>
+      <th>price71_82</th>
+      <th>tax71_82</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>1629.000000</td>
+      <td>1629.000000</td>
+      <td>1629.000000</td>
+      <td>318.000000</td>
+      <td>322.000000</td>
+      <td>322.000000</td>
+      <td>1552.000000</td>
+      <td>1548.000000</td>
+      <td>1629.000000</td>
+      <td>1629.000000</td>
+      <td>...</td>
+      <td>1629.000000</td>
+      <td>726.00000</td>
+      <td>1613.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+      <td>1537.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>16552.364641</td>
+      <td>0.262738</td>
+      <td>0.195212</td>
+      <td>87.569182</td>
+      <td>6.257764</td>
+      <td>15.872671</td>
+      <td>128.709407</td>
+      <td>77.744832</td>
+      <td>0.509515</td>
+      <td>43.915285</td>
+      <td>...</td>
+      <td>1.084715</td>
+      <td>3.69146</td>
+      <td>219.973962</td>
+      <td>0.165908</td>
+      <td>2.138750</td>
+      <td>1.806095</td>
+      <td>1.058581</td>
+      <td>0.505983</td>
+      <td>0.332741</td>
+      <td>0.552614</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>7498.918195</td>
+      <td>0.440256</td>
+      <td>0.396485</td>
+      <td>2.659415</td>
+      <td>3.615304</td>
+      <td>8.905488</td>
+      <td>19.051560</td>
+      <td>10.634864</td>
+      <td>0.500063</td>
+      <td>12.170430</td>
+      <td>...</td>
+      <td>0.947747</td>
+      <td>2.20560</td>
+      <td>45.444202</td>
+      <td>0.372119</td>
+      <td>0.229016</td>
+      <td>0.130641</td>
+      <td>0.216229</td>
+      <td>0.111894</td>
+      <td>0.155045</td>
+      <td>0.150321</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>233.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>83.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>87.000000</td>
+      <td>47.000000</td>
+      <td>0.000000</td>
+      <td>25.000000</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>1.00000</td>
+      <td>78.000000</td>
+      <td>0.000000</td>
+      <td>1.506592</td>
+      <td>1.451904</td>
+      <td>0.524902</td>
+      <td>0.219971</td>
+      <td>-0.202698</td>
+      <td>0.035995</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>10607.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>85.000000</td>
+      <td>3.000000</td>
+      <td>8.000000</td>
+      <td>116.000000</td>
+      <td>70.000000</td>
+      <td>0.000000</td>
+      <td>33.000000</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>2.00000</td>
+      <td>189.000000</td>
+      <td>0.000000</td>
+      <td>2.036621</td>
+      <td>1.739990</td>
+      <td>0.944946</td>
+      <td>0.439941</td>
+      <td>0.200989</td>
+      <td>0.460999</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>20333.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>88.000000</td>
+      <td>6.000000</td>
+      <td>15.500000</td>
+      <td>126.000000</td>
+      <td>77.000000</td>
+      <td>1.000000</td>
+      <td>44.000000</td>
+      <td>...</td>
+      <td>1.000000</td>
+      <td>3.00000</td>
+      <td>216.000000</td>
+      <td>0.000000</td>
+      <td>2.167969</td>
+      <td>1.814941</td>
+      <td>1.049805</td>
+      <td>0.505981</td>
+      <td>0.335999</td>
+      <td>0.543945</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>22719.000000</td>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>90.000000</td>
+      <td>10.000000</td>
+      <td>24.000000</td>
+      <td>140.000000</td>
+      <td>85.000000</td>
+      <td>1.000000</td>
+      <td>53.000000</td>
+      <td>...</td>
+      <td>2.000000</td>
+      <td>5.00000</td>
+      <td>245.000000</td>
+      <td>0.000000</td>
+      <td>2.241699</td>
+      <td>1.867676</td>
+      <td>1.154785</td>
+      <td>0.571899</td>
+      <td>0.443787</td>
+      <td>0.621948</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>25061.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>92.000000</td>
+      <td>12.000000</td>
+      <td>31.000000</td>
+      <td>229.000000</td>
+      <td>130.000000</td>
+      <td>1.000000</td>
+      <td>74.000000</td>
+      <td>...</td>
+      <td>2.000000</td>
+      <td>15.00000</td>
+      <td>416.000000</td>
+      <td>1.000000</td>
+      <td>2.692871</td>
+      <td>2.103027</td>
+      <td>1.522461</td>
+      <td>0.747925</td>
+      <td>0.612061</td>
+      <td>0.884399</td>
+    </tr>
+  </tbody>
+</table>
+<p>8 rows × 64 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">codebook</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;causal_inference_python_code/codebook.xls&#39;</span><span class="p">)</span>
+<span class="n">codebook</span><span class="o">.</span><span class="n">Description</span> <span class="o">=</span> <span class="n">codebook</span><span class="o">.</span><span class="n">Description</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+<span class="n">codebook</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;in your usual day, how active are you? in 1971, 0:very active, 1:moderately active, 2:inactive&#39;,
+ &#39;age in 1971&#39;,
+ &#39;how often do you drink?  in 1971  0: almost every day, 1: 2-3 times/week, 2: 1-4 times/month, 3: &lt; 12 times/year, 4: no alcohol last year, 5: unknown&#39;,
+ &#39;when you drink, how much do you drink?  in 1971&#39;,
+ &#39;have you had 1 drink past year? in 1971,  1:ever, 0:never; 2:missing&#39;,
+ &#39;which do you most frequently drink? in 1971  1: beer, 2: wine, 3: liquor, 4: other/unknown&#39;,
+ &#39;use allergies medication in 1971,  1:ever, 0:never&#39;,
+ &#39;dx asthma in 1971, 1:ever, 0:never&#39;,
+ &#39;birth control pills past 6 months? in 1971 1:yes, 0:no, 2:missing&#39;,
+ &#39;check state code - second page&#39;,
+ &#39;use bowel trouble medication in 1971,  1:ever, 0:never, ; 2:missing&#39;,
+ &#39;dx chronic bronchitis/emphysema in 1971,  1:ever, 0:never&#39;,
+ &#39;serum cholesterol (mg/100ml) in 1971&#39;,
+ &#39;dx chronic cough in 1971,  1:ever, 0:never&#39;,
+ &#39;dx colitis in 1971,  1:ever, 0:never&#39;,
+ &#39;day of death&#39;,
+ &#39;diastolic blood pressure in 1982&#39;,
+ &#39;death by 1992, 1:yes, 0:no&#39;,
+ &#39;dx diabetes in 1971,  1:ever, 0:never, 2:missing&#39;,
+ &#39;amount of education by 1971: 1: 8th grade or less, 2: hs dropout, 3: hs, 4:college dropout, 5: college or more&#39;,
+ &#39;in recreation, how much exercise? in 1971, 0:much exercise,1:moderate exercise,2:little or no exercise&#39;,
+ &#39;dx hay fever in 1971, 1:ever, 0:never&#39;,
+ &#39;dx high blood pressure in 1971, 1:ever, 0:never, 2:missing&#39;,
+ &#39;use high blood pressure medication in 1971,  1:ever, 0:never, ; 2:missing&#39;,
+ &#39;use headache medication in 1971,  1:ever, 0:never&#39;,
+ &#39;dx hepatitis in 1971,  1:ever, 0:never&#39;,
+ &#39;dx heart failure in 1971, 1:ever, 0:never&#39;,
+ &#39;living in a highly taxed state in 1982, high taxed state of residence=1, 0 otherwise&#39;,
+ &#39;height in centimeters in 1971&#39;,
+ &#39;total family income in 1971  11:&lt;$1000, 12: 1000-1999, 13: 2000-2999, 14: 3000-3999, 15: 4000-4999, 16: 5000-5999, 17: 6000-6999, 18: 7000-9999, 19: 10000-14999, 20: 15000-19999, 21: 20000-24999, 22: 25000+&#39;,
+ &#39;use infection medication in 1971,  1:ever, 0:never&#39;,
+ &#39;uselack of pep medication in 1971,  1:ever, 0:never&#39;,
+ &#39;marital status in 1971  1: under 17, 2: married, 3: widowed, 4: never married, 5: divorced, 6: separated, 8: unknown&#39;,
+ &#39;month of death&#39;,
+ &#39;use nerves medication in 1971,  1:ever, 0:never&#39;,
+ &#39;dx nervous breakdown in 1971,  1:ever, 0:never&#39;,
+ &#39;use other pains medication in 1971,  1:ever, 0:never&#39;,
+ &#39;dx peptic ulcer in 1971,  1:ever, 0:never&#39;,
+ &#39;do you eat dirt or clay, starch or other non standard food?  in 1971  1:ever, 0:never; 2:missing&#39;,
+ &#39;dx polio in 1971, 1:ever, 0:never&#39;,
+ &#39;total number of pregnancies? in 1971&#39;,
+ &#39;avg tobacco price in state of residence 1971 (us$2008)&#39;,
+ &#39;difference in avg tobacco price in state of residence 1971-1982 (us$2008)&#39;,
+ &#39;avg tobacco price in state of residence 1982 (us$2008)&#39;,
+ &#39;quit smoking between 1st questionnaire and 1982, 1:yes, 0:no&#39;,
+ &#39;0: white 1: black or other in 1971&#39;,
+ &#39;systolic blood pressure in 1982&#39;,
+ &#39;highest grade of regular school ever  in 1971&#39;,
+ &#39;unique personal identifier&#39;,
+ &#39;0: male 1: female&#39;,
+ &#39;number of cigarettes smoked per day in 1971&#39;,
+ &#39;increase in number of cigarettes/day between 1971 and 1982&#39;,
+ &#39;years of smoking&#39;,
+ &#39;tobacco tax in state of residence 1971 (us$2008)&#39;,
+ &#39;difference in tobacco tax in state of residence 1971-1982 (us$2008)&#39;,
+ &#39;tobacco tax in state of residence 1971 (us$2008)&#39;,
+ &#39;dx tuberculosis in 1971,  1:ever, 0:never&#39;,
+ &#39;dx malignant tumor/growth in 1971,  1:ever, 0:never&#39;,
+ &#39;use weak heart medication in 1971,  1:ever, 0:never&#39;,
+ &#39;weight in kilograms  in 1971&#39;,
+ &#39;weight in kilograms  in 1982&#39;,
+ &#39;weight change in kilograms&#39;,
+ &#39;use weight loss medication in 1971,  1:ever, 0:never&#39;,
+ &#39;year of death&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">codebook</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>active</td>
+      <td>in your usual day, how active are you? in 1971...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>age</td>
+      <td>age in 1971</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>alcoholfreq</td>
+      <td>how often do you drink?  in 1971  0: almost ev...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>alcoholhowmuch</td>
+      <td>when you drink, how much do you drink?  in 1971</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>alcoholpy</td>
+      <td>have you had 1 drink past year? in 1971,  1:ev...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>alcoholtype</td>
+      <td>which do you most frequently drink? in 1971  1...</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>allergies</td>
+      <td>use allergies medication in 1971,  1:ever, 0:n...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>asthma</td>
+      <td>dx asthma in 1971, 1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>bithcontrol</td>
+      <td>birth control pills past 6 months? in 1971 1:y...</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>birthplace</td>
+      <td>check state code - second page</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>boweltrouble</td>
+      <td>use bowel trouble medication in 1971,  1:ever,...</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>bronch</td>
+      <td>dx chronic bronchitis/emphysema in 1971,  1:ev...</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>cholesterol</td>
+      <td>serum cholesterol (mg/100ml) in 1971</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>chroniccough</td>
+      <td>dx chronic cough in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>colitis</td>
+      <td>dx colitis in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>dadth</td>
+      <td>day of death</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>dbp</td>
+      <td>diastolic blood pressure in 1982</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>death</td>
+      <td>death by 1992, 1:yes, 0:no</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>diabetes</td>
+      <td>dx diabetes in 1971,  1:ever, 0:never, 2:missing</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>education</td>
+      <td>amount of education by 1971: 1: 8th grade or l...</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>exercise</td>
+      <td>in recreation, how much exercise? in 1971, 0:m...</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>hayfever</td>
+      <td>dx hay fever in 1971, 1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>hbp</td>
+      <td>dx high blood pressure in 1971, 1:ever, 0:neve...</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>hbpmed</td>
+      <td>use high blood pressure medication in 1971,  1...</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>headache</td>
+      <td>use headache medication in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>hepatitis</td>
+      <td>dx hepatitis in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>hf</td>
+      <td>dx heart failure in 1971, 1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>hightax82</td>
+      <td>living in a highly taxed state in 1982, high t...</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>ht</td>
+      <td>height in centimeters in 1971</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>income</td>
+      <td>total family income in 1971  11:&lt;$1000, 12: 10...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>nerves</td>
+      <td>use nerves medication in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>nervousbreak</td>
+      <td>dx nervous breakdown in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>otherpain</td>
+      <td>use other pains medication in 1971,  1:ever, 0...</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>pepticulcer</td>
+      <td>dx peptic ulcer in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>pica</td>
+      <td>do you eat dirt or clay, starch or other non s...</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>polio</td>
+      <td>dx polio in 1971, 1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>pregnancies</td>
+      <td>total number of pregnancies? in 1971</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>price71</td>
+      <td>avg tobacco price in state of residence 1971 (...</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>price71_82</td>
+      <td>difference in avg tobacco price in state of re...</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>price82</td>
+      <td>avg tobacco price in state of residence 1982 (...</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>qsmk</td>
+      <td>quit smoking between 1st questionnaire and 198...</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>race</td>
+      <td>0: white 1: black or other in 1971</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>sbp</td>
+      <td>systolic blood pressure in 1982</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>school</td>
+      <td>highest grade of regular school ever  in 1971</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>seqn</td>
+      <td>unique personal identifier</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>sex</td>
+      <td>0: male 1: female</td>
+    </tr>
+    <tr>
+      <th>50</th>
+      <td>smokeintensity</td>
+      <td>number of cigarettes smoked per day in 1971</td>
+    </tr>
+    <tr>
+      <th>51</th>
+      <td>smkintensity 82_71</td>
+      <td>increase in number of cigarettes/day between 1...</td>
+    </tr>
+    <tr>
+      <th>52</th>
+      <td>smokeyrs</td>
+      <td>years of smoking</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>tax71</td>
+      <td>tobacco tax in state of residence 1971 (us$2008)</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>tax71_82</td>
+      <td>difference in tobacco tax in state of residenc...</td>
+    </tr>
+    <tr>
+      <th>55</th>
+      <td>tax82</td>
+      <td>tobacco tax in state of residence 1971 (us$2008)</td>
+    </tr>
+    <tr>
+      <th>56</th>
+      <td>tb</td>
+      <td>dx tuberculosis in 1971,  1:ever, 0:never</td>
+    </tr>
+    <tr>
+      <th>57</th>
+      <td>tumor</td>
+      <td>dx malignant tumor/growth in 1971,  1:ever, 0:...</td>
+    </tr>
+    <tr>
+      <th>58</th>
+      <td>weakheart</td>
+      <td>use weak heart medication in 1971,  1:ever, 0:...</td>
+    </tr>
+    <tr>
+      <th>59</th>
+      <td>wt71</td>
+      <td>weight in kilograms  in 1971</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>wt82</td>
+      <td>weight in kilograms  in 1982</td>
+    </tr>
+    <tr>
+      <th>61</th>
+      <td>wt82_71</td>
+      <td>weight change in kilograms</td>
+    </tr>
+    <tr>
+      <th>62</th>
+      <td>wtloss</td>
+      <td>use weight loss medication in 1971,  1:ever, 0...</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>yrdth</td>
+      <td>year of death</td>
+    </tr>
+  </tbody>
+</table>
+<p>64 rows × 2 columns</p>
+</div></div>
+</div>
+</div>
+<div class="section" id="EDA">
+<h3>EDA<a class="headerlink" href="#EDA" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dat</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Index([&#39;seqn&#39;, &#39;qsmk&#39;, &#39;death&#39;, &#39;yrdth&#39;, &#39;modth&#39;, &#39;dadth&#39;, &#39;sbp&#39;, &#39;dbp&#39;, &#39;sex&#39;,
+       &#39;age&#39;, &#39;race&#39;, &#39;income&#39;, &#39;marital&#39;, &#39;school&#39;, &#39;education&#39;, &#39;ht&#39;, &#39;wt71&#39;,
+       &#39;wt82&#39;, &#39;wt82_71&#39;, &#39;birthplace&#39;, &#39;smokeintensity&#39;, &#39;smkintensity82_71&#39;,
+       &#39;smokeyrs&#39;, &#39;asthma&#39;, &#39;bronch&#39;, &#39;tb&#39;, &#39;hf&#39;, &#39;hbp&#39;, &#39;pepticulcer&#39;,
+       &#39;colitis&#39;, &#39;hepatitis&#39;, &#39;chroniccough&#39;, &#39;hayfever&#39;, &#39;diabetes&#39;, &#39;polio&#39;,
+       &#39;tumor&#39;, &#39;nervousbreak&#39;, &#39;alcoholpy&#39;, &#39;alcoholfreq&#39;, &#39;alcoholtype&#39;,
+       &#39;alcoholhowmuch&#39;, &#39;pica&#39;, &#39;headache&#39;, &#39;otherpain&#39;, &#39;weakheart&#39;,
+       &#39;allergies&#39;, &#39;nerves&#39;, &#39;lackpep&#39;, &#39;hbpmed&#39;, &#39;boweltrouble&#39;, &#39;wtloss&#39;,
+       &#39;infection&#39;, &#39;active&#39;, &#39;exercise&#39;, &#39;birthcontrol&#39;, &#39;pregnancies&#39;,
+       &#39;cholesterol&#39;, &#39;hightax82&#39;, &#39;price71&#39;, &#39;price82&#39;, &#39;tax71&#39;, &#39;tax82&#39;,
+       &#39;price71_82&#39;, &#39;tax71_82&#39;],
+      dtype=&#39;object&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">d</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[[</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;wt82&#39;</span><span class="p">]]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sex</th>
+      <th>wt82</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>68.946040</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>61.234970</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>66.224486</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>64.410117</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>92.079251</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1</td>
+      <td>103.419060</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1</td>
+      <td>58.967008</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1</td>
+      <td>58.967008</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0</td>
+      <td>62.142155</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0</td>
+      <td>72.121187</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">d</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;wt82&#39;</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f8650d6ec50&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/02-Part(II)有模型因果推断_12_1.png" src="_images/02-Part(II)有模型因果推断_12_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;sex&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="8" halign="left">wt82</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>sex</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>762.0</td>
+      <td>80.131080</td>
+      <td>14.567845</td>
+      <td>38.101759</td>
+      <td>70.306817</td>
+      <td>78.925072</td>
+      <td>87.543327</td>
+      <td>136.531303</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>804.0</td>
+      <td>67.155366</td>
+      <td>15.022770</td>
+      <td>35.380205</td>
+      <td>57.039241</td>
+      <td>63.956524</td>
+      <td>73.481964</td>
+      <td>136.531303</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">d_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+<span class="n">d_test</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">d_test</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.axes._subplots.AxesSubplot at 0x7f8651b33978&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/02-Part(II)有模型因果推断_15_1.png" src="_images/02-Part(II)有模型因果推断_15_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="03-Part(III)g-estimation_methods.html" class="btn btn-neutral float-right" title="Part III 时间变化干预的 G-估计" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="01-Part(I)仰望天空.html" class="btn btn-neutral float-left" title="Part I: 仰望天空" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 编译和解读 by Heyang Gong
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Ch1 因果理论相关概念" href="chapter1_gong.html" />
+    <link rel="next" title="Part I: 仰望天空" href="01-Part(I)仰望天空.html" />
     <link rel="prev" title="Welcome to Causal Inference: What If!" href="index.html" /> 
 </head>
 
@@ -93,9 +93,15 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">项目简介</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Motivation">Motivation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#内容概要">内容概要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Preface-of-the-Book">Preface of the Book</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Resources">Resources</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -214,10 +220,28 @@
 </style>
 <div class="section" id="项目简介">
 <h1>项目简介<a class="headerlink" href="#项目简介" title="Permalink to this headline">¶</a></h1>
-<p>本项目是关于因果推断教材 <a class="reference external" href="https://causalai.github.io/what-if/">Causal Inference: What If 的编译和解读</a></p>
+<p>本项目是关于因果推断教材 Causal Inference: What If 的编译和解读。</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">原书地址</a></p></li>
+<li><p>项目地址：<a class="reference external" href="https://github.com/CausalAI/what-if">https://github.com/CausalAI/what-if</a></p></li>
+<li><p>blog 地址：<a class="reference external" href="https://causalai.github.io/what-if">https://causalai.github.io/what-if</a></p></li>
+<li><p>原书地址: <a class="reference external" href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/">https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/</a></p></li>
 </ul>
+<div class="section" id="Motivation">
+<h2>Motivation<a class="headerlink" href="#Motivation" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p><a class="reference external" href="https://sites.google.com/view/minituring/home">Causal AI</a></p>
+</div></blockquote>
+<p>Judea Pearl 是 Causal AI 的奠基人，Bernhard Scholkopf 推进了 Causality for Machine Learning，Yoshua Bengio 提出了 System 2 deep learning 作为 Causal AI 的一个范式。沉醉于 life and Intelligence 之美，众多工具中（包括数学，计算机，物理，复杂系统等等），偏好用信息论视角研究如何教会机器因果思维，希望创造具备 free will 的 AI，使之成为我们的良师益友，一起探索解密生命和智能的终极奥秘。</p>
+<p>该书对因果推理的概念和方法进行了全面的介绍。是我们 <a class="reference external" href="https://sites.google.com/view/minituring/home">Causal AI</a> 中组成内容。</p>
+<blockquote>
+<div><p>DoWhy | 让因果推断容易</p>
+</div></blockquote>
+<p>因果推断并不容易，我们希望结合 DoWhy 和本书的理论让 Causal Inference 更加容易。</p>
+<blockquote>
+<div><p><a class="reference external" href="https://causalai.github.io/pyro_zh_tutorial/">Pyro|深度通用概率图语言</a></p>
+</div></blockquote>
+<p>要构建 Benigo 的 System 2 deep learning for Causal AI, 我们需要 Pyro 这个强大的工具。</p>
+</div>
 <div class="section" id="内容概要">
 <h2>内容概要<a class="headerlink" href="#内容概要" title="Permalink to this headline">¶</a></h2>
 <p>本项目的主要内容是：</p>
@@ -226,6 +250,38 @@
 <li><p>使用 DoWhy 来构建本书的代码工作，用 DoWhy 的视角来理解该教材内容。</p></li>
 </ul>
 <p>注：For simplicity, in this book we do not distinguish between vector and scalar parameters. This is an abuse of notation, but we believe it does not create any confusion</p>
+</div>
+<div class="section" id="Preface-of-the-Book">
+<h2>Preface of the Book<a class="headerlink" href="#Preface-of-the-Book" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>Introduction: Towards Less Causal Causal Inferences</p>
+</div></blockquote>
+<p>Causal Inference is an admittedly pretentious(过于宏大的) title for a book. 因果推理是一项复杂的科学任务 that relies on triangulating evidence from multiple sources and on the application of a variety of methodological approaches. No book can possibly provide a comprehensive description of methodologies for causal inference across the sciences. 任何因果推理书籍的作者都必须选择他们要强调的因果推理的哪些方面。</p>
+<p>本引言的标题就已经反映了我们自己的选择： a book that helps scientists–especially health and social scientists–generate and analyze data to make causal inferences that are explicit about both the causal question and the assumptions underlying the data analysis.（为什么作出这样一个选择？） Unfortunately, the scientific literature is plagued by studies in which the causal question is not explicitly stated and the investigators’ unverifiable assumptions are not declared. This casual attitude towards
+causal inference has led to a great deal of confusion. For example, it is not uncommon to find studies in which the effect estimates are hard to interpret because the data analysis methods cannot appropriately answer the causal question (were it explicitly stated) under the investigators’ assumptions (were they declared).</p>
+<p>在这本书中，we stress the need to take the causal question seriously enough to articulate it, and to delineate the separate roles of data and assumptions for causal inference. Once these foundations are in place, causal inferences become necessarily less casual, which helps prevent confusion. The book describes various data analysis approaches that can be used to estimate the causal effect of interest under a particular set of assumptions when data are collected on each individual in a
+population. 这本书的一个关键信息是，因果推理不能简化为用于数据分析的配方的集合。具体来说，就是像 DoWhy 的设计理念一样，把因果推断分成四个步骤：</p>
+<ol class="arabic simple">
+<li><p>Model a causal inference problem using assumptions.</p></li>
+<li><p>Identify an expression for the causal effect under these assumptions (“causal estimand”).</p></li>
+<li><p>Estimate the expression using statistical methods such as matching or instrumental variables.</p></li>
+<li><p>Finally, verify the validity of the estimate using a variety of robustness checks.</p></li>
+</ol>
+<p>（本书的组织结构）The book is divided in three parts of increasing difficulty: Part I is about causal inference without models (i.e., nonparametric identification of causal ef- fects), Part II is about causal inference with models (i.e., estimation of causal effects with parametric models), and Part III is about causal inference from complex longitudinal data (i.e., estimation of causal effects of time-varying treatments). （我们全书使用 Fine Points 和 Technical points
+来附加解释相关内容）Throughout the text, we have interspersed Fine Points and Technical points that elaborate on certain topics mentioned in the main text. Fine Points are designed to be accessible to all readers while Technical Points are designed for readers with intermediate training in statistics. The book provides a cohesive presentation of concepts of, and methods for, causal inference that are currently scattered across journals in several disciplines. （我们的目标读者是：）We expect that
+the book will be of interest to anyone interested in causal inference, e.g., epidemiologists, statisticians, psychologists, economists, sociologists, political scientists, computer scientists…</p>
+<p>（我们考虑哲学上因果有关内容）Importantly, this is not a philosophy book. We remain agnostic about metaphysical concepts like causality and cause. Rather, we focus on the identification and estimation of causal effects in populations, that is, numerical quantities that measure changes in the distribution of an outcome under different interventions.</p>
+<p>哲学上，mental causation, consciousness prior by Bengio, free will 是重要因果概念。我们强调信息的观点研究因果，两个理由: - (1) the brain is an information processing machine, and - (2) the way we talk about the mental to physical relationship seems similar to the relationship between the abstract content of information and its physical realization.</p>
+<p>信息传递可以物理世界，但是不需要遵从能量守恒定律。封闭物理系统一定会遵从能量守恒，那么可以反推出信息的本质是开放物理系统（Agents，典型生命就是与外界交换能量和物质的典型）和其所在环境的交互。如果我们把心智和信息内容对应，那么通过信息传递，心智可以对物理世界产生影响。</p>
+<blockquote>
+<div><p>What is causality as information transfer.</p>
+</div></blockquote>
+<p>Collier himself defines it as the transfer of a particular quantity of information from one state of a system to another. Physical causation is a special case in which physical information instances are transferred from one state of physical system to another. (Collier, 1999, p. 215).</p>
+<p>更多哲学上因果相关内容请参考 <a class="reference external" href="https://colab.research.google.com/drive/1aF9RsFSwQDo35shL2XOkJZCLxohX5vOa">Free will, Causality and Neuroscience</a></p>
+</div>
+<div class="section" id="Resources">
+<h2>Resources<a class="headerlink" href="#Resources" title="Permalink to this headline">¶</a></h2>
+<p>这里给出相关的资料。</p>
 </div>
 </div>
 
@@ -237,7 +293,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="chapter1_gong.html" class="btn btn-neutral float-right" title="Ch1 因果理论相关概念" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="01-Part(I)仰望天空.html" class="btn btn-neutral float-right" title="Part I: 仰望天空" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Causal Inference: What If!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
