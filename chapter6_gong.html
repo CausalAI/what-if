@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul class="current">
@@ -102,6 +105,7 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch6 因果图模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#主要知识点">主要知识点</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#More-to-read">More to read</a></li>
 </ul>
 </li>
@@ -215,9 +219,32 @@
 <div class="section" id="Ch6-因果图模型">
 <h1>Ch6 因果图模型<a class="headerlink" href="#Ch6-因果图模型" title="Permalink to this headline">¶</a></h1>
 <p>本章介绍因果图用来表示关键的因果概念。现代因果图源于计算机科学和人工智能领域。本章介绍了一种图形工具来表示我们的定性专家知识和有关因果关系的先验假设。通过以直观的方式总结知识和假设，图可帮助阐明概念问题并方便研究者之间的沟通。The use of graphs in causal inference problems makes it easier to follow a sensible advice: draw your assumptions before your conclusions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Table</span> <span class="n">of</span> <span class="n">Contents</span>
+<span class="mf">1.</span> <span class="n">Causal</span> <span class="n">diagrams</span>
+<span class="mf">2.</span> <span class="n">Causal</span> <span class="n">diagrams</span> <span class="ow">and</span> <span class="n">marginal</span> <span class="n">independence</span>
+<span class="mf">3.</span> <span class="n">Causal</span> <span class="n">diagrams</span> <span class="ow">and</span> <span class="n">conditional</span> <span class="n">independence</span>
+<span class="mf">4.</span> <span class="n">Positivity</span> <span class="ow">and</span> <span class="n">consistency</span> <span class="ow">in</span> <span class="n">causal</span> <span class="n">diagrams</span>
+<span class="mf">5.</span> <span class="n">A</span> <span class="n">structural</span> <span class="n">classification</span> <span class="n">of</span> <span class="n">bias</span>
+<span class="mf">6.</span> <span class="n">The</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">effect</span> <span class="n">modification</span>
+</pre></div>
+</div>
+<div class="section" id="主要知识点">
+<h2>主要知识点<a class="headerlink" href="#主要知识点" title="Permalink to this headline">¶</a></h2>
+<p>Causal DAG satifies the Markov factorization:</p>
+<div class="math notranslate nohighlight">
+\[f(v) = \prod_{j=1}^M f(v_j | pa_j)\]</div>
+<p>Because causal diagrams encode our qualitative expert knowledge about the causal structure, they can be used as a visual aid to help conceptualize causal problems and guide data analyses.</p>
+<ul class="simple">
+<li><p><strong>faithfulness:</strong> Causal DAG 中的所有条件独立性都意味着 d-分离。</p></li>
+<li><p><strong>系统偏差</strong>。 We say that there is systematic bias when the data are insufficient to identify–compute–the causal effect even with an infinite sample size.</p></li>
+</ul>
+<p>Identifying potential sources of bias is a key use of causal diagrams: we can use our causal expert knowledge to draw graphs and then search for sources of association between treatment and outcome. 但是 Causal diagrams are less helpful to illustrate the concept of effect modification that we discussed in Chapter 4. That is, valid causal could fail to distinguish between the above three different qualitative types of effect modification by <span class="math notranslate nohighlight">\(V\)</span>. Many effect modifiers, however, do not have a
+causal effect on the outcome. Rather, they are surrogates for variables that have a causal effect on the outcome.</p>
+<p><strong>异质因果效应：</strong> Because <strong>causal and surrogate effect modifiers are often indistinguishable</strong> in practice, the concept of effect modification comprises both. some prefer to use the neutral term “heterogeneity of causal effects,” rather than “effect modification,” to avoid confusion.</p>
+</div>
 <div class="section" id="More-to-read">
 <h2>More to read<a class="headerlink" href="#More-to-read" title="Permalink to this headline">¶</a></h2>
-<p>更多可以参考的内容。</p>
+<p>更多内容内容参见 <a class="reference external" href="https://colab.research.google.com/drive/1m8bHbsToIP8M41o0IL55AuXLzKSLaTPa">Handbook of graphical models</a>。</p>
 </div>
 </div>
 

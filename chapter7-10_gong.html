@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul class="current">
@@ -102,7 +105,13 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter4_gong.html">Ch4 Effect Modification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter6_gong.html">Ch6 因果图模型</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-10 因果推断的偏差</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Ch7-10 因果推断的偏差</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Single-world-intervention-graphs">Single-world intervention graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Selection-bias-and-censoring">Selection bias and censoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Intention-to-treat-effect:-the-effect-of-a-misclassified-treatment">Intention-to-treat effect: the effect of a misclassified treatment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-conditionality-“principle”">The conditionality “principle”</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul>
@@ -187,224 +196,6 @@
             
   
 <style>
-/* CSS for nbsphinx extension */
-
-/* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
-    border: none;
-    padding: 0 0;
-    margin: 0;
-    box-shadow: none;
-}
-
-/* avoid gaps between output lines */
-div.nboutput.container div[class*=highlight] pre {
-    line-height: normal;
-}
-
-/* input/output containers */
-div.nbinput.container,
-div.nboutput.container {
-    display: -webkit-flex;
-    display: flex;
-    align-items: flex-start;
-    margin: 0;
-    width: 100%;
-}
-@media (max-width: 540px) {
-    div.nbinput.container,
-    div.nboutput.container {
-        flex-direction: column;
-    }
-}
-
-/* input container */
-div.nbinput.container {
-    padding-top: 5px;
-}
-
-/* last container */
-div.nblast.container {
-    padding-bottom: 5px;
-}
-
-/* input prompt */
-div.nbinput.container div.prompt pre {
-    color: #307FC1;
-}
-
-/* output prompt */
-div.nboutput.container div.prompt pre {
-    color: #BF5B3D;
-}
-
-/* all prompts */
-div.nbinput.container div.prompt,
-div.nboutput.container div.prompt {
-    min-width: 5ex;
-    padding-top: 0.3rem;
-    padding-right: 0.3rem;
-    text-align: right;
-    flex: 0;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.prompt,
-    div.nboutput.container div.prompt {
-        text-align: left;
-        padding: 0.4em;
-    }
-    div.nboutput.container div.prompt.empty {
-        padding: 0;
-    }
-}
-
-/* disable scrollbars on prompts */
-div.nbinput.container div.prompt pre,
-div.nboutput.container div.prompt pre {
-    overflow: hidden;
-}
-
-/* input/output area */
-div.nbinput.container div.input_area,
-div.nboutput.container div.output_area {
-    -webkit-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-@media (max-width: 540px) {
-    div.nbinput.container div.input_area,
-    div.nboutput.container div.output_area {
-        width: 100%;
-    }
-}
-
-/* input area */
-div.nbinput.container div.input_area {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    background: #f5f5f5;
-}
-
-/* override MathJax center alignment in output cells */
-div.nboutput.container div[class*=MathJax] {
-    text-align: left !important;
-}
-
-/* override sphinx.ext.imgmath center alignment in output cells */
-div.nboutput.container div.math p {
-    text-align: left;
-}
-
-/* standard error */
-div.nboutput.container div.output_area.stderr {
-    background: #fdd;
-}
-
-/* ANSI colors */
-.ansi-black-fg { color: #3E424D; }
-.ansi-black-bg { background-color: #3E424D; }
-.ansi-black-intense-fg { color: #282C36; }
-.ansi-black-intense-bg { background-color: #282C36; }
-.ansi-red-fg { color: #E75C58; }
-.ansi-red-bg { background-color: #E75C58; }
-.ansi-red-intense-fg { color: #B22B31; }
-.ansi-red-intense-bg { background-color: #B22B31; }
-.ansi-green-fg { color: #00A250; }
-.ansi-green-bg { background-color: #00A250; }
-.ansi-green-intense-fg { color: #007427; }
-.ansi-green-intense-bg { background-color: #007427; }
-.ansi-yellow-fg { color: #DDB62B; }
-.ansi-yellow-bg { background-color: #DDB62B; }
-.ansi-yellow-intense-fg { color: #B27D12; }
-.ansi-yellow-intense-bg { background-color: #B27D12; }
-.ansi-blue-fg { color: #208FFB; }
-.ansi-blue-bg { background-color: #208FFB; }
-.ansi-blue-intense-fg { color: #0065CA; }
-.ansi-blue-intense-bg { background-color: #0065CA; }
-.ansi-magenta-fg { color: #D160C4; }
-.ansi-magenta-bg { background-color: #D160C4; }
-.ansi-magenta-intense-fg { color: #A03196; }
-.ansi-magenta-intense-bg { background-color: #A03196; }
-.ansi-cyan-fg { color: #60C6C8; }
-.ansi-cyan-bg { background-color: #60C6C8; }
-.ansi-cyan-intense-fg { color: #258F8F; }
-.ansi-cyan-intense-bg { background-color: #258F8F; }
-.ansi-white-fg { color: #C5C1B4; }
-.ansi-white-bg { background-color: #C5C1B4; }
-.ansi-white-intense-fg { color: #A1A6B2; }
-.ansi-white-intense-bg { background-color: #A1A6B2; }
-
-.ansi-default-inverse-fg { color: #FFFFFF; }
-.ansi-default-inverse-bg { background-color: #000000; }
-
-.ansi-bold { font-weight: bold; }
-.ansi-underline { text-decoration: underline; }
-
-
-div.nbinput.container div.input_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight] > pre,
-div.nboutput.container div.output_area div[class*=highlight].math,
-div.nboutput.container div.output_area.rendered_html,
-div.nboutput.container div.output_area > div.output_javascript,
-div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 0.3rem;
-}
-
-/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
-div.nbinput.container div.input_area > div[class^='highlight'],
-div.nboutput.container div.output_area > div[class^='highlight']{
-    overflow-y: hidden;
-}
-
-/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
-    display: none;
-}
-
-/* Some additional styling taken form the Jupyter notebook CSS */
-div.rendered_html table {
-  border: none;
-  border-collapse: collapse;
-  border-spacing: 0;
-  color: black;
-  font-size: 12px;
-  table-layout: fixed;
-}
-div.rendered_html thead {
-  border-bottom: 1px solid black;
-  vertical-align: bottom;
-}
-div.rendered_html tr,
-div.rendered_html th,
-div.rendered_html td {
-  text-align: right;
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-  line-height: normal;
-  white-space: normal;
-  max-width: none;
-  border: none;
-}
-div.rendered_html th {
-  font-weight: bold;
-}
-div.rendered_html tbody tr:nth-child(odd) {
-  background: #f5f5f5;
-}
-div.rendered_html tbody tr:hover {
-  background: rgba(66, 165, 245, 0.2);
-}
-
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
@@ -430,14 +221,38 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Ch7-10-因果推断的偏差">
 <h1>Ch7-10 因果推断的偏差<a class="headerlink" href="#Ch7-10-因果推断的偏差" title="Permalink to this headline">¶</a></h1>
 <p>因果推断中可能会出现多种偏差，包括 - confounding bias, - selection bias, - measurement error and - random variability.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
+<div class="section" id="Single-world-intervention-graphs">
+<h2>Single-world intervention graphs<a class="headerlink" href="#Single-world-intervention-graphs" title="Permalink to this headline">¶</a></h2>
+<p>Exchangeability is translated into graph language as the lack of open paths between the treatment <span class="math notranslate nohighlight">\(A\)</span> and outcome <span class="math notranslate nohighlight">\(Y\)</span> nodes–other than those originating from <span class="math notranslate nohighlight">\(A\)</span>–that would result in an association between <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>A new type of graph–Single-world intervention graphs (SWIGs)– unify the counterfactual and graphical approaches by explicitly including the counterfactual variables on the graph.</p>
+<p><strong>A SWIG</strong> is a graph that represents a counterfactual world created by a single intervention. In contrast, the vari- ables on a standard causal diagram represent the actual world.</p>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
+<div class="section" id="Selection-bias-and-censoring">
+<h2>Selection bias and censoring<a class="headerlink" href="#Selection-bias-and-censoring" title="Permalink to this headline">¶</a></h2>
+<p>Since censoring <span class="math notranslate nohighlight">\(C\)</span> is now viewed as a treatment, it follows that we will need to</p>
+<ul class="simple">
+<li><ol class="lowerroman simple">
+<li><p>ensure that the identifiability conditions of exchangeability, positivity, and consistency hold for <span class="math notranslate nohighlight">\(C\)</span> as well as for <span class="math notranslate nohighlight">\(A\)</span>, and</p></li>
+</ol>
+</li>
+<li><ol class="lowerroman simple" start="2">
+<li><p>use analytical methods that are identical to those we would have to use if we wanted to estimate the effect of censoring <span class="math notranslate nohighlight">\(C\)</span>.</p></li>
+</ol>
+</li>
+</ul>
+<p>Under these identifiability conditions and using these methods, selection bias can be eliminated via analytic adjustment and, in the absence of measurement error and confounding, the causal effect of treatment <span class="math notranslate nohighlight">\(A\)</span> on outcome <span class="math notranslate nohighlight">\(Y\)</span> can be identified.</p>
+<p>信息因果模型中，系统一的每个信息传递都是信息干预。</p>
 </div>
+<div class="section" id="Intention-to-treat-effect:-the-effect-of-a-misclassified-treatment">
+<h2>Intention-to-treat effect: the effect of a misclassified treatment<a class="headerlink" href="#Intention-to-treat-effect:-the-effect-of-a-misclassified-treatment" title="Permalink to this headline">¶</a></h2>
+<p>Alternatively, one could view the bias due to mismeasured confounders as a form of unmeasured confounding rather than as a form of measurement bias. The particular choice of terminology–unmeasured confounding versus bias due to mismeasurement of the confounders–is irrelevant for practical purposes.</p>
+<p>In real randomized experiments we need to distinguish between two treat- ment variables: the assigned treatment <span class="math notranslate nohighlight">\(Z\)</span> (1 if the person is assigned to trans- plant, 0 otherwise) and the received treatment <span class="math notranslate nohighlight">\(A\)</span> (1 if the person receives a transplant, 0 otherwise).</p>
+<p><strong>per-protocol effect：</strong> In randomized experiments, the per-protocol effect is the causal effect of treatment that would have been observed if all individuals had adhered to their assigned treatment as specified in the protocol of the experiment.</p>
+<p><strong>intention-to-treat effect：</strong> The causal effect of randomized assignment is referred to as the intention-to-treat effect.</p>
+</div>
+<div class="section" id="The-conditionality-“principle”">
+<h2>The conditionality “principle”<a class="headerlink" href="#The-conditionality-“principle”" title="Permalink to this headline">¶</a></h2>
+<p>The likelihood for the observed data has three factors: the density of <span class="math notranslate nohighlight">\(Y\)</span> given <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(L\)</span>, the density of <span class="math notranslate nohighlight">\(A\)</span> given <span class="math notranslate nohighlight">\(L\)</span>, and the marginal density of <span class="math notranslate nohighlight">\(L\)</span>. <strong>The conditionality principle states</strong> that one should always perform inference on the parameter of interest conditional on any ancillary statistics.</p>
 </div>
 </div>
 

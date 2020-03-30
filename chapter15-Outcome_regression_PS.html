@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -111,24 +114,22 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter14-G估计_of_SNMs.html">Ch14 结构嵌套模型的G估计</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch15 结果回归模型和倾向得分</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-15.1">Section 15.1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#15.1-Outcome-regression">15.1 Outcome regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#15.2-Propensity-scores">15.2 Propensity scores</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#15.3-Propensity-stratification-and-standardization">15.3 Propensity stratification and standardization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#15.4-Propensity-matching">15.4 Propensity matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#15.5-Propensity-models,-structural-models,-predictive-models">15.5 Propensity models, structural models, predictive models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-15.1">Program 15.1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-15.2">Section 15.2</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-15.2">Program 15.2</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Section-15.3">Section 15.3</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-15.3">Program 15.3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-15.4">Program 15.4</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#用类组织本章的代码">用类组织本章的代码</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#用类组织本章的代码">用类组织本章的代码</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter16-工具变量法.html">Ch16 工具变量法</a></li>
@@ -450,35 +451,56 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Ch15-结果回归模型和倾向得分">
 <h1>Ch15 结果回归模型和倾向得分<a class="headerlink" href="#Ch15-结果回归模型和倾向得分" title="Permalink to this headline">¶</a></h1>
 <p>Outcome Regression and Propensity Scores</p>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>结果回归和倾向得分分析的各种版本是因果推断最常用的参数方法。您可能想知道为什么我们花这么长时间才包含讨论这些方法的章节。到目前为止，我们已经描述了IP加权，标准化和g估计-g方法。在最不常用的方法之后再提出最常用的方法，对于我们而言似乎是一个奇怪的选择。我们为什么不从基于结果回归和倾向得分的更简单，广泛使用的方法开始呢？因为这些方法通常无法使用。</p>
 <p>更准确地说，更简单的结果回归和倾向评分方法（as described in a zillion publications that this chapter cannot possibly summarize）在更简单的环境下可以很好地工作，但这些方法并非handle the complexities associated with causal inference with time-varying treatments. 在第三部分中，我们将再次讨论g方法，但是将不再赘述常规结果回归和倾向评分方法。本章专门讨论因果方法，这些因果方法通常 have limited applicability for complex longitudinal data.</p>
-<div class="section" id="Setup-and-imports">
-<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="15.1-Outcome-regression">
+<h3>15.1 Outcome regression<a class="headerlink" href="#15.1-Outcome-regression" title="Permalink to this headline">¶</a></h3>
+<p>前面我们介绍了 IP weighting, standardization, and g-estimation to estimate the average causal effect of smoking cessation (the treatment) <span class="math notranslate nohighlight">\(A\)</span> on weight gain (the outcome) <span class="math notranslate nohighlight">\(Y\)</span> . 我们也介绍了如何估计 CATE, either by restricting the analysis to the subset of interest or by adding product terms in marginal structural models (Chapter 12) and structural nested models (Chapter 14).</p>
+<p>(G-估计的好处就是避免偏差 induced by misspecifying <span class="math notranslate nohighlight">\(L-Y\)</span> relation) Take structural nested models for example. These models include parameters for the product terms between treatment <span class="math notranslate nohighlight">\(A\)</span> and the variables <span class="math notranslate nohighlight">\(L\)</span>, but no parameters for the variables <span class="math notranslate nohighlight">\(L\)</span> themselves. This is an attractive property of structural nested models 是因为我们关注因果效应 of <span class="math notranslate nohighlight">\(A\)</span> on <span class="math notranslate nohighlight">\(Y\)</span> within levels of <span class="math notranslate nohighlight">\(L\)</span> but not in the (noncausal) relation between <span class="math notranslate nohighlight">\(L\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> . A method–
+g-estimation of structural nested models–that is agnostic about the functional form of the <span class="math notranslate nohighlight">\(L\)</span>-<span class="math notranslate nohighlight">\(Y\)</span> relation is protected from bias due to misspecifying this relation.</p>
+<p>如果我们不管偏差 induced by misspecifying <span class="math notranslate nohighlight">\(L-Y\)</span> relation, 那么对应的方法就是 Outcome Regression.</p>
+</div>
+<div class="section" id="15.2-Propensity-scores">
+<h3>15.2 Propensity scores<a class="headerlink" href="#15.2-Propensity-scores" title="Permalink to this headline">¶</a></h3>
+<p>When using IP weighting (Chapter 12) and g-estimation (Chapter 14), we estimated the probability of treatment given the covariates <span class="math notranslate nohighlight">\(L\)</span>, <span class="math notranslate nohighlight">\(P(A = 1|L)\)</span>, for each individual. Let us refer to this conditional probability as the <strong>propensity score</strong> <span class="math notranslate nohighlight">\(\pi(L)\)</span>.</p>
+</div>
+<div class="section" id="15.3-Propensity-stratification-and-standardization">
+<h3>15.3 Propensity stratification and standardization<a class="headerlink" href="#15.3-Propensity-stratification-and-standardization" title="Permalink to this headline">¶</a></h3>
+<p>The average causal effect among individuals with a particular value <span class="math notranslate nohighlight">\(s\)</span> of the propensity score, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}E[Y^{a=1, c=0} |\pi(L) = s] − E[Y^{a=0, c=0} |\pi(L) = s] = \\ E[Y|{A=1, C=0}, \pi(L) = s] - E[Y|{A=0, C=0}, \pi(L) = s]\end{split}\]</div>
+<p>under the identifying conditions.</p>
+</div>
+<div class="section" id="15.4-Propensity-matching">
+<h3>15.4 Propensity matching<a class="headerlink" href="#15.4-Propensity-matching" title="Permalink to this headline">¶</a></h3>
+<p>After propensity matching, the matched population has the <span class="math notranslate nohighlight">\(\pi(L)\)</span> distribution of the treated, of the untreated, or any other arbitrary distribution.</p>
+</div>
+<div class="section" id="15.5-Propensity-models,-structural-models,-predictive-models">
+<h3>15.5 Propensity models, structural models, predictive models<a class="headerlink" href="#15.5-Propensity-models,-structural-models,-predictive-models" title="Permalink to this headline">¶</a></h3>
+<p>In Part II of this book we have described two different types of models for causal inference: propensity models and structural models. Let us now compare them.</p>
+<p>Propensity models are models for the probability of treatment <span class="math notranslate nohighlight">\(A\)</span> given the variables <span class="math notranslate nohighlight">\(L\)</span> used to try to achieve conditional exchangeability. We have used propensity models for matching and stratification in this chapter, for IP weighting in Chapter 12, and for g-estimation in Chapter 14. 倾向模型的参数是 nuisance parameters (see Fine Point 15.1) <strong>without a causal interpretation</strong> because a variable <span class="math notranslate nohighlight">\(L\)</span> and treatment <span class="math notranslate nohighlight">\(L\)</span> may be associated for many reasons–not only
+because the variable <span class="math notranslate nohighlight">\(L\)</span> causes <span class="math notranslate nohighlight">\(A\)</span>. 倾向模型很有用 as the basis of the estimation of the parameters of structural models, as we have described in this and previous chapters.</p>
+<p>Structural models describe the relation between the treatment <span class="math notranslate nohighlight">\(A\)</span> and some component of the distribution (e.g., the mean) of the counterfactual outcome <span class="math notranslate nohighlight">\(Y^a\)</span>, either marginally or within levels of the variables <span class="math notranslate nohighlight">\(L\)</span>. For continuous treatments, a structural model is often referred to as a <strong>dose-response model</strong>.</p>
+<p>The parameters for treatment in structural models are not nuisance parameters: 他们有直接的因果解释 as outcome differences under different treatment values <span class="math notranslate nohighlight">\(a\)</span>.</p>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="c1">## Setup and imports</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -518,9 +540,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 </div>
 </div>
 <p>This time, instead of adding dummy variables and squared variables, we’ll use formulas to specify Statsmodels models</p>
-</div>
-<div class="section" id="Section-15.1">
-<h2>Section 15.1<a class="headerlink" href="#Section-15.1" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-15.1">
 <h3>Program 15.1<a class="headerlink" href="#Program-15.1" title="Permalink to this headline">¶</a></h3>
 <p>“Using the same model as in Section 13.2…”</p>
@@ -932,9 +951,6 @@ alpha_1       3.5    (2.6, 4.3)
 </pre></div></div>
 </div>
 </div>
-</div>
-<div class="section" id="Section-15.2">
-<h2>Section 15.2<a class="headerlink" href="#Section-15.2" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-15.2">
 <h3>Program 15.2<a class="headerlink" href="#Program-15.2" title="Permalink to this headline">¶</a></h3>
 <p>To estimate propensity score, we fit a logistic model for <code class="docutils literal notranslate"><span class="pre">qsmk</span></code> conditional on <span class="math notranslate nohighlight">\(L\)</span></p>
@@ -1076,7 +1092,7 @@ Name: 1628, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter15-Outcome_regression_PS_40_0.png" src="_images/chapter15-Outcome_regression_PS_40_0.png" />
+<img alt="_images/chapter15-Outcome_regression_PS_48_0.png" src="_images/chapter15-Outcome_regression_PS_48_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1101,9 +1117,6 @@ Name: 1628, dtype: float64
 </pre></div></div>
 </div>
 </div>
-</div>
-<div class="section" id="Section-15.3">
-<h2>Section 15.3<a class="headerlink" href="#Section-15.3" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-15.3">
 <h3>Program 15.3<a class="headerlink" href="#Program-15.3" title="Permalink to this headline">¶</a></h3>
 <p>“only individual 22005 had an estimated <span class="math notranslate nohighlight">\(\pi(L)\)</span> of 0.6563”, pg 186</p>
@@ -1565,10 +1578,8 @@ effect      3.6    (2.6, 4.5)
 </div>
 </div>
 </div>
-<div class="section" id="End-to-End">
-<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="用类组织本章的代码">
-<h3>用类组织本章的代码<a class="headerlink" href="#用类组织本章的代码" title="Permalink to this headline">¶</a></h3>
+<h2>用类组织本章的代码<a class="headerlink" href="#用类组织本章的代码" title="Permalink to this headline">¶</a></h2>
 <p>结果回归和倾向得分分析的各种版本是因果推断最常用的参数方法。那么本类主要目的是用于展示这两种因果效应估计方法的实现。</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -1804,7 +1815,7 @@ effect      3.6    (2.6, 4.5)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter15-Outcome_regression_PS_70_7.png" src="_images/chapter15-Outcome_regression_PS_70_7.png" />
+<img alt="_images/chapter15-Outcome_regression_PS_76_7.png" src="_images/chapter15-Outcome_regression_PS_76_7.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1814,7 +1825,6 @@ effect      3.6    (2.6, 4.5)
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>

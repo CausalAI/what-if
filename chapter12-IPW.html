@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -108,37 +111,27 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch12 逆概率加权和边际结构模型</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#The-causal-question">The causal question</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#12.1-The-causal-question">12.1 The causal question</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#12.2-Estimating-IP-weights-via-modeling">12.2 Estimating IP weights via modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#12.3-Stabilized-IP-weights">12.3 Stabilized IP weights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#12.4-Marginal-structural-models">12.4 Marginal structural models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#12.5-Effect-modification-and-marginal-structural-models">12.5 Effect modification and marginal structural models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#12.6-Censoring-and-missing-data">12.6 Censoring and missing data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.1">Program 12.1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#12.2-Estimating-IP-weights-via-modeling">12.2 Estimating IP weights via modeling</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.2">Program 12.2</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#12.3-Stabilized-IP-weights">12.3 Stabilized IP weights</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.3">Program 12.3</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#12.4-Marginal-structural-models">12.4 Marginal structural models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.4">Program 12.4</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.5">Program 12.5</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#12.5-Effect-modification-and-marginal-structural-models">12.5 Effect modification and marginal structural models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.6">Program 12.6</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#12.6-Censoring-and-missing-data">12.6 Censoring and missing data</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-12.7">Program 12.7</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#一个类组织本章代码">一个类组织本章代码</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Mini-Ch12">Mini Ch12</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#因果效应估计">因果效应估计</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#一个类组织本章代码">一个类组织本章代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#因果效应估计">因果效应估计</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
@@ -463,11 +456,60 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Ch12-逆概率加权和边际结构模型">
 <h1>Ch12 逆概率加权和边际结构模型<a class="headerlink" href="#Ch12-逆概率加权和边际结构模型" title="Permalink to this headline">¶</a></h1>
 <p>IP Weighting and Marginal Structural Models</p>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>本书第二部分围绕因果问题“戒烟对体重增加的平均因果效应是什么？”进行组织。在本章中，我们描述如何使用IP加权从观测数据中估计这种效应。尽管在第二章中介绍了IP加权，但我们仅将其描述为非参数方法。We now describe the use of models together with IP weighting，在额外的假设下，这些模型将使我们能够处理高维问题 with many covariates and nondichotomous treatments.</p>
 <p>为了估计戒烟对体重增加的影响，我们将使用NHEFS的真实数据，该缩写词代表国家卫生和营养检查调查数据I流行病学随访研究。NHEFS是由国家卫生统计中心和国家老龄研究所与美国公共卫生局其他机构共同发起的。 可以在 www.cdc.gov/nchs/nhanes/nhefs/ 上找到NHEFS的详细说明以及可公开获得的数据集和文档。 在本章及以后的章节中，我们将使用NHEFS数据的一部分，该数据可从本书的网站上获得。</p>
 <blockquote>
 <div><p>我们关注的是戒烟是否会引起体重增加？</p>
 </div></blockquote>
+<div class="section" id="12.1-The-causal-question">
+<h3>12.1 The causal question<a class="headerlink" href="#12.1-The-causal-question" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>戒烟是否会引起体重增加？ <span class="math notranslate nohighlight">\(\theta = E[Y^{a=1}] - E[Y^{a=0}]\)</span>如何估计呢？</p>
+</div></blockquote>
+<p>Our goal is to estimate the average causal effect of smoking cessation (the treatment) A on weight gain (the outcome) Y .</p>
+</div>
+<div class="section" id="12.2-Estimating-IP-weights-via-modeling">
+<h3>12.2 Estimating IP weights via modeling<a class="headerlink" href="#12.2-Estimating-IP-weights-via-modeling" title="Permalink to this headline">¶</a></h3>
+<p>必须回答的一个关键问题是： if <span class="math notranslate nohighlight">\(A\)</span> is a continuous variable, then IPW 方法的推广是什么？更简单的如果 <span class="math notranslate nohighlight">\(A\)</span> 是个离散变量，如何使用一组权重 <span class="math notranslate nohighlight">\(W\)</span> 使得加权总体中，<span class="math notranslate nohighlight">\(L\)</span> 的分布并不影响 <span class="math notranslate nohighlight">\(A\)</span> 的分布。</p>
+<p>IP weighting creates a pseudo-population in which the arrow from the covariates <span class="math notranslate nohighlight">\(L\)</span> to the treatment <span class="math notranslate nohighlight">\(A\)</span> is removed. 也就是说</p>
+<p><span class="math notranslate nohighlight">\(L \rightarrow A\)</span> for population <span class="math notranslate nohighlight">\(S\)</span>, then we create a pseudo-population <span class="math notranslate nohighlight">\(S'\)</span> in which the distribution of <span class="math notranslate nohighlight">\(A\)</span> is not influenced by any information about <span class="math notranslate nohighlight">\(L\)</span> keeping everything else unchange. 这里就导致一个悖论，在视角 <span class="math notranslate nohighlight">\(S\)</span> 下，<span class="math notranslate nohighlight">\(L\)</span> 是 <span class="math notranslate nohighlight">\(A\)</span> 的原因，但是换一个视角 <span class="math notranslate nohighlight">\(S'\)</span> 他就不再是其原因了。</p>
+<ul class="simple">
+<li><p>一种解释方式是 effect 是 cause 的一种测量。例如测量体重环境变化了，太空中重量就测出来是以个常数，或者说测不出来。 这种解释的问题在于新的环境意味着新的因果机制，pseudo-population 的 setting 变化只是视角的变化，而不是环境或者因果机制的变化。</p></li>
+<li><p>另外一种解释方式是，只存在 individual-level causal effect 的因果关系不变性，在群体层次上的因果关系并存在 invariant 因果关系，群体层次上的因果关系是一种统计特性。具体来说具备不变性的是个体因果关系，而因果效应确实一个离开了特定总体就没有定义的量 which is a statistical quantity。这种解释的问题在于</p></li>
+</ul>
+<p>这里有一个问题 <span class="math notranslate nohighlight">\(A\)</span> 是 <span class="math notranslate nohighlight">\(L\)</span> 的原因, 那么 <span class="math notranslate nohighlight">\(A\)</span> 一定对 <span class="math notranslate nohighlight">\(L\)</span> 有因果效应。</p>
+</div>
+<div class="section" id="12.3-Stabilized-IP-weights">
+<h3>12.3 Stabilized IP weights<a class="headerlink" href="#12.3-Stabilized-IP-weights" title="Permalink to this headline">¶</a></h3>
+<p>Create the stabilized IP weights <span class="math notranslate nohighlight">\(SW^A = f(A) \, / \, f(A|L)\)</span></p>
+<p>“The effect estimate obtained in the pseudo-population created by weights <span class="math notranslate nohighlight">\(0.5 \, / \, f(A|L)\)</span> is equal to that obtained in the pseudo-population created by weights <span class="math notranslate nohighlight">\(1 \, / \, f(A|L)\)</span>.”</p>
+</div>
+<div class="section" id="12.4-Marginal-structural-models">
+<h3>12.4 Marginal structural models<a class="headerlink" href="#12.4-Marginal-structural-models" title="Permalink to this headline">¶</a></h3>
+<p>Models for the marginal mean of a counterfactual outcome are referred to as marginal structural mean models. 反事实结果的边际均值模型称为边际结构均值模型。</p>
+<p>模型的各种变体，从离散的连续。</p>
+<p>Marginal structural mean models within a pseudo-population:</p>
+<div class="math notranslate nohighlight">
+\[E[Y^a] = \beta_0 + \beta_1 a\]</div>
+<div class="math notranslate nohighlight">
+\[\Rightarrow E[Y^a] = \beta_0 + \beta_1 a + \beta_2 a^2\]</div>
+<p>marginal structural logistic model</p>
+<div class="math notranslate nohighlight">
+\[logit Pr[Y^a = 1] = \beta_0 + \beta_1 a\]</div>
+</div>
+<div class="section" id="12.5-Effect-modification-and-marginal-structural-models">
+<h3>12.5 Effect modification and marginal structural models<a class="headerlink" href="#12.5-Effect-modification-and-marginal-structural-models" title="Permalink to this headline">¶</a></h3>
+<p>Marginal structural models do not include covariates when the target parameter is the average causal effect in the population. However, one may include covariates–which may be non-confounders–in a marginal structural model to assess effect modification.</p>
+<p>在第一部分中，我们讨论了 effect modification and confounding 是两个在逻辑上截然不同的概念。 但是，许多学生很难理解这种区别，因为经常使用相同的统计方法（分层（第4章）或回归（第15章）for confounder adjustment and detection of effect modification. 因此，使用边际结构模型来讲授这些概念可能会有一些优势， because then methods for confounder adjustment (IP weighting) are distinct from methods for detection of effect modification (adding treatment-covariate product terms to a marginal structural model).</p>
+</div>
+<div class="section" id="12.6-Censoring-and-missing-data">
+<h3>12.6 Censoring and missing data<a class="headerlink" href="#12.6-Censoring-and-missing-data" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <p><strong>Setup and imports</strong></p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -547,12 +589,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
   &#39;have you had 1 drink past year? in 1971,  1:ever, 0:never; 2:missing&#39;])
 </pre></div></div>
 </div>
-<div class="section" id="The-causal-question">
-<h2>The causal question<a class="headerlink" href="#The-causal-question" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>戒烟是否会引起体重增加？ <span class="math notranslate nohighlight">\(\theta = E[Y^{a=1}] - E[Y^{a=0}]\)</span>如何估计呢？</p>
-</div></blockquote>
-<p>Our goal is to estimate the average causal effect of smoking cessation (the treatment) A on weight gain (the outcome) Y .</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -827,17 +863,6 @@ difference     2.54   (1.7, 3.4)
     </tbody></table></div>
 </div>
 </div>
-</div>
-<div class="section" id="12.2-Estimating-IP-weights-via-modeling">
-<h2>12.2 Estimating IP weights via modeling<a class="headerlink" href="#12.2-Estimating-IP-weights-via-modeling" title="Permalink to this headline">¶</a></h2>
-<p>必须回答的一个关键问题是： if <span class="math notranslate nohighlight">\(A\)</span> is a continuous variable, then IPW 方法的推广是什么？更简单的如果 <span class="math notranslate nohighlight">\(A\)</span> 是个离散变量，如何使用一组权重 <span class="math notranslate nohighlight">\(W\)</span> 使得加权总体中，<span class="math notranslate nohighlight">\(L\)</span> 的分布并不影响 <span class="math notranslate nohighlight">\(A\)</span> 的分布。</p>
-<p>IP weighting creates a pseudo-population in which the arrow from the covariates <span class="math notranslate nohighlight">\(L\)</span> to the treatment <span class="math notranslate nohighlight">\(A\)</span> is removed. 也就是说</p>
-<p><span class="math notranslate nohighlight">\(L \rightarrow A\)</span> for population <span class="math notranslate nohighlight">\(S\)</span>, then we create a pseudo-population <span class="math notranslate nohighlight">\(S'\)</span> in which the distribution of <span class="math notranslate nohighlight">\(A\)</span> is not influenced by any information about <span class="math notranslate nohighlight">\(L\)</span> keeping everything else unchange. 这里就导致一个悖论，在视角 <span class="math notranslate nohighlight">\(S\)</span> 下，<span class="math notranslate nohighlight">\(L\)</span> 是 <span class="math notranslate nohighlight">\(A\)</span> 的原因，但是换一个视角 <span class="math notranslate nohighlight">\(S'\)</span> 他就不再是其原因了。</p>
-<ul class="simple">
-<li><p>一种解释方式是 effect 是 cause 的一种测量。例如测量体重环境变化了，太空中重量就测出来是以个常数，或者说测不出来。 这种解释的问题在于新的环境意味着新的因果机制，pseudo-population 的 setting 变化只是视角的变化，而不是环境或者因果机制的变化。</p></li>
-<li><p>另外一种解释方式是，只存在 individual-level causal effect 的因果关系不变性，在群体层次上的因果关系并存在 invariant 因果关系，群体层次上的因果关系是一种统计特性。具体来说具备不变性的是个体因果关系，而因果效应确实一个离开了特定总体就没有定义的量 which is a statistical quantity。这种解释的问题在于</p></li>
-</ul>
-<p>这里有一个问题 <span class="math notranslate nohighlight">\(A\)</span> 是 <span class="math notranslate nohighlight">\(L\)</span> 的原因, 那么 <span class="math notranslate nohighlight">\(A\)</span> 一定对 <span class="math notranslate nohighlight">\(L\)</span> 有因果效应。</p>
 <div class="section" id="Program-12.2">
 <h3>Program 12.2<a class="headerlink" href="#Program-12.2" title="Permalink to this headline">¶</a></h3>
 <p>We’re going to be modeling with squared terms and some categorical features. Here we’ll explicitly add squared features and dummy features to the data. In later chapters we’ll use Statsmodels’ formula syntax.</p>
@@ -964,7 +989,7 @@ IP weights
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter12-IPW_33_0.png" src="_images/chapter12-IPW_33_0.png" />
+<img alt="_images/chapter12-IPW_41_0.png" src="_images/chapter12-IPW_41_0.png" />
 </div>
 </div>
 <p>Now, the main model</p>
@@ -1159,7 +1184,7 @@ theta_1       3.44   (2.4, 4.5)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter12-IPW_47_0.png" src="_images/chapter12-IPW_47_0.png" />
+<img alt="_images/chapter12-IPW_55_0.png" src="_images/chapter12-IPW_55_0.png" />
 </div>
 </div>
 <p>We see that there are actually a few ages with zero counts</p>
@@ -1259,11 +1284,6 @@ theta_1       3.44   (2.4, 4.5)
 </div></div>
 </div>
 <p>For a discussion on ages with zero counts, see Fine Point 12.2, pg 155.</p>
-</div>
-</div>
-<div class="section" id="12.3-Stabilized-IP-weights">
-<h2>12.3 Stabilized IP weights<a class="headerlink" href="#12.3-Stabilized-IP-weights" title="Permalink to this headline">¶</a></h2>
-<p>Create the stabilized IP weights <span class="math notranslate nohighlight">\(SW^A = f(A) \, / \, f(A|L)\)</span></p>
 <p>“The effect estimate obtained in the pseudo-population created by weights <span class="math notranslate nohighlight">\(0.5 \, / \, f(A|L)\)</span> is equal to that obtained in the pseudo-population created by weights <span class="math notranslate nohighlight">\(1 \, / \, f(A|L)\)</span>.”</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -1388,6 +1408,7 @@ Optimization terminated successfully.
 <div class="highlight"><pre>
 equivalent: True
 </pre></div></div>
+</div>
 </div>
 <div class="section" id="Program-12.3">
 <h3>Program 12.3<a class="headerlink" href="#Program-12.3" title="Permalink to this headline">¶</a></h3>
@@ -1544,19 +1565,6 @@ theta_1       3.44   (2.4, 4.5)
 </div></div>
 </div>
 </div>
-</div>
-<div class="section" id="12.4-Marginal-structural-models">
-<h2>12.4 Marginal structural models<a class="headerlink" href="#12.4-Marginal-structural-models" title="Permalink to this headline">¶</a></h2>
-<p>Models for the marginal mean of a counterfactual outcome are referred to as marginal structural mean models. 反事实结果的边际均值模型称为边际结构均值模型。</p>
-<p>模型的各种变体，从离散的连续。</p>
-<p>Marginal structural mean models within a pseudo-population:</p>
-<div class="math notranslate nohighlight">
-\[E[Y^a] = \beta_0 + \beta_1 a\]</div>
-<div class="math notranslate nohighlight">
-\[\Rightarrow E[Y^a] = \beta_0 + \beta_1 a + \beta_2 a^2\]</div>
-<p>marginal structural logistic model</p>
-<div class="math notranslate nohighlight">
-\[logit Pr[Y^a = 1] = \beta_0 + \beta_1 a\]</div>
 <div class="section" id="Program-12.4">
 <h3>Program 12.4<a class="headerlink" href="#Program-12.4" title="Permalink to this headline">¶</a></h3>
 <p>Subset the data to subjects that smoked 25 or fewer cigarettes per day at baseline. In this case, we can either obtain the subset from the original dataset, or we can obtain it from the reduced dataset that we’ve been using. I’ll get it from the reduced subset, since it already contains dummy features we’ll need.</p>
@@ -1668,7 +1676,7 @@ theta_1       3.44   (2.4, 4.5)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter12-IPW_85_0.png" src="_images/chapter12-IPW_85_0.png" />
+<img alt="_images/chapter12-IPW_90_0.png" src="_images/chapter12-IPW_90_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1976,11 +1984,6 @@ odds ratio    1.03   (0.8, 1.4)
 </pre></div></div>
 </div>
 </div>
-</div>
-<div class="section" id="12.5-Effect-modification-and-marginal-structural-models">
-<h2>12.5 Effect modification and marginal structural models<a class="headerlink" href="#12.5-Effect-modification-and-marginal-structural-models" title="Permalink to this headline">¶</a></h2>
-<p>Marginal structural models do not include covariates when the target parameter is the average causal effect in the population. However, one may include covariates–which may be non-confounders–in a marginal structural model to assess effect modification.</p>
-<p>在第一部分中，我们讨论了 effect modification and confounding 是两个在逻辑上截然不同的概念。 但是，许多学生很难理解这种区别，因为经常使用相同的统计方法（分层（第4章）或回归（第15章）for confounder adjustment and detection of effect modification. 因此，使用边际结构模型来讲授这些概念可能会有一些优势， because then methods for confounder adjustment (IP weighting) are distinct from methods for detection of effect modification (adding treatment-covariate product terms to a marginal structural model).</p>
 <div class="section" id="Program-12.6">
 <h3>Program 12.6<a class="headerlink" href="#Program-12.6" title="Permalink to this headline">¶</a></h3>
 <p>Create the numerator of the IP weights. Reuse the basic <code class="docutils literal notranslate"><span class="pre">weights</span></code> for the denominator.</p>
@@ -2096,9 +2099,6 @@ Stabilized weights
 </table></div>
 </div>
 </div>
-</div>
-<div class="section" id="12.6-Censoring-and-missing-data">
-<h2>12.6 Censoring and missing data<a class="headerlink" href="#12.6-Censoring-and-missing-data" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-12.7">
 <h3>Program 12.7<a class="headerlink" href="#Program-12.7" title="Permalink to this headline">¶</a></h3>
 <p>We’re going back to the original dataset</p>
@@ -2432,10 +2432,9 @@ Stabilized weights
 </div>
 </div>
 </div>
-<div class="section" id="End-to-End">
-<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="一个类组织本章代码">
-<h3>一个类组织本章代码<a class="headerlink" href="#一个类组织本章代码" title="Permalink to this headline">¶</a></h3>
+<h2>一个类组织本章代码<a class="headerlink" href="#一个类组织本章代码" title="Permalink to this headline">¶</a></h2>
+<p>我们把本章主要代码工作整理成类。</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -2609,11 +2608,6 @@ Marignal Structural Models 的有关变量:
 </tr>
 </table></div>
 </div>
-</div>
-<div class="section" id="Mini-Ch12">
-<h3>Mini Ch12<a class="headerlink" href="#Mini-Ch12" title="Permalink to this headline">¶</a></h3>
-<p>这里我们重新组织和整理本章的内容，a mini version of this chapter。</p>
-<p>本书第二部分围绕因果问题“戒烟对体重增加的平均因果效应是什么？”进行组织。在本章中，我们描述如何使用IP加权从观测数据中估计这种效应。尽管在第二章中介绍了IP加权，但我们仅将其描述为非参数方法。We now describe the use of models together with IP weighting，在额外的假设下，这些模型将使我们能够处理高维问题 with many covariates and nondichotomous treatments.</p>
 <p>Table of Contents</p>
 <ul class="simple">
 <li><p>IPW via modeling</p></li>
@@ -2700,8 +2694,8 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 </div>
 </div>
 <div class="section" id="因果效应估计">
-<h3>因果效应估计<a class="headerlink" href="#因果效应估计" title="Permalink to this headline">¶</a></h3>
-<p>四种的方法估计因果效应：</p>
+<h2>因果效应估计<a class="headerlink" href="#因果效应估计" title="Permalink to this headline">¶</a></h2>
+<p>这里我们重新组织和整理本章的内容，a mini version of this chapter。四种的方法估计因果效应：</p>
 <ul class="simple">
 <li><p>直接计算均值的差异: 4.525079 - 1.98449 <span class="math notranslate nohighlight">\(\approx\)</span> 2.52</p></li>
 <li><p>一元线性模型 2.54 - 1.98 = 0.56</p></li>
@@ -2899,7 +2893,6 @@ Marignal Structural Models 的有关变量:
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>

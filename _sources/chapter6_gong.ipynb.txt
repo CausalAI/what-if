@@ -15,7 +15,73 @@
     "Collapsed": "false"
    },
    "source": [
-    "本章介绍因果图用来表示关键的因果概念。现代因果图源于计算机科学和人工智能领域。本章介绍了一种图形工具来表示我们的定性专家知识和有关因果关系的先验假设。通过以直观的方式总结知识和假设，图可帮助阐明概念问题并方便研究者之间的沟通。The use of graphs in causal inference problems makes it easier to follow a sensible advice: draw your assumptions before your conclusions.\n"
+    "本章介绍因果图用来表示关键的因果概念。现代因果图源于计算机科学和人工智能领域。本章介绍了一种图形工具来表示我们的定性专家知识和有关因果关系的先验假设。通过以直观的方式总结知识和假设，图可帮助阐明概念问题并方便研究者之间的沟通。The use of graphs in causal inference problems makes it easier to follow a sensible advice: draw your assumptions before your conclusions."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "    Table of Contents\n",
+    "    1. Causal diagrams\n",
+    "    2. Causal diagrams and marginal independence \n",
+    "    3. Causal diagrams and conditional independence\n",
+    "    4. Positivity and consistency in causal diagrams\n",
+    "    5. A structural classification of bias\n",
+    "    6. The structure of effect modification"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## 主要知识点"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Causal DAG satifies the Markov factorization:\n",
+    "\n",
+    "$$f(v) = \\prod_{j=1}^M f(v_j | pa_j)$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Because causal diagrams encode our qualitative expert knowledge about the causal structure, they can be used as a visual aid to help conceptualize causal problems and guide data analyses."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "- **faithfulness:** Causal DAG 中的所有条件独立性都意味着 d-分离。\n",
+    "- **系统偏差**。 We say that there is systematic bias when the data are insufficient to identify–compute–the causal effect even with an infinite sample size."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Identifying potential sources of bias is a key use of causal diagrams: we can use our causal expert knowledge to draw graphs and then search for sources of association between treatment and outcome. 但是 Causal diagrams are less helpful to illustrate the concept of effect modification that we discussed in Chapter 4. That is, valid causal could fail to distinguish between the above three different qualitative types of effect modification by $V$.  Many effect modifiers, however, do not have a causal effect on the outcome. Rather, they are surrogates for variables that have a causal effect on the outcome. \n",
+    "\n",
+    "\n",
+    "**异质因果效应：** Because **causal and surrogate effect modifiers are often indistinguishable** in practice, the concept of effect modification comprises both. some prefer to use the neutral term “heterogeneity of causal effects,” rather than “effect modification,” to avoid confusion.\n"
    ]
   },
   {
@@ -26,7 +92,7 @@
    "source": [
     "## More to read\n",
     "\n",
-    "更多可以参考的内容。"
+    "更多内容内容参见 [Handbook of graphical models](https://colab.research.google.com/drive/1m8bHbsToIP8M41o0IL55AuXLzKSLaTPa)。"
    ]
   }
  ],

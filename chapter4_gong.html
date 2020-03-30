@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul class="current">
@@ -101,7 +104,11 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter3_gong.html">Ch3 观测性研究</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch4 Effect Modification</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#从仰望天空开始">从仰望天空开始</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#More-to-read">More to read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#一个简单例子">一个简单例子</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#平均因果效应">平均因果效应</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#条件平均因果效应">条件平均因果效应</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="chapter5_gong.html">Ch5 Interaction</a></li>
@@ -191,6 +198,224 @@
             
   
 <style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
 /* CSS overrides for sphinx_rtd_theme */
 
 /* 24px margin */
@@ -238,9 +463,350 @@
 population, rather than in particular subsets. You will be interested in characterizing how the causal effect varies across subsets of the population when the intervention can be targeted to different subsets, or when the findings of the study need to be applied to other populations.</p>
 <p>本章强调离开了特定的总体，我们无法谈及因果效应。</p>
 </div>
-<div class="section" id="More-to-read">
-<h2>More to read<a class="headerlink" href="#More-to-read" title="Permalink to this headline">¶</a></h2>
-<p>更多可以参考的内容。</p>
+<div class="section" id="一个简单例子">
+<h2>一个简单例子<a class="headerlink" href="#一个简单例子" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">dowhy</span>
+<span class="kn">from</span> <span class="nn">dowhy</span> <span class="k">import</span> <span class="n">CausalModel</span>
+<span class="kn">import</span> <span class="nn">dowhy.datasets</span>
+
+<span class="kn">import</span> <span class="nn">econml</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="平均因果效应">
+<h3>平均因果效应<a class="headerlink" href="#平均因果效应" title="Permalink to this headline">¶</a></h3>
+<p>我们构建一个一般的因果问题来计算 ATE。</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data</span> <span class="o">=</span> <span class="n">dowhy</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">linear_dataset</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_common_causes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                                    <span class="n">num_instruments</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_effect_modifiers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                     <span class="n">num_treatments</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">treatment_is_binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="c1">#                                      ,</span>
+<span class="c1">#                                     num_discrete_effect_modifiers=0,</span>
+<span class="c1">#                                     one_hot_encode=False</span>
+                                    <span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;df&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>X0</th>
+      <th>X1</th>
+      <th>Z0</th>
+      <th>Z1</th>
+      <th>W0</th>
+      <th>W1</th>
+      <th>W2</th>
+      <th>W3</th>
+      <th>v0</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>-0.869496</td>
+      <td>-0.829653</td>
+      <td>0.0</td>
+      <td>0.773161</td>
+      <td>-2.489549</td>
+      <td>0.011868</td>
+      <td>1.261433</td>
+      <td>-1.929507</td>
+      <td>-3.012168</td>
+      <td>-21.078711</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>-1.907581</td>
+      <td>-1.297034</td>
+      <td>1.0</td>
+      <td>0.441208</td>
+      <td>0.430182</td>
+      <td>0.038594</td>
+      <td>1.189957</td>
+      <td>0.594743</td>
+      <td>24.769325</td>
+      <td>-38.058701</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>-1.904767</td>
+      <td>-0.237641</td>
+      <td>1.0</td>
+      <td>0.016561</td>
+      <td>-2.082283</td>
+      <td>1.667971</td>
+      <td>0.948148</td>
+      <td>-1.891389</td>
+      <td>5.957369</td>
+      <td>10.122296</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>-0.446893</td>
+      <td>-1.434080</td>
+      <td>1.0</td>
+      <td>0.468078</td>
+      <td>-1.986538</td>
+      <td>1.128416</td>
+      <td>0.226358</td>
+      <td>-1.208578</td>
+      <td>7.055077</td>
+      <td>10.941123</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.768800</td>
+      <td>-0.031658</td>
+      <td>1.0</td>
+      <td>0.253133</td>
+      <td>-2.130161</td>
+      <td>0.474995</td>
+      <td>1.583731</td>
+      <td>0.299903</td>
+      <td>15.560307</td>
+      <td>193.903025</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">CausalModel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;df&quot;</span><span class="p">],</span>
+                    <span class="n">treatment</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;treatment_name&quot;</span><span class="p">],</span> <span class="n">outcome</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;outcome_name&quot;</span><span class="p">],</span>
+                    <span class="n">graph</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gml_graph&quot;</span><span class="p">])</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">view_model</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;causal_model.png&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO:dowhy.causal_model:Model to find the causal effect of treatment [&#39;v0&#39;] on outcome [&#39;y&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter4_gong_10_1.png" src="_images/chapter4_gong_10_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+
+<span></span><span class="n">identified_estimand</span><span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">identify_effect</span><span class="p">(</span><span class="n">proceed_when_unidentifiable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">identified_estimand</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO:dowhy.causal_identifier:Common causes of treatment and outcome:[&#39;W2&#39;, &#39;W3&#39;, &#39;W1&#39;, &#39;Unobserved Confounders&#39;, &#39;W0&#39;]
+WARNING:dowhy.causal_identifier:If this is observed data (not from a randomized experiment), there might always be missing confounders. Causal effect cannot be identified perfectly.
+INFO:dowhy.causal_identifier:Continuing by ignoring these unobserved confounders because proceed_when_unidentifiable flag is True.
+INFO:dowhy.causal_identifier:Instrumental variables for treatment and outcome:[&#39;Z0&#39;, &#39;Z1&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Estimand type: nonparametric-ate
+### Estimand : 1
+Estimand name: backdoor
+Estimand expression:
+  d
+─────(Expectation(y|W2,W3,W1,W0))
+d[v₀]
+Estimand assumption 1, Unconfoundedness: If U→{v0} and U→y then P(y|v0,W2,W3,W1,W0,U) = P(y|v0,W2,W3,W1,W0)
+### Estimand : 2
+Estimand name: iv
+Estimand expression:
+Expectation(Derivative(y, [Z0, Z1])*Derivative([v0], [Z0, Z1])**(-1))
+Estimand assumption 1, As-if-random: If U→→y then ¬(U →→{Z0,Z1})
+Estimand assumption 2, Exclusion: If we remove {Z0,Z1}→{v0}, then ¬({Z0,Z1}→y)
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">linear_estimate</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">estimate_effect</span><span class="p">(</span><span class="n">identified_estimand</span><span class="p">,</span>
+                                        <span class="n">method_name</span><span class="o">=</span><span class="s2">&quot;backdoor.linear_regression&quot;</span><span class="p">,</span>
+                                       <span class="n">control_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                       <span class="n">treatment_value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">linear_estimate</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO:dowhy.causal_estimator:INFO: Using Linear Regression Estimator
+INFO:dowhy.causal_estimator:b: y~v0+W2+W3+W1+W0+v0*X0+v0*X1
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+*** Causal Estimate ***
+
+## Target estimand
+Estimand type: nonparametric-ate
+### Estimand : 1
+Estimand name: backdoor
+Estimand expression:
+  d
+─────(Expectation(y|W2,W3,W1,W0))
+d[v₀]
+Estimand assumption 1, Unconfoundedness: If U→{v0} and U→y then P(y|v0,W2,W3,W1,W0,U) = P(y|v0,W2,W3,W1,W0)
+### Estimand : 2
+Estimand name: iv
+Estimand expression:
+Expectation(Derivative(y, [Z0, Z1])*Derivative([v0], [Z0, Z1])**(-1))
+Estimand assumption 1, As-if-random: If U→→y then ¬(U →→{Z0,Z1})
+Estimand assumption 2, Exclusion: If we remove {Z0,Z1}→{v0}, then ¬({Z0,Z1}→y)
+
+## Realized estimand
+b: y~v0+W2+W3+W1+W0+v0*X0+v0*X1
+## Estimate
+Value: 10.000000000000004
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="条件平均因果效应">
+<h3>条件平均因果效应<a class="headerlink" href="#条件平均因果效应" title="Permalink to this headline">¶</a></h3>
+<p>现在我们需要估计 CATE。</p>
+<p><img alt="image0" src="_images/causal_model.png" /></p>
+<p>Target units 定义了要计算因果估计的 units。 可以是 a lambda function filter on the original dataframe, a new Pandas dataframe, or a string corresponding to the three main kinds of target units (“ate”, “att” and “atc”).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">PolynomialFeatures</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LassoCV</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">GradientBoostingRegressor</span>
+<span class="n">dml_estimate</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">estimate_effect</span><span class="p">(</span><span class="n">identified_estimand</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="s2">&quot;backdoor.econml.dml.DMLCateEstimator&quot;</span><span class="p">,</span>
+                                     <span class="n">control_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                     <span class="n">treatment_value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">target_units</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;X0&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># condition used for CATE</span>
+                                 <span class="n">confidence_intervals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">method_params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;init_params&quot;</span><span class="p">:{</span><span class="s1">&#39;model_y&#39;</span><span class="p">:</span><span class="n">GradientBoostingRegressor</span><span class="p">(),</span>
+                                                              <span class="s1">&#39;model_t&#39;</span><span class="p">:</span> <span class="n">GradientBoostingRegressor</span><span class="p">(),</span>
+                                                              <span class="s2">&quot;model_final&quot;</span><span class="p">:</span><span class="n">LassoCV</span><span class="p">(),</span>
+                                                              <span class="s1">&#39;featurizer&#39;</span><span class="p">:</span><span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)},</span>
+                                               <span class="s2">&quot;fit_params&quot;</span><span class="p">:{}})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dml_estimate</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+INFO:dowhy.causal_estimator:INFO: Using EconML Estimator
+INFO:dowhy.causal_estimator:b: y~v0+W2+W3+W1+W0
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+*** Causal Estimate ***
+
+## Target estimand
+Estimand type: nonparametric-ate
+### Estimand : 1
+Estimand name: backdoor
+Estimand expression:
+  d
+─────(Expectation(y|W2,W3,W1,W0))
+d[v₀]
+Estimand assumption 1, Unconfoundedness: If U→{v0} and U→y then P(y|v0,W2,W3,W1,W0,U) = P(y|v0,W2,W3,W1,W0)
+### Estimand : 2
+Estimand name: iv
+Estimand expression:
+Expectation(Derivative(y, [Z0, Z1])*Derivative([v0], [Z0, Z1])**(-1))
+Estimand assumption 1, As-if-random: If U→→y then ¬(U →→{Z0,Z1})
+Estimand assumption 2, Exclusion: If we remove {Z0,Z1}→{v0}, then ¬({Z0,Z1}→y)
+
+## Realized estimand
+b: y~v0+W2+W3+W1+W0
+## Estimate
+Value: 8.642788550773068
+
+</pre></div></div>
+</div>
+<p>更多可以参见 <a class="reference external" href="https://zhuanlan.zhihu.com/p/46803675">使用随机森林进行因果推断</a>。</p>
+</div>
 </div>
 </div>
 

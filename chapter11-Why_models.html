@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -107,24 +110,22 @@
 <p class="caption"><span class="caption-text">Part II 有模型因果推断</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch11 Why Model?</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Setup-and-imports">Setup and imports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#11.1-Data-cannot-speak-for-themselves">11.1 Data cannot speak for themselves</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#11.1-Data-cannot-speak-for-themselves">11.1 Data cannot speak for themselves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#11.2-Parametric-estimators-of-the-conditional-mean">11.2 Parametric estimators of the conditional mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#11.3-Nonparametric-estimators-of-the-conditional-mean">11.3 Nonparametric estimators of the conditional mean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#11.4-Smoothing">11.4 Smoothing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#11.5-The-bias-variance-trade-off">11.5 The bias-variance trade-off</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-11.1">Program 11.1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#11.2-Parametric-estimators-of-the-conditional-mean">11.2 Parametric estimators of the conditional mean</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-11.2">Program 11.2</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#11.3-Nonparametric-estimators-of-the-conditional-mean">11.3 Nonparametric estimators of the conditional mean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#11.4-Smoothing">11.4 Smoothing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-11.3">Program 11.3</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#11.5-The-bias-variance-trade-off">11.5 The bias-variance trade-off</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#解读知识点">解读知识点</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#估计置信区间">估计置信区间</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#本章的主要内容">本章的主要内容</a></li>
 </ul>
 </li>
 </ul>
@@ -451,11 +452,18 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Ch11-Why-Model?">
 <h1>Ch11 Why Model?<a class="headerlink" href="#Ch11-Why-Model?" title="Permalink to this headline">¶</a></h1>
-<p>本章描述了本书第一部分中使用的非参数估计量与第二部分中使用的基于模型的参数估计量之间的区别。它还回顾了 smoothing 的概念，并简要回顾了任何建模决策中涉及的 bias-variance trade-off。本章motivates the need for models in data analysis，无论分析目标是因果推理还是预测。We will take a break from causal considerations until the next chapter. 请记住，有关建模的统计文献非常丰富；本章只能重点介绍一些关键问题。</p>
+<p>Data cannot speak for themselves, 所以我们需要简单非参数模型到各种参数模型。本文的内容如下：</p>
+<ul class="simple">
+<li><p>教材对应章节的内容摘要</p></li>
+<li><p>教材中的 Programs</p></li>
+</ul>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
+<p>本章描述了本书 Part I 中使用的非参数估计量与 Part II 中使用的基于模型的参数估计量之间的区别。它还回顾了 smoothing 的概念，并简要回顾了任何建模决策中涉及的 bias-variance trade-off。本章motivates the need for models in data analysis，无论分析目标是因果推理还是预测。We will take a break from causal considerations until the next chapter. 请记住，有关建模的统计文献非常丰富；本章只能重点介绍一些关键问题。</p>
 <p><strong>Big Picturce:</strong></p>
 <p>非参数模型 –&gt; parametric models –&gt; structural mean models</p>
 <ul class="simple">
-<li><p>Models for the marginal mean of a counterfactual outcome are referred to as marginal structural mean models.</p></li>
+<li><p>Models for the marginal mean of a counterfactual outcome are referred to as <strong>marginal structural mean models</strong>.</p></li>
 <li><p>Effect modification and marginal structural models 在上面的模型增加新的变量 for effect modification</p></li>
 <li><p>Structural nested mean model 会有一个对比某个基准 potential outcome.</p></li>
 </ul>
@@ -469,45 +477,60 @@ div.rendered_html tbody tr:hover {
 <li><p>Propensity models are models for the probability of treatment <span class="math notranslate nohighlight">\(A\)</span> given the variables <span class="math notranslate nohighlight">\(L\)</span> used to try to achieve conditional exchangeability.</p></li>
 <li><p>Structural models describe the relation between the treatment <span class="math notranslate nohighlight">\(A\)</span> and some component of the distribution (e.g., the mean) of the counterfactual outcome</p></li>
 </ul>
-<div class="section" id="Setup-and-imports">
-<h2>Setup and imports<a class="headerlink" href="#Setup-and-imports" title="Permalink to this headline">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
+<p>Table of contents</p>
+<ul class="simple">
+<li><p>Data cannot speak for themselves</p></li>
+<li><p>Parametric estimators of the conditional mean</p></li>
+<li><p>Nonparametric estimators of the conditional mean</p></li>
+<li><p>Smoothing</p></li>
+<li><p>The bias-variance trade-off</p></li>
+</ul>
+<div class="section" id="11.1-Data-cannot-speak-for-themselves">
+<h3>11.1 Data cannot speak for themselves<a class="headerlink" href="#11.1-Data-cannot-speak-for-themselves" title="Permalink to this headline">¶</a></h3>
+<p>考虑一个研究总体，其中有16个人感染了人类免疫缺陷病毒（HIV）。与本书第一部分不同，我们不会将这些人视为 representatives of 1 billion individuals identical to them. Rather, these are just 16 individuals randomly sampled from a large, possibly hypothetical super-population: the target population.</p>
+<p>在研究开始时，每个人都会接受一定程度的治疗 <span class="math notranslate nohighlight">\(A\)</span> (antiretroviral therapy), which is maintained during the study. At the end of the study, a continuous outcome <span class="math notranslate nohighlight">\(Y\)</span> (CD4 cell count, in cells/mm3) is measured in all individuals. 我们希望一致的估算 the mean of <span class="math notranslate nohighlight">\(Y\)</span> among individuals with treatment level <span class="math notranslate nohighlight">\(A = a\)</span> in the population from which the 16 individuals were randomly sampled. 也就是说，估计是未知的总体参数 <span class="math notranslate nohighlight">\(E[Y^{a=1} - Y^{a=0}|A=a]\)</span>.</p>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
+<div class="section" id="11.2-Parametric-estimators-of-the-conditional-mean">
+<h3>11.2 Parametric estimators of the conditional mean<a class="headerlink" href="#11.2-Parametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h3>
+<p>当使用参数模型时，只有在模型中编码的限制正确（i.e. if the model is correctly specified）的情况下，推断才是正确的。因此，基于模型的因果推断（本书其余大部分内容都基于此因果推断）依赖于(approximately)没有模型错误指定的条件。由于很少（甚至从来没有）完美地指定参数模型，因此几乎总是会期望一定程度的模型指定错误。This can be at least partially rectified by using nonparametric estimators，我们将在下一部分中进行描述。</p>
 </div>
+<div class="section" id="11.3-Nonparametric-estimators-of-the-conditional-mean">
+<h3>11.3 Nonparametric estimators of the conditional mean<a class="headerlink" href="#11.3-Nonparametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>In this book we define “model” as an a priori mathematical restriction on the possible states of nature (Robins, Greenland 1986). Part I was entitled “Causal inference without models” because it only described <strong>saturated models</strong>.</p></li>
+<li><p>本书 Part II 中描述的大多数因果推断方法都依赖于 estimators that are parametric estimators of some part of the distribution of the data. Parametric estimation and other approaches to borrow information 是我们唯一的希望，因为多数情况下数据不能自己说话。</p></li>
+</ul>
 </div>
+<div class="section" id="11.4-Smoothing">
+<h3>11.4 Smoothing<a class="headerlink" href="#11.4-Smoothing" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="11.5-The-bias-variance-trade-off">
+<h3>11.5 The bias-variance trade-off<a class="headerlink" href="#11.5-The-bias-variance-trade-off" title="Permalink to this headline">¶</a></h3>
+<p>这种偏差-方差分析是数据分析的核心。Investigators using models need to decide whether some protection against bias–by, say, adding more parameters to the model–is worth the cost in terms of variance. 尽管存在一些有助于这些决定的正式程序，但实际上，许多研究人员会根据诸如传统，参数的可解释性和软件可用性等标准来决定使用哪种模型。在本书中，我们通常会假设正确指定了我们的参数模型。这是一个不现实的假设，但它使我们能够专注于因果分析所特有的问题。毕竟，Model misspecification
+是在任何类型的数据分析中都可能出现的问题，无论估计值是否具有因果关系。在实践中，谨慎的研究人员将始终对模型的有效性提出质疑，并将 conduct an analysis to assess the sensitivity of their estimates to model specification.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="c1">## Setup and imports</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="11.1-Data-cannot-speak-for-themselves">
-<h2>11.1 Data cannot speak for themselves<a class="headerlink" href="#11.1-Data-cannot-speak-for-themselves" title="Permalink to this headline">¶</a></h2>
-<p>考虑一个研究总体，其中有16个人感染了人类免疫缺陷病毒（HIV）。与本书第一部分不同，我们不会将这些人视为 representatives of 1 billion individuals identical to them. Rather, these are just 16 individuals randomly sampled from a large, possibly hypothetical super-population: the target population.</p>
-<p>在研究开始时，每个人都会接受一定程度的治疗 <span class="math notranslate nohighlight">\(A\)</span> (antiretroviral therapy), which is maintained during the study. At the end of the study, a continuous outcome <span class="math notranslate nohighlight">\(Y\)</span> (CD4 cell count, in cells/mm3) is measured in all individuals. 我们希望一致的估算 the mean of <span class="math notranslate nohighlight">\(Y\)</span> among individuals with treatment level <span class="math notranslate nohighlight">\(A = a\)</span> in the population from which the 16 individuals were randomly sampled. 也就是说，估计是未知的总体参数 <span class="math notranslate nohighlight">\(E[Y|A=a]\)</span>.</p>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-11.1">
 <h3>Program 11.1<a class="headerlink" href="#Program-11.1" title="Permalink to this headline">¶</a></h3>
 <p>Half of the individuals were treated <span class="math notranslate nohighlight">\((A = 1)\)</span>. Figure 11.1 is a scatter plot that displays each of the 16 individuals as a dot. The height of the dot indicates the value of the individual’s outcome <span class="math notranslate nohighlight">\(Y\)</span>.</p>
@@ -543,7 +566,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter11-Why_models_10_0.png" src="_images/chapter11-Why_models_10_0.png" />
+<img alt="_images/chapter11-Why_models_17_0.png" src="_images/chapter11-Why_models_17_0.png" />
 </div>
 </div>
 <p>Our estimate of the population mean in the treated is the sample aver- age 146.25 for those with <span class="math notranslate nohighlight">\(A = 1\)</span>, and our estimate of the population mean in the untreated is the sample average 67.50 in those with <span class="math notranslate nohighlight">\(A = 0\)</span>.</p>
@@ -671,7 +694,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter11-Why_models_15_0.png" src="_images/chapter11-Why_models_15_0.png" />
+<img alt="_images/chapter11-Why_models_22_0.png" src="_images/chapter11-Why_models_22_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -785,10 +808,6 @@ div.rendered_html tbody tr:hover {
 </div></div>
 </div>
 </div>
-</div>
-<div class="section" id="11.2-Parametric-estimators-of-the-conditional-mean">
-<h2>11.2 Parametric estimators of the conditional mean<a class="headerlink" href="#11.2-Parametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h2>
-<p>当使用参数模型时，只有在模型中编码的限制正确（i.e. if the model is correctly specified）的情况下，推断才是正确的。因此，基于模型的因果推断（本书其余大部分内容都基于此因果推断）依赖于(approximately)没有模型错误指定的条件。由于很少（甚至从来没有）完美地指定参数模型，因此几乎总是会期望一定程度的模型指定错误。This can be at least partially rectified by using nonparametric estimators，我们将在下一部分中进行描述。</p>
 <div class="section" id="Program-11.2">
 <h3>Program 11.2<a class="headerlink" href="#Program-11.2" title="Permalink to this headline">¶</a></h3>
 <p>Finally, suppose that treatment <span class="math notranslate nohighlight">\(A\)</span> is a variable representing the dose of treatment in mg/day, and that it takes integer values from 0 to 100 mg. This creates a problem: how can we estimate the mean of the outcome <span class="math notranslate nohighlight">\(Y\)</span> among individuals with treatment level <span class="math notranslate nohighlight">\(A = 90\)</span> in the target population?</p>
@@ -845,7 +864,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter11-Why_models_21_0.png" src="_images/chapter11-Why_models_21_0.png" />
+<img alt="_images/chapter11-Why_models_27_0.png" src="_images/chapter11-Why_models_27_0.png" />
 </div>
 </div>
 <p>“The values <span class="math notranslate nohighlight">\(\hat{\theta}_0\)</span> and <span class="math notranslate nohighlight">\(\hat{\theta}_1\)</span> can be easily computed using linear algebra, as described in any statistics textbook.”</p>
@@ -1062,18 +1081,10 @@ E[Y|A=90]   216.89   (172.15, 261.63)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter11-Why_models_34_0.png" src="_images/chapter11-Why_models_34_0.png" />
+<img alt="_images/chapter11-Why_models_40_0.png" src="_images/chapter11-Why_models_40_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="11.3-Nonparametric-estimators-of-the-conditional-mean">
-<h2>11.3 Nonparametric estimators of the conditional mean<a class="headerlink" href="#11.3-Nonparametric-estimators-of-the-conditional-mean" title="Permalink to this headline">¶</a></h2>
 <p>(Still Program 11.2)</p>
-<ul class="simple">
-<li><p>In this book we define “model” as an a priori mathematical restriction on the possible states of nature (Robins, Greenland 1986). Part I was entitled “Causal inference without models” because it only described <strong>saturated models</strong>.</p></li>
-<li><p>本书第二部分中描述的大多数因果推断方法都依赖于 estimators that are parametric estimators of some part of the distribution of the data. Parametric estimation and other approaches to borrow information are our only hope when, as is often the case, data are unable to speak for themselves.</p></li>
-</ul>
 <p>“Let us return to the data in Figure 11.1.”</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -1142,8 +1153,6 @@ E[Y|A=1] est.: 146.25
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="11.4-Smoothing">
-<h2>11.4 Smoothing<a class="headerlink" href="#11.4-Smoothing" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-11.3">
 <h3>Program 11.3<a class="headerlink" href="#Program-11.3" title="Permalink to this headline">¶</a></h3>
 <p>Starting from the same data as Section 11.2, Program 11.2</p>
@@ -1216,7 +1225,7 @@ E[Y|A=1] est.: 146.25
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter11-Why_models_49_0.png" src="_images/chapter11-Why_models_49_0.png" />
+<img alt="_images/chapter11-Why_models_52_0.png" src="_images/chapter11-Why_models_52_0.png" />
 </div>
 </div>
 <p>The expected value and confidence interval can be obtained with the method contributed by &#64;pettypychen above</p>
@@ -1277,17 +1286,12 @@ E[Y|A=1] est.: 146.25
 </div>
 </div>
 </div>
-<div class="section" id="11.5-The-bias-variance-trade-off">
-<h2>11.5 The bias-variance trade-off<a class="headerlink" href="#11.5-The-bias-variance-trade-off" title="Permalink to this headline">¶</a></h2>
-<p>这种偏差-方差分析是数据分析的核心。Investigators using models need to decide whether some protection against bias–by, say, adding more parameters to the model–is worth the cost in terms of variance. 尽管存在一些有助于这些决定的正式程序，但实际上，许多研究人员会根据诸如传统，参数的可解释性和软件可用性等标准来决定使用哪种模型。在本书中，我们通常会假设正确指定了我们的参数模型。这是一个不现实的假设，但它使我们能够专注于因果分析所特有的问题。毕竟，Model misspecification
-是在任何类型的数据分析中都可能出现的问题，无论估计值是否具有因果关系。在实践中，谨慎的研究人员将始终对模型的有效性提出质疑，并将 conduct an analysis to assess the sensitivity of their estimates to model specification.</p>
-</div>
-<div class="section" id="End-to-End">
-<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="解读知识点">
+<h2>解读知识点<a class="headerlink" href="#解读知识点" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="估计置信区间">
 <h3>估计置信区间<a class="headerlink" href="#估计置信区间" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1301,8 +1305,15 @@ E[Y|A=1] est.: 146.25
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="n">A</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">A</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
     <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">54</span><span class="p">),</span>
     <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">33</span><span class="p">),</span>
@@ -1322,20 +1333,8 @@ E[Y|A=1] est.: 146.25
 <span class="p">))</span>
 
 <span class="n">df3</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="s1">&#39;constant&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">16</span><span class="p">)})</span>
-<span class="c1"># fig, ax = plt.subplots(figsize=(8, 6))</span>
-<span class="c1"># ax.scatter(df3.A, df3.Y)</span>
-<span class="c1"># ax.set_xlabel(&#39;A&#39;, fontsize=14)</span>
-<span class="c1"># ax.set_ylabel(&#39;Y&#39;, fontsize=14)</span>
-<span class="c1"># plt.show()</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df3</span><span class="p">[</span><span class="s1">&#39;A^2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span>
+
+<span class="n">df3</span><span class="p">[</span><span class="s1">&#39;A^2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">df3</span><span class="o">.</span><span class="n">A</span>
 
 <span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A^2&#39;</span><span class="p">]])</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">ols</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -1346,7 +1345,7 @@ E[Y|A=1] est.: 146.25
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1365,22 +1364,29 @@ E[Y|A=1] est.: 146.25
 </tr>
 </table></div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># df3.sort_values(&#39;A&#39;, inplace=True)</span>
-<span class="c1"># fig, ax = plt.subplots(figsize=(8, 6))</span>
-<span class="c1"># ax.scatter(df3.A, df3.Y)</span>
-<span class="c1"># ax.plot(df3.A, res.predict(df3[[&#39;constant&#39;, &#39;A&#39;, &#39;A^2&#39;]]))</span>
-<span class="c1"># ax.set_xlabel(&#39;A&#39;, fontsize=14)</span>
-<span class="c1"># ax.set_ylabel(&#39;Y&#39;, fontsize=14);</span>
+<span></span><span class="n">df3</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">df3</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df3</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df3</span><span class="p">[[</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A^2&#39;</span><span class="p">]]))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/chapter11-Why_models_59_0.png" src="_images/chapter11-Why_models_59_0.png" />
+</div>
+</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1390,7 +1396,7 @@ E[Y|A=1] est.: 146.25
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1433,27 +1439,6 @@ E[Y|A=1] est.: 146.25
   </tbody>
 </table>
 </div></div>
-</div>
-</div>
-<div class="section" id="本章的主要内容">
-<h3>本章的主要内容<a class="headerlink" href="#本章的主要内容" title="Permalink to this headline">¶</a></h3>
-<p>本章描述了本书第一部分中使用的非参数估计量与第二部分中使用的基于模型的参数估计量之间的区别。它还回顾了 smoothing 的概念，并简要回顾了任何建模决策中涉及的 bias-variance trade-off。本章motivates the need for models in data analysis，无论分析目标是因果推理还是预测。We will take a break from causal considerations until the next chapter. 请记住，有关建模的统计文献非常丰富；本章只能重点介绍一些关键问题。</p>
-<p>Table of contents</p>
-<ul class="simple">
-<li><p>Data cannot speak for themselves</p></li>
-<li><p>Parametric estimators of the conditional mean</p></li>
-<li><p>Nonparametric estimators of the conditional mean</p></li>
-<li><p>Smoothing</p></li>
-<li><p>The bias-variance trade-off</p></li>
-</ul>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
-</pre></div>
-</div>
 </div>
 </div>
 </div>

@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -110,18 +113,18 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter13-Standardization_g-formula.html">Ch13 标准化和参数 G-公式</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch14 结构嵌套模型的G估计</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#14.1-The-causal-question-revisited">14.1 The causal question revisited</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#14.2-Exchangeability-revisited">14.2 Exchangeability revisited</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#14.3-Structural-nested-mean-models">14.3 Structural nested mean models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#14.1-The-causal-question-revisited">14.1 The causal question revisited</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#14.2-Exchangeability-revisited">14.2 Exchangeability revisited</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#14.3-Structural-nested-mean-models">14.3 Structural nested mean models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#14.4-Rank-preservation">14.4 Rank preservation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#14.5-G-estimation">14.5 G-estimation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#14.6-Structural-nested-models-with-two-or-more-parameters">14.6 Structural nested models with two or more parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-14.1">Program 14.1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#14.4-Rank-preservation">14.4 Rank preservation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#14.5-G-estimation">14.5 G-estimation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-14.2">Program 14.2</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#14.6-Structural-nested-models-with-two-or-more-parameters">14.6 Structural nested models with two or more parameters</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Program-14.3">Program 14.3</a></li>
 </ul>
 </li>
@@ -446,6 +449,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Ch14-结构嵌套模型的G估计">
 <h1>Ch14 结构嵌套模型的G估计<a class="headerlink" href="#Ch14-结构嵌套模型的G估计" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>在前两章中，我们描述了IP权重和标准化，以估计戒烟对体重增加的平均因果关系。在本章中，我们描述了估计平均因果效应的第三种方法：g估计。我们使用相同的NHEFS观测数据，并提供简单的计算机代码来进行分析。</p>
 <p>IP加权，标准化和g估计通常统称为g方法，because they are designed for application to generalized treatment contrasts involving treatments that vary over time. 本书第二部分中将g方法应用于不会随时间变化的治疗方法 may then be overkill since there are alternative, simpler approaches. 但是，通过在相对简单的环境中展示g方法，我们可以专注于 their main features，同时避免了第三部分中描述的更复杂的问题。</p>
 <p>IP加权和标准化在第2章中进行了介绍，然后是在第12章和第13章。In contrast, 我们需要等到 Part II 来描述g估计。原因是：describing g-estimation is facilitated by the specification of a structural model, even if the model is saturated.</p>
@@ -456,6 +461,70 @@ div.rendered_html tbody tr:hover {
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(G\)</span> 估计只能用于调整混淆，不能用于选择偏差？ 而 IP Weighting and standardization 可以用于 confounding and selection bias</p></li>
 </ul>
+<div class="section" id="14.1-The-causal-question-revisited">
+<h3>14.1 The causal question revisited<a class="headerlink" href="#14.1-The-causal-question-revisited" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>估计量：ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span></p></li>
+</ul>
+<p>如前几章所述， we restricted the analysis to NHEFS individuals with known sex, age, race, weight, height, education, alcohol use and intensity of smoking at the baseline (1971-75) and followup (1982) visits, and who answered the medical history questionnaire at baseline.</p>
+<p>在上两章中，我们应用了IP加权和标准化来估计戒烟（治疗）对体重增加（结果）的平均因果效应。We assumed that exchangeability of the treated and the untreated was achieved conditional on the <span class="math notranslate nohighlight">\(L\)</span> variables: sex, age, race, education, intensity and duration of smoking, physical activity in daily life, recreational exercise, and weight.We defined the average causal effect on the difference scale as <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span>, that is, the difference in mean weight that would have been
+observed if everybody had been treated and uncensored compared with untreated and uncensored.</p>
+<p>The quantity <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span> measures the average causal effect in the entire population. 但是有时候，人们可能会对因果效应 in a subset of the population 感兴趣。For example, one may want to estimate the average causal effect in women, in individuals aged 45, in those with low educational level, etc.</p>
+<p>在本章中，我们将使用g估计来估计 ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span>. This conditional effect is represented by <span class="math notranslate nohighlight">\(E[Y^{a, c=0}|L]−E[Y^{a=0, c=0}|L]\)</span> 在描述g估计之前，我们将介绍 structural nested models and rank preservation, and, 在下一节中，将以新的方式阐明给定 <span class="math notranslate nohighlight">\(L\)</span> 的可交换性条件。</p>
+</div>
+<div class="section" id="14.2-Exchangeability-revisited">
+<h3>14.2 Exchangeability revisited<a class="headerlink" href="#14.2-Exchangeability-revisited" title="Permalink to this headline">¶</a></h3>
+<p>As a reminder, 条件可交换性意味着 in any subset of the study population in which all individuals have the same values of <span class="math notranslate nohighlight">\(L\)</span>, those who did not quit smoking <span class="math notranslate nohighlight">\((A = 0)\)</span> would have had the same mean weight gain as those who did quit smoking <span class="math notranslate nohighlight">\((A = 1)\)</span> if they had not quit, and vice versa.</p>
+<div class="math notranslate nohighlight">
+\[P(A=1|Y^{a=0}, L) = P(A=1|L)\]</div>
+<p>理解 <span class="math notranslate nohighlight">\(g\)</span>-估计需要两个方面：</p>
+<ul class="simple">
+<li><p>理解模型 <span class="math notranslate nohighlight">\(logit P(A=1|Y^{a=0}, L) = \alpha_0 + \alpha_1 Y^{a=0} + \alpha_2 L\)</span> 中系数 <span class="math notranslate nohighlight">\(\alpha_1\)</span> 应该是多少？</p></li>
+<li><p>the structural model</p></li>
+</ul>
+</div>
+<div class="section" id="14.3-Structural-nested-mean-models">
+<h3>14.3 Structural nested mean models<a class="headerlink" href="#14.3-Structural-nested-mean-models" title="Permalink to this headline">¶</a></h3>
+<p>Our structural model for the conditional causal effect would be <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}|L] = \beta_1 a\)</span>. 更一般而言，可能会有effect modification. 例如，在重度吸烟者中戒烟的因果效应可能比在轻度吸烟者中更大。 To allow for the causal effect to depend on <span class="math notranslate nohighlight">\(L\)</span> we can add a product term to the structural model, i.e., <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L] = \beta_1 a + \beta_2 a L\)</span>, where <span class="math notranslate nohighlight">\(\beta_2\)</span> is a vector of parameters. Under conditional exchangeability <span class="math notranslate nohighlight">\(Y^a \perp A | L\)</span>,
+治疗和未治疗的条件因果效应相同 because the treated and the untreated are, on average, the same type of people within levels of <span class="math notranslate nohighlight">\(L\)</span>. 因此，在可交换性下，结构模型也可以写成</p>
+<div class="math notranslate nohighlight">
+\[E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a + \beta_2 a L\]</div>
+<p>which is referred to as a <strong>structural nested mean model</strong>. 边际结构模型与结构嵌套模型之间的关系是：</p>
+<ul class="simple">
+<li><p>It leaves the mean counterfactual outcomes under no treatment <span class="math notranslate nohighlight">\(E[Y^{a=0}|L]\)</span> completely unspecified.</p></li>
+</ul>
+<p>Estimating this difference requires adjustment for (两种偏差)both confounding and selection bias (due to censoring <span class="math notranslate nohighlight">\(C = 1\)</span>) for the effect of treatment <span class="math notranslate nohighlight">\(A\)</span>. As described in the previous two chapters, IP weighting and standardization can be used to adjust for these two biases. 如前两章所述，IP加权和标准化可用于针对这两个偏差进行调整。另一方面，<span class="math notranslate nohighlight">\(G\)</span> 估计只能用于调整混淆，不能用于选择偏差。</p>
+<p>现在，我们将注意力转移到 rank preservation 的概念上，这将有助于我们描述结构嵌套模型的 g 估计。</p>
+</div>
+<div class="section" id="14.4-Rank-preservation">
+<h3>14.4 Rank preservation<a class="headerlink" href="#14.4-Rank-preservation" title="Permalink to this headline">¶</a></h3>
+<p>We would then have two lists of individuals ordered from larger to smaller value of the corresponding counterfactual outcome. If both lists are in identical order we say that there is rank preservation.</p>
+<p>然后，我们将有 two lists of individuals，从相应的反事实结果按从大到小的顺序排序。如果两个列表的顺序相同，我们就说有 rank preservation。</p>
+<p>我们没有理由要在实践中使用这种不切实际的 rank-preserving model 模型。但是，我们将在下一节中使用它来介绍g估计，因为对于秩排序模型，g估计更容易理解，并且对于秩排序和非秩排序模型，g 估计过程实际上是相同的。</p>
+</div>
+<div class="section" id="14.5-G-estimation">
+<h3>14.5 G-estimation<a class="headerlink" href="#14.5-G-estimation" title="Permalink to this headline">¶</a></h3>
+<p>This section links the material in the previous three sections. 我们的目标是 is estimating the parameters of the structural nested mean model <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a\)</span>. For simplicity, we first consider a model with a single parameter <span class="math notranslate nohighlight">\(\beta_1\)</span>.</p>
+<p>We also assume that the additive rank-preserving model <span class="math notranslate nohighlight">\(Y_i^a - Y_i^{a=0} = \psi_1 a\)</span> is correctly specified for all individuals <span class="math notranslate nohighlight">\(i\)</span>. 因为所有个体的模型都是相同的，we write the model in the equivalent form</p>
+<div class="math notranslate nohighlight">
+\[Y^{a=0} = Y^a -  \psi_1 a\]</div>
+<p>g估计的第一步是将模型链接到观测数据，Therefore, if we replace the fixed value <span class="math notranslate nohighlight">\(a\)</span> in the structural model by each individual’s value <span class="math notranslate nohighlight">\(A\)</span>–which will be 1 for some and 0 for others–then we can replace the counterfactual outcome <span class="math notranslate nohighlight">\(Y^a\)</span> by the individual’s observed outcome <span class="math notranslate nohighlight">\(Y^A = Y\)</span>. 于是</p>
+<div class="math notranslate nohighlight">
+\[Y^{a=0} = Y -  \psi_1 A\]</div>
+</div>
+<div class="section" id="14.6-Structural-nested-models-with-two-or-more-parameters">
+<h3>14.6 Structural nested models with two or more parameters<a class="headerlink" href="#14.6-Structural-nested-models-with-two-or-more-parameters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>We have so far considered a structural nested mean model with a single parameter, 但是我们需要交互项。</p></li>
+<li><p>Fortunately, the g-estimation procedure described in the previous section can be generalized to models with product terms.</p></li>
+<li><p>此时，我们的优化问题有所不同。</p></li>
+<li><p>In the more general case, we would consider a model that allows the average causal effect of smoking cessation to vary across all strata of the variables in <span class="math notranslate nohighlight">\(L\)</span>. 但是实际上，很少使用具有多个参数的结构嵌套模型。</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
+<p>书籍中例子代码</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -547,39 +616,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 (1566, 81)
 </pre></div></div>
 </div>
-<div class="section" id="14.1-The-causal-question-revisited">
-<h2>14.1 The causal question revisited<a class="headerlink" href="#14.1-The-causal-question-revisited" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>估计量：ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span></p></li>
-</ul>
-<p>如前几章所述， we restricted the analysis to NHEFS individuals with known sex, age, race, weight, height, education, alcohol use and intensity of smoking at the baseline (1971-75) and followup (1982) visits, and who answered the medical history questionnaire at baseline.</p>
-<p>在上两章中，我们应用了IP加权和标准化来估计戒烟（治疗）对体重增加（结果）的平均因果效应。We assumed that exchangeability of the treated and the untreated was achieved conditional on the <span class="math notranslate nohighlight">\(L\)</span> variables: sex, age, race, education, intensity and duration of smoking, physical activity in daily life, recreational exercise, and weight.We defined the average causal effect on the difference scale as <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span>, that is, the difference in mean weight that would have been
-observed if everybody had been treated and uncensored compared with untreated and uncensored.</p>
-<p>The quantity <span class="math notranslate nohighlight">\(E[Y^{ a=1,c=0}]−E[Y^{ a=0,c=0}]\)</span> measures the average causal effect in the entire population. 但是有时候，人们可能会对因果效应 in a subset of the population 感兴趣。For example, one may want to estimate the average causal effect in women, in individuals aged 45, in those with low educational level, etc.</p>
-<p>在本章中，我们将使用g估计来估计 ACE of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> in each strata defined by the covariates <span class="math notranslate nohighlight">\(L\)</span>. This conditional effect is represented by <span class="math notranslate nohighlight">\(E[Y^{a, c=0}|L]−E[Y^{a=0, c=0}|L]\)</span> 在描述g估计之前，我们将介绍 structural nested models and rank preservation, and, 在下一节中，将以新的方式阐明给定 <span class="math notranslate nohighlight">\(L\)</span> 的可交换性条件。</p>
-</div>
-<div class="section" id="14.2-Exchangeability-revisited">
-<h2>14.2 Exchangeability revisited<a class="headerlink" href="#14.2-Exchangeability-revisited" title="Permalink to this headline">¶</a></h2>
-<p>As a reminder, 条件可交换性意味着 in any subset of the study population in which all individuals have the same values of <span class="math notranslate nohighlight">\(L\)</span>, those who did not quit smoking <span class="math notranslate nohighlight">\((A = 0)\)</span> would have had the same mean weight gain as those who did quit smoking <span class="math notranslate nohighlight">\((A = 1)\)</span> if they had not quit, and vice versa.</p>
-<div class="math notranslate nohighlight">
-\[P(A=1|Y^{a=0}, L) = P(A=1|L)\]</div>
-<p>理解 <span class="math notranslate nohighlight">\(g\)</span>-估计需要两个方面：</p>
-<ul class="simple">
-<li><p>理解模型 <span class="math notranslate nohighlight">\(logit P(A=1|Y^{a=0}, L) = \alpha_0 + \alpha_1 Y^{a=0} + \alpha_2 L\)</span> 中系数 <span class="math notranslate nohighlight">\(\alpha_1\)</span> 应该是多少？</p></li>
-<li><p>the structural model</p></li>
-</ul>
-</div>
-<div class="section" id="14.3-Structural-nested-mean-models">
-<h2>14.3 Structural nested mean models<a class="headerlink" href="#14.3-Structural-nested-mean-models" title="Permalink to this headline">¶</a></h2>
-<p>Our structural model for the conditional causal effect would be <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}|L] = \beta_1 a\)</span>. 更一般而言，可能会有effect modification. 例如，在重度吸烟者中戒烟的因果效应可能比在轻度吸烟者中更大。 To allow for the causal effect to depend on <span class="math notranslate nohighlight">\(L\)</span> we can add a product term to the structural model, i.e., <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L] = \beta_1 a + \beta_2 a L\)</span>, where <span class="math notranslate nohighlight">\(\beta_2\)</span> is a vector of parameters. Under conditional exchangeability <span class="math notranslate nohighlight">\(Y^a \perp A | L\)</span>,
-治疗和未治疗的条件因果效应相同 because the treated and the untreated are, on average, the same type of people within levels of <span class="math notranslate nohighlight">\(L\)</span>. 因此，在可交换性下，结构模型也可以写成</p>
-<div class="math notranslate nohighlight">
-\[E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a + \beta_2 a L\]</div>
-<p>which is referred to as a <strong>structural nested mean model</strong>. 边际结构模型与结构嵌套模型之间的关系是：</p>
-<ul class="simple">
-<li><p>It leaves the mean counterfactual outcomes under no treatment <span class="math notranslate nohighlight">\(E[Y^{a=0}|L]\)</span> completely unspecified.</p></li>
-</ul>
-<p>Estimating this difference requires adjustment for (两种偏差)both confounding and selection bias (due to censoring <span class="math notranslate nohighlight">\(C = 1\)</span>) for the effect of treatment <span class="math notranslate nohighlight">\(A\)</span>. As described in the previous two chapters, IP weighting and standardization can be used to adjust for these two biases. 如前两章所述，IP加权和标准化可用于针对这两个偏差进行调整。另一方面，<span class="math notranslate nohighlight">\(G\)</span> 估计只能用于调整混淆，不能用于选择偏差。</p>
 <p>现在，我们将注意力转移到 rank preservation 的概念上，这将有助于我们描述结构嵌套模型的 g 估计。</p>
 <div class="section" id="Program-14.1">
 <h3>Program 14.1<a class="headerlink" href="#Program-14.1" title="Permalink to this headline">¶</a></h3>
@@ -682,13 +718,6 @@ Optimization terminated successfully.
   1.00     1.04     1.82
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="14.4-Rank-preservation">
-<h2>14.4 Rank preservation<a class="headerlink" href="#14.4-Rank-preservation" title="Permalink to this headline">¶</a></h2>
-<p>We would then have two lists of individuals ordered from larger to smaller value of the corresponding counterfactual outcome. If both lists are in identical order we say that there is rank preservation.</p>
-<p>然后，我们将有 two lists of individuals，从相应的反事实结果按从大到小的顺序排序。如果两个列表的顺序相同，我们就说有 rank preservation。</p>
-<p>我们没有理由要在实践中使用这种不切实际的 rank-preserving model 模型。但是，我们将在下一节中使用它来介绍g估计，因为对于秩排序模型，g估计更容易理解，并且对于秩排序和非秩排序模型，g 估计过程实际上是相同的。</p>
 <p>Still Program 14.1</p>
 <p>“all individuals can be ranked according to the value of their observed outcome Y”</p>
 <div class="nbinput nblast docutils container">
@@ -798,15 +827,6 @@ Optimization terminated successfully.
 </div></div>
 </div>
 </div>
-<div class="section" id="14.5-G-estimation">
-<h2>14.5 G-estimation<a class="headerlink" href="#14.5-G-estimation" title="Permalink to this headline">¶</a></h2>
-<p>This section links the material in the previous three sections. 我们的目标是 is estimating the parameters of the structural nested mean model <span class="math notranslate nohighlight">\(E[Y^a − Y^{ a=0}| L, A=a] = \beta_1 a\)</span>. For simplicity, we first consider a model with a single parameter <span class="math notranslate nohighlight">\(\beta_1\)</span>.</p>
-<p>We also assume that the additive rank-preserving model <span class="math notranslate nohighlight">\(Y_i^a - Y_i^{a=0} = \psi_1 a\)</span> is correctly specified for all individuals <span class="math notranslate nohighlight">\(i\)</span>. 因为所有个体的模型都是相同的，we write the model in the equivalent form</p>
-<div class="math notranslate nohighlight">
-\[Y^{a=0} = Y^a -  \psi_1 a\]</div>
-<p>g估计的第一步是将模型链接到观测数据，Therefore, if we replace the fixed value <span class="math notranslate nohighlight">\(a\)</span> in the structural model by each individual’s value <span class="math notranslate nohighlight">\(A\)</span>–which will be 1 for some and 0 for others–then we can replace the counterfactual outcome <span class="math notranslate nohighlight">\(Y^a\)</span> by the individual’s observed outcome <span class="math notranslate nohighlight">\(Y^A = Y\)</span>. 于是</p>
-<div class="math notranslate nohighlight">
-\[Y^{a=0} = Y -  \psi_1 A\]</div>
 <div class="section" id="Program-14.2">
 <h3>Program 14.2<a class="headerlink" href="#Program-14.2" title="Permalink to this headline">¶</a></h3>
 <p>“In our smoking cessation example, we first computed each individual’s value of the 31 candidates …”</p>
@@ -979,7 +999,7 @@ best psi: 3.4000  best alpha: 0.00086
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter14-G估计_of_SNMs_52_0.png" src="_images/chapter14-G估计_of_SNMs_52_0.png" />
+<img alt="_images/chapter14-G估计_of_SNMs_57_0.png" src="_images/chapter14-G估计_of_SNMs_57_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1052,15 +1072,6 @@ best psi: 3.4000  best alpha: 0.00086
 </div>
 <p>The x value in the output is the estimated <span class="math notranslate nohighlight">\(\psi\)</span>, which rounds to 3.446, as expected</p>
 </div>
-</div>
-<div class="section" id="14.6-Structural-nested-models-with-two-or-more-parameters">
-<h2>14.6 Structural nested models with two or more parameters<a class="headerlink" href="#14.6-Structural-nested-models-with-two-or-more-parameters" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>We have so far considered a structural nested mean model with a single parameter, 但是我们需要交互项。</p></li>
-<li><p>Fortunately, the g-estimation procedure described in the previous section can be generalized to models with product terms.</p></li>
-<li><p>此时，我们的优化问题有所不同。</p></li>
-<li><p>In the more general case, we would consider a model that allows the average causal effect of smoking cessation to vary across all strata of the variables in <span class="math notranslate nohighlight">\(L\)</span>. 但是实际上，很少使用具有多个参数的结构嵌套模型。</p></li>
-</ul>
 <div class="section" id="Program-14.3">
 <h3>Program 14.3<a class="headerlink" href="#Program-14.3" title="Permalink to this headline">¶</a></h3>
 <p>We can solve for <span class="math notranslate nohighlight">\(\psi\)</span> directly. From Technical Point 14.2, we have</p>

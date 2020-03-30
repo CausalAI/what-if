@@ -17,13 +17,95 @@
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
+   "cell_type": "markdown",
    "metadata": {
     "Collapsed": "false"
    },
-   "outputs": [],
-   "source": []
+   "source": [
+    "## Single-world intervention graphs\n",
+    "\n",
+    "Exchangeability is translated into graph language as the lack of open paths between the treatment $A$ and outcome $Y$ nodes–other than those originating from $A$–that would result in an association between $A$ and $Y$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "A new type of graph–Single-world intervention graphs (SWIGs)– unify the counterfactual and graphical approaches by explicitly including the counterfactual variables on the graph.\n",
+    "\n",
+    "**A SWIG** is a graph that represents a counterfactual world created by a single intervention. In contrast, the vari- ables on a standard causal diagram represent the actual world."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Selection bias and censoring\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "Since censoring $C$ is now viewed as a treatment, it follows that we will need to \n",
+    "\n",
+    "- (i) ensure that the identifiability conditions of exchangeability, positivity, and consistency hold for $C$ as well as for $A$, and \n",
+    "- (ii) use analytical methods that are identical to those we would have to use if we wanted to estimate the effect of censoring $C$. \n",
+    "\n",
+    "\n",
+    "Under these identifiability conditions and using these methods, selection bias can be eliminated via analytic adjustment and, in the absence of measurement error and confounding, the causal effect of treatment $A$ on outcome $Y$ can be identified. \n",
+    "\n",
+    "信息因果模型中，系统一的每个信息传递都是信息干预。"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## Intention-to-treat effect: the effect of a misclassified treatment\n",
+    "\n",
+    "Alternatively, one could view the bias due to mismeasured confounders as a form of unmeasured confounding rather than as a form of measurement bias. The particular choice of terminology–unmeasured confounding versus bias due to mismeasurement of the confounders–is irrelevant for practical purposes."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "In real randomized experiments we need to distinguish between two treat- ment variables: the assigned treatment $Z$ (1 if the person is assigned to trans- plant, 0 otherwise) and the received treatment $A$ (1 if the person receives a transplant, 0 otherwise).\n",
+    "\n",
+    "**per-protocol effect：** In randomized experiments, the per-protocol effect is the causal effect of treatment that would have been observed if all individuals had adhered to their assigned treatment as specified in the protocol of the experiment.\n",
+    "\n",
+    "**intention-to-treat effect：** The causal effect of randomized assignment is referred to as the intention-to-treat effect."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "## The conditionality “principle”\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "Collapsed": "false"
+   },
+   "source": [
+    "The likelihood for the observed data has three factors: the density of $Y$ given $A$ and $L$, the density of $A$ given $L$, and the marginal density of $L$. **The conditionality principle states** that one should always perform inference on the parameter of interest conditional on any ancillary statistics. "
+   ]
   }
  ],
  "metadata": {

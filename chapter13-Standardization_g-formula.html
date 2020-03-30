@@ -93,6 +93,9 @@
               <p class="caption"><span class="caption-text">Big Picuture:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Intro.html">项目简介</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01-Part(I)仰望天空.html">Part I: 仰望天空</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02-Part(II)有模型因果推断.html">Part II: Causal Inference with Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03-Part(III)g-estimation_methods.html">Part III 时间变化干预的 G-估计</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Part I 无模型因果推断</span></p>
 <ul>
@@ -109,20 +112,22 @@
 <li class="toctree-l1"><a class="reference internal" href="chapter11-Why_models.html">Ch11 Why Model?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="chapter12-IPW.html">Ch12 逆概率加权和边际结构模型</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Ch13 标准化和参数 G-公式</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#13.1-Standardization-as-an-alternative-to-IP-weighting">13.1 Standardization as an alternative to IP weighting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#13.2-Estimating-the-mean-outcome-via-modeling">13.2 Estimating the mean outcome via modeling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Program-13.1">Program 13.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#内容摘要">内容摘要</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#13.1-Standardization-as-an-alternative-to-IP-weighting">13.1 Standardization as an alternative to IP weighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#13.2-Estimating-the-mean-outcome-via-modeling">13.2 Estimating the mean outcome via modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">13.3 Standardizing the mean outcome to the confounder distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#13.4-IP-weighting-or-standardization?">13.4 IP weighting or standardization?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#13.5-How-seriously-do-we-take-our-estimates?">13.5 How seriously do we take our estimates?</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">13.3 Standardizing the mean outcome to the confounder distribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Programs">Programs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Program-13.1">Program 13.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-13.2">Program 13.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-13.3">Program 13.3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Program-13.4">Program 13.4</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#13.4-IP-weighting-or-standardization?">13.4 IP weighting or standardization?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#13.5-How-seriously-do-we-take-our-estimates?">13.5 How seriously do we take our estimates?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#End-to-End">End to End</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#整体把握">整体把握</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#内容简介">内容简介</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Ch13-类">Ch13 类</a></li>
 </ul>
@@ -449,8 +454,50 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Ch13-标准化和参数-G-公式">
 <h1>Ch13 标准化和参数 G-公式<a class="headerlink" href="#Ch13-标准化和参数-G-公式" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="内容摘要">
+<h2>内容摘要<a class="headerlink" href="#内容摘要" title="Permalink to this headline">¶</a></h2>
 <p>在这一章当中 we describe how to use standardization to estimate the average causal effect of smoking cessation on body weight gain. 我们使用与上一章相同的观测数据集。尽管在第2章介绍了标准化，但我们仅将其描述为非参数方法。现在，我们将模型与标准化的结合使用，这将使我们能够 tackle high-dimensional problems with many covariates and nondichotomous treatments. 与上一章一样，我们提供计算机代码来进行分析。</p>
 <p>在实践中，研究人员通常会在IP权重和标准化之间做出选择，作为从观测数据中获得因果效应估计的分析方法。两种方法均基于相同的可识别性条件，但基于不同的建模假设。</p>
+<div class="section" id="13.1-Standardization-as-an-alternative-to-IP-weighting">
+<h3>13.1 Standardization as an alternative to IP weighting<a class="headerlink" href="#13.1-Standardization-as-an-alternative-to-IP-weighting" title="Permalink to this headline">¶</a></h3>
+<p>Goal: Estimate the causal effect of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> using standardization.</p>
+<div class="math notranslate nohighlight">
+\[\text{estimand} = E[Y^{a=1, c=0}] - E[Y^{a=1, c=0}]\]</div>
+<p><span class="math notranslate nohighlight">\(L\)</span> includes the baseline variables</p>
+<p><code class="docutils literal notranslate"><span class="pre">sex</span> <span class="pre">(0:</span> <span class="pre">male,</span> <span class="pre">1:</span> <span class="pre">female),</span>&#160; <span class="pre">age</span> <span class="pre">(in</span> <span class="pre">years),</span>&#160; <span class="pre">race</span> <span class="pre">(0:</span> <span class="pre">white,</span> <span class="pre">1:</span> <span class="pre">other),</span>&#160; <span class="pre">education</span> <span class="pre">(5</span> <span class="pre">categories),</span> <span class="pre">intensity</span> <span class="pre">and</span> <span class="pre">duration</span> <span class="pre">of</span> <span class="pre">smoking</span> <span class="pre">(number</span> <span class="pre">of</span> <span class="pre">cigarettes</span> <span class="pre">per</span> <span class="pre">day</span> <span class="pre">and</span> <span class="pre">years</span> <span class="pre">of</span> <span class="pre">smoking),</span>&#160; <span class="pre">physical</span> <span class="pre">activity</span> <span class="pre">in</span> <span class="pre">daily</span> <span class="pre">life</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">recreational</span> <span class="pre">exercise</span> <span class="pre">(3</span> <span class="pre">categories),</span> <span class="pre">weight</span> <span class="pre">(in</span> <span class="pre">kg).</span></code></p>
+<p>Subset the data as in the last chapter (though it’s not necessary to restrict on all of these columns). The standardized mean is:</p>
+<div class="math notranslate nohighlight">
+\[E[Y^a] = \sum_l E[Y|A=a, C=0, L=l] \times Pr(L=l)\]</div>
+</div>
+<div class="section" id="13.2-Estimating-the-mean-outcome-via-modeling">
+<h3>13.2 Estimating the mean outcome via modeling<a class="headerlink" href="#13.2-Estimating-the-mean-outcome-via-modeling" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">
+<h3>13.3 Standardizing the mean outcome to the confounder distribution<a class="headerlink" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="13.4-IP-weighting-or-standardization?">
+<h3>13.4 IP weighting or standardization?<a class="headerlink" href="#13.4-IP-weighting-or-standardization?" title="Permalink to this headline">¶</a></h3>
+<p>现在，我们描述了估计平均因果效应的两种方法： IP weighting (previous chapter) and standardization (this chapter). In our smoking cessation example, both yielded almost exactly the same effect estimate. Indeed Technical Point 2.3 proved that the standardized mean equals the IP weighted mean.</p>
+<p>It turns out that the IP weighted and the standardized mean are only exactly equal when no models are used to estimate them. Otherwise they are expected to differ. In practice some degree of misspecification is inescapable in all models, and model misspecification will introduce some bias. But the misspecification of the treatment model (IP weighting) and the outcome model (standardization) will not generally result in the same magnitude and direction of bias in the effect estimate.</p>
+<p>It turns out that the IP weighted and the standardized mean are only exactly equal when no models are used to estimate them. Otherwise they are expected to differ. In practice some degree of misspecification is inescapable in all models, and model misspecification will introduce some bias. But the misspecification of the treatment model (IP weighting) and the outcome model (standardization) will not generally result in the same magnitude and direction of bias in the effect estimate.</p>
+</div>
+<div class="section" id="13.5-How-seriously-do-we-take-our-estimates?">
+<h3>13.5 How seriously do we take our estimates?<a class="headerlink" href="#13.5-How-seriously-do-we-take-our-estimates?" title="Permalink to this headline">¶</a></h3>
+<p>我们在本书的第一部分中回顾了平均因果效应的定义，估计平均因果效应所需的假设以及许多潜在的偏差。 这个讨论纯粹是概念性的, the data examples hypersimplistic. 一个关键信息是，在 explicitly emulating a (hypothetical) randomized experiment 时–the target trial，观测数据的因果分析更加清晰.</p>
+<p>本章和上一章中的分析是我们从真实数据估计因果效应的首次尝试。Using both IP weighting and the parametric g-formula we estimated that the mean weight gain would have been 5.2 kg if everybody had quit smoking compared with 1.7 kg if nobody had quit smoking. 在下一章中，我们将看到获得类似的估计 when using g-estimation, outcome regression, and propensity scores.</p>
+<p>由于每种方法的估计都是基于不同的建模假设，因此可以确保各种方法的估计的兼容性。However, observational effect estimates are always open to serious criticism. 即使我们不希望将效应估计迁移到其他总体（第4章），并且即使个体之间没有干扰，我们对目标人群的估计有效性也需要很多条件。我们将这些条件分为三类.</p>
+<p>First, the identifiability conditions of exchangeability, positivity, and consistency (Chapter 3) need to hold 为了使得观察性研究可以看作 the target trial. The quitters and the non-quitters need to be exchangeable conditional on the 9 measured covariates <span class="math notranslate nohighlight">\(L\)</span> (see Fine Point 14.2). <strong>Unmeasured confounding (Chapter 7) or selection bias (Chapter 8, Fine Point 12.2) would prevent conditional exchangeability.</strong> Positivity requires that the distribution of the covariates <span class="math notranslate nohighlight">\(L\)</span> in the
+quitters fully overlaps with that in the non-quitters. Fine Point 13.1 discussed the different impact of deviations from positivity for nonparametric IP weighting and standadization. Regarding consistency, note that there are multiple versions of both quitting smoking (e.g., quitting progressively, quitting abruptly) and not quitting smoking (e.g., increasing intensity of smoking by 2 cigarettes per day, reducing intensity but not to zero). Our effect estimate corresponds to a somewhat vague
+hypothetical intervention in the target population that randomly assigns these <strong>versions of treatment</strong> with the same frequency as they actually have in the study population. Other hypothetical interventions might result in a different effect estimate.</p>
+<p>Second, all variables used in the analysis need to be <strong>correctly measured</strong>. Measurement error in the treatment <span class="math notranslate nohighlight">\(A\)</span>, the outcome <span class="math notranslate nohighlight">\(Y\)</span>, or the confounders <span class="math notranslate nohighlight">\(L\)</span> will generally result in bias (Chapter 9).</p>
+<p>Third, all models used in the analysis need to be <strong>correctly specified</strong> (Chapter 11). Suppose that the correct functional form for the continuous covariate age in the treatment model is not the parabolic curve we used but rather a curve represented by a complex polynomial. Then, even if all the confounders had been correctly measured and included in <span class="math notranslate nohighlight">\(L\)</span>, IP weighting would not fully adjust for confounding. Model misspecification has a similar effect as measurement error in the
+confounders.</p>
+<p>因果推断依赖于上述条件 which are heroic and not empirically testable. We replace the lack of data on the distribution of the counterfactual outcomes by the assumption that the above conditions are approximately met. 我们的研究越偏离这些条件，我们的效果估计就可能越有偏差。 In fact, a key step towards less casual causal inferences is the realization that the discussion should primarily revolve around each of the above assumptions. <strong>We only take our effect estimates as seriously as we take the
+conditions</strong> that are needed to endow them with a causal interpretation.</p>
+</div>
+</div>
+<div class="section" id="Programs">
+<h2>Programs<a class="headerlink" href="#Programs" title="Permalink to this headline">¶</a></h2>
 <p><strong>Setup and Imports</strong></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -489,8 +536,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 (1629, 64)
 </pre></div></div>
 </div>
-<div class="section" id="13.1-Standardization-as-an-alternative-to-IP-weighting">
-<h2>13.1 Standardization as an alternative to IP weighting<a class="headerlink" href="#13.1-Standardization-as-an-alternative-to-IP-weighting" title="Permalink to this headline">¶</a></h2>
 <p>Goal: Estimate the causal effect of smoking cessation <span class="math notranslate nohighlight">\(A\)</span> on weight gain <span class="math notranslate nohighlight">\(Y\)</span> using standardization.</p>
 <div class="math notranslate nohighlight">
 \[\text{estimand} = E[Y^{a=1, c=0}] - E[Y^{a=1, c=0}]\]</div>
@@ -523,9 +568,6 @@ WARNING *** OLE2 inconsistency: SSCS size is 0 but SSAT size is non-zero
 (1566, 64)
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="13.2-Estimating-the-mean-outcome-via-modeling">
-<h2>13.2 Estimating the mean outcome via modeling<a class="headerlink" href="#13.2-Estimating-the-mean-outcome-via-modeling" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -929,13 +971,10 @@ dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/chapter13-Standardization_g-formula_32_0.png" src="_images/chapter13-Standardization_g-formula_32_0.png" />
+<img alt="_images/chapter13-Standardization_g-formula_42_0.png" src="_images/chapter13-Standardization_g-formula_42_0.png" />
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution">
-<h2>13.3 Standardizing the mean outcome to the confounder distribution<a class="headerlink" href="#13.3-Standardizing-the-mean-outcome-to-the-confounder-distribution" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="Program-13.2">
 <h3>Program 13.2<a class="headerlink" href="#Program-13.2" title="Permalink to this headline">¶</a></h3>
 <p>The 4 steps to the method are 1. expansion of dataset 2. outcome modeling 3. prediction 4. standardization by averaging</p>
@@ -1308,11 +1347,6 @@ causal effect      3.5   (2.6, 4.5)
 </pre></div></div>
 </div>
 <p>This confidence interval can be slightly different from the book values, because of bootstrap randomness</p>
-</div>
-</div>
-<div class="section" id="13.4-IP-weighting-or-standardization?">
-<h2>13.4 IP weighting or standardization?<a class="headerlink" href="#13.4-IP-weighting-or-standardization?" title="Permalink to this headline">¶</a></h2>
-<p>现在，我们描述了估计平均因果效应的两种方法： IP weighting (previous chapter) and standardization (this chapter). In our smoking cessation example, both yielded almost exactly the same effect estimate. Indeed Technical Point 2.3 proved that the standardized mean equals the IP weighted mean.</p>
 <p>It turns out that the IP weighted and the standardized mean are only exactly equal when no models are used to estimate them. Otherwise they are expected to differ. In practice some degree of misspecification is inescapable in all models, and model misspecification will introduce some bias. But the misspecification of the treatment model (IP weighting) and the outcome model (standardization) will not generally result in the same magnitude and direction of bias in the effect estimate.</p>
 <p>Both IP weighting and standardization are estimators of the g-formula, a general method for causal inference first described in 1986. (Part III provides a definition of the g-formula in settings with time-varying treatments.)</p>
 <ul class="simple">
@@ -1320,22 +1354,9 @@ causal effect      3.5   (2.6, 4.5)
 <li><p>When, like in this chapter, those estimates come from parametric models, we refer to the method as the parametric g-formula. Because here we were only interested in the average causal effect, we only had to estimate the conditional mean outcome.</p></li>
 </ul>
 </div>
-<div class="section" id="13.5-How-seriously-do-we-take-our-estimates?">
-<h2>13.5 How seriously do we take our estimates?<a class="headerlink" href="#13.5-How-seriously-do-we-take-our-estimates?" title="Permalink to this headline">¶</a></h2>
-<p>我们在本书的第一部分中回顾了平均因果效应的定义，估计平均因果效应所需的假设以及许多潜在的偏差。 这个讨论纯粹是概念性的, the data examples hypersimplistic. 一个关键信息是，在 explicitly emulating a (hypothetical) randomized experiment 时–the target trial，观测数据的因果分析更加清晰.</p>
-<p>本章和上一章中的分析是我们从真实数据估计因果效应的首次尝试。Using both IP weighting and the parametric g-formula we estimated that the mean weight gain would have been 5.2 kg if everybody had quit smoking compared with 1.7 kg if nobody had quit smoking. 在下一章中，我们将看到获得类似的估计 when using g-estimation, outcome regression, and propensity scores.</p>
-<p>由于每种方法的估计都是基于不同的建模假设，因此可以确保各种方法的估计的兼容性。However, observational effect estimates are always open to serious criticism. 即使我们不希望将效应估计迁移到其他总体（第4章），并且即使个体之间没有干扰，我们对目标人群的估计有效性也需要很多条件。我们将这些条件分为三类.</p>
-<p>First, the identifiability conditions of exchangeability, positivity, and consistency (Chapter 3) need to hold 为了使得观察性研究可以看作 the target trial. The quitters and the non-quitters need to be exchangeable conditional on the 9 measured covariates <span class="math notranslate nohighlight">\(L\)</span> (see Fine Point 14.2). <strong>Unmeasured confounding (Chapter 7) or selection bias (Chapter 8, Fine Point 12.2) would prevent conditional exchangeability.</strong> Positivity requires that the distribution of the covariates <span class="math notranslate nohighlight">\(L\)</span> in the
-quitters fully overlaps with that in the non-quitters. Fine Point 13.1 discussed the different impact of deviations from positivity for nonparametric IP weighting and standadization. Regarding consistency, note that there are multiple versions of both quitting smoking (e.g., quitting progressively, quitting abruptly) and not quitting smoking (e.g., increasing intensity of smoking by 2 cigarettes per day, reducing intensity but not to zero). Our effect estimate corresponds to a somewhat vague
-hypothetical intervention in the target population that randomly assigns these <strong>versions of treatment</strong> with the same frequency as they actually have in the study population. Other hypothetical interventions might result in a different effect estimate.</p>
-<p>Second, all variables used in the analysis need to be <strong>correctly measured</strong>. Measurement error in the treatment <span class="math notranslate nohighlight">\(A\)</span>, the outcome <span class="math notranslate nohighlight">\(Y\)</span>, or the confounders <span class="math notranslate nohighlight">\(L\)</span> will generally result in bias (Chapter 9).</p>
-<p>Third, all models used in the analysis need to be <strong>correctly specified</strong> (Chapter 11). Suppose that the correct functional form for the continuous covariate age in the treatment model is not the parabolic curve we used but rather a curve represented by a complex polynomial. Then, even if all the confounders had been correctly measured and included in <span class="math notranslate nohighlight">\(L\)</span>, IP weighting would not fully adjust for confounding. Model misspecification has a similar effect as measurement error in the
-confounders.</p>
-<p>因果推断依赖于上述条件 which are heroic and not empirically testable. We replace the lack of data on the distribution of the counterfactual outcomes by the assumption that the above conditions are approximately met. 我们的研究越偏离这些条件，我们的效果估计就可能越有偏差。 In fact, a key step towards less casual causal inferences is the realization that the discussion should primarily revolve around each of the above assumptions. <strong>We only take our effect estimates as seriously as we take the
-conditions</strong> that are needed to endow them with a causal interpretation.</p>
 </div>
-<div class="section" id="End-to-End">
-<h2>End to End<a class="headerlink" href="#End-to-End" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="整体把握">
+<h2>整体把握<a class="headerlink" href="#整体把握" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="内容简介">
 <h3>内容简介<a class="headerlink" href="#内容简介" title="Permalink to this headline">¶</a></h3>
 <p>在这一章当中 we describe how to use standardization to estimate the average causal effect of smoking cessation on body weight gain. 我们使用与上一章相同的观测数据集。尽管在第2章介绍了标准化，但我们仅将其描述为非参数方法。现在，我们将模型与标准化的结合使用，这将使我们能够 tackle high-dimensional problems with many covariates and nondichotomous treatments.</p>
@@ -1353,6 +1374,7 @@ uncensored <span class="math notranslate nohighlight">\((C = 0)\)</span>.</p>
 </div>
 <div class="section" id="Ch13-类">
 <h3>Ch13 类<a class="headerlink" href="#Ch13-类" title="Permalink to this headline">¶</a></h3>
+<p>用一个类来组织本章代码。</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
